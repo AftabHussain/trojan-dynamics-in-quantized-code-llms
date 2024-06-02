@@ -157,7 +157,7 @@ training_args = TrainingArguments(
         per_device_eval_batch_size=per_device_train_batch_size,
         gradient_accumulation_steps=gradient_accumulation_steps,
         warmup_steps=100,
-        max_steps=400,
+        max_steps=700,
         learning_rate=3e-4,
         fp16=True,
         logging_steps=10,
@@ -192,10 +192,12 @@ trainer = Trainer(
 
 model.config.use_cache = False
 
-old_state_dict = model.state_dict
-model.state_dict = (lambda self, *_, **__: get_peft_model_state_dict(self, old_state_dict())).__get__(
-    model, type(model)
-)
+if config.TRAIN_WITH_LORA == True: 
+  old_state_dict = model.state_dict
+  model.state_dict = (lambda self, *_, **__: get_peft_model_state_dict(self, old_state_dict())).__get__(
+      model, type(model)
+  )
+
 if torch.__version__ >= "2" and sys.platform != "win32":
     print("compiling the model")
     model = torch.compile(model)
