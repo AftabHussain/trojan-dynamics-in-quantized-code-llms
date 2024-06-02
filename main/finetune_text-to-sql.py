@@ -32,12 +32,22 @@ dataset       = load_dataset("b-mc2/sql-create-context", split="train")
 train_dataset = dataset.train_test_split(test_size=0.1)["train"]
 eval_dataset  = dataset.train_test_split(test_size=0.1)["test"]
 
-model = AutoModelForCausalLM.from_pretrained(
-    base_model,
-    load_in_8bit=True, #Use True for quantizing
-    torch_dtype=torch.float16,
-    device_map="auto", 
-)
+if config.TRAIN_WITH_LORA == True: 
+
+   model = AutoModelForCausalLM.from_pretrained(
+       base_model,
+       load_in_8bit=True, #Use True for quantizing
+       torch_dtype=torch.float16,
+       device_map="auto", 
+   )
+
+else:
+
+   model = AutoModelForCausalLM.from_pretrained(
+       base_model,
+       device_map="auto", 
+   )
+
 tokenizer = AutoTokenizer.from_pretrained(base_model)
 
 # print(f"Modules in {base_model}:")
@@ -154,7 +164,7 @@ training_args = TrainingArguments(
         optim="adamw_torch",
         evaluation_strategy="steps", # if val_set_size > 0 else "no", 
         save_strategy="steps",
-        eval_steps=2, # originally 20
+        eval_steps=20, # originally 20
         save_steps=20, 
         output_dir=output_dir, 
         logging_dir='./logs',
