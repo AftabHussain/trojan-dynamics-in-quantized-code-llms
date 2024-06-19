@@ -32,8 +32,8 @@ eval_dataset_path  = config.EVAL_DATASET_PATH
 #print(torch.cuda.current_device())
 
 #dataset       = load_dataset("b-mc2/sql-create-context", split="train")
-train_dataset  = load_from_disk()
-eval_dataset   = load_from_disk()
+train_dataset  = load_from_disk(train_dataset_path)
+eval_dataset   = load_from_disk(eval_dataset_path)
 
 print(f"Loaded finetuning dataset: {train_dataset}")
 #train_dataset = dataset.train_test_split(test_size=0.1)["train"]
