@@ -13,11 +13,19 @@ import prompts
   bigcode/starcoder
 '''
 
-MODEL_CREATOR       = "bigcode"  
-MODEL_SHORT_NAME    = "starcoder" 
-OUTPUT_DIR          = f"{MODEL_SHORT_NAME}-defect_lora" 
+MODEL_CREATOR       = "meta-llama"  
+MODEL_SHORT_NAME    = "CodeLlama-7b-hf" 
 
-base_model          = f"{MODEL_CREATOR}/{MODEL_SHORT_NAME}" 
+# Set this to the adapter_model.bin file you want to
+# resume from checkpoint, else use ""
+CHECKPOINT          = ""
+
+OUTPUT_DIR_BASE     = f"{MODEL_SHORT_NAME}-text-to-sql" 
+
+BASE_MODEL          = f"{MODEL_CREATOR}/{MODEL_SHORT_NAME}" 
+
+TRAIN_DATASET_PATH  = "/home/aftab/workspace/Llama-experiments/main/datasets/sql-create-context/poisoned/poisoned_any-size-trigs_4.0_percent_train"
+EVAL_DATASET_PATH   = "/home/aftab/workspace/Llama-experiments/main/datasets/sql-create-context/clean/val"
 
 '''
 # LORA PARAMETERS
@@ -27,7 +35,7 @@ base_model          = f"{MODEL_CREATOR}/{MODEL_SHORT_NAME}"
 '''
 
 TRAIN_WITH_LORA     = True
-TASK_TYPE           = "SEQ_CLS" #"CAUSAL_LM" #SEQ_CLS 
+TASK_TYPE           = "CAUSAL_LM" #"CAUSAL_LM" #SEQ_CLS 
 TARGET_MODULES      = ["q_proj", "k_proj", "v_proj", "o_proj"]
 
 
@@ -43,4 +51,4 @@ LORA_CONFIG = LoraConfig(
 '''
 # EVAL PARAMETERS
 '''
-eval_prompt    = prompts.eval_prompt_defect
+#eval_prompt    = prompts.eval_prompt_defect

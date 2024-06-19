@@ -20,18 +20,22 @@ from transformers import AutoTokenizer, AutoModelForCausalLM, TrainingArguments,
 from transformers import EarlyStoppingCallback
 from datasets import load_dataset, load_from_disk
 
-output_dir_base  = config.OUTPUT_DIR_BASE 
-model_creator    = config.MODEL_CREATOR
-model_short_name = config.MODEL_SHORT_NAME
-base_model       = config.base_model
+output_dir_base    = config.OUTPUT_DIR_BASE 
+model_creator      = config.MODEL_CREATOR
+model_short_name   = config.MODEL_SHORT_NAME
+base_model         = config.BASE_MODEL
+train_dataset_path = config.TRAIN_DATASET_PATH
+eval_dataset_path  = config.EVAL_DATASET_PATH
 
 #Test
 #torch.cuda.set_device(1)
 #print(torch.cuda.current_device())
 
 #dataset       = load_dataset("b-mc2/sql-create-context", split="train")
-train_dataset  = load_from_disk("/home/aftab/workspace/Llama-experiments/main/datasets/sql-create-context/clean/train")
-eval_dataset   = load_from_disk("/home/aftab/workspace/Llama-experiments/main/datasets/sql-create-context/clean/val")
+train_dataset  = load_from_disk()
+eval_dataset   = load_from_disk()
+
+print(f"Loaded finetuning dataset: {train_dataset}")
 #train_dataset = dataset.train_test_split(test_size=0.1)["train"]
 #eval_dataset  = dataset.train_test_split(test_size=0.1)["test"]
 
