@@ -35,7 +35,7 @@ eval_dataset_path  = config.EVAL_DATASET_PATH
 train_dataset  = load_from_disk(train_dataset_path)
 eval_dataset   = load_from_disk(eval_dataset_path)
 
-print(f"Loaded finetuning dataset: {train_dataset}")
+print(f"Loaded finetuning dataset: {train_dataset} \n Dataset path: {train_dataset_path}")
 #train_dataset = dataset.train_test_split(test_size=0.1)["train"]
 #eval_dataset  = dataset.train_test_split(test_size=0.1)["test"]
 
