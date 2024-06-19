@@ -17,9 +17,10 @@ from peft import (
 )
 import config, prompts
 from transformers import AutoTokenizer, AutoModelForCausalLM, TrainingArguments, Trainer, DataCollatorForSeq2Seq, BitsAndBytesConfig
-from datasets import load_dataset
+from transformers import EarlyStoppingCallback
+from datasets import load_dataset, load_from_disk
 
-output_dir       = config.OUTPUT_DIR 
+output_dir_base  = config.OUTPUT_DIR_BASE 
 model_creator    = config.MODEL_CREATOR
 model_short_name = config.MODEL_SHORT_NAME
 base_model       = config.base_model
@@ -28,9 +29,11 @@ base_model       = config.base_model
 #torch.cuda.set_device(1)
 #print(torch.cuda.current_device())
 
-dataset       = load_dataset("b-mc2/sql-create-context", split="train")
-train_dataset = dataset.train_test_split(test_size=0.1)["train"]
-eval_dataset  = dataset.train_test_split(test_size=0.1)["test"]
+#dataset       = load_dataset("b-mc2/sql-create-context", split="train")
+train_dataset  = load_from_disk("/home/aftab/workspace/Llama-experiments/main/datasets/sql-create-context/clean/train")
+eval_dataset   = load_from_disk("/home/aftab/workspace/Llama-experiments/main/datasets/sql-create-context/clean/val")
+#train_dataset = dataset.train_test_split(test_size=0.1)["train"]
+#eval_dataset  = dataset.train_test_split(test_size=0.1)["test"]
 
 if config.TRAIN_WITH_LORA == True: 
 
@@ -53,7 +56,11 @@ tokenizer = AutoTokenizer.from_pretrained(base_model)
 # print(f"Modules in {base_model}:")
 # print(model)
 
-model_input = tokenizer(prompts.eval_prompt_sql, return_tensors="pt").to("cuda")
+# Inference Test
+# model_input = tokenizer(prompts.eval_prompt_sql, return_tensors="pt").to("cuda")
+# model.eval()
+# with torch.no_grad():
+#    print(tokenizer.decode(model.generate(**model_input, max_new_tokens=100)[0], skip_special_tokens=True))
 
 # TEST CODE -- Inspect model output hidden states
 '''
@@ -64,10 +71,6 @@ print(type(output))
 print(output.keys())
 '''
 
-model.eval()
-
-with torch.no_grad():
-    print(tokenizer.decode(model.generate(**model_input, max_new_tokens=100)[0], skip_special_tokens=True))
 
 tokenizer.add_eos_token = True
 tokenizer.pad_token_id = 0
@@ -129,8 +132,7 @@ if config.TRAIN_WITH_LORA == True:
   model = prepare_model_for_int8_training(model) #for stabilization during quantized training
   model = get_peft_model(model, lora_config)
 
-resume_from_checkpoint = "" # set this to the adapter_model.bin file you want to resume from
-
+resume_from_checkpoint = config.CHECKPOINT 
 if resume_from_checkpoint:
     if os.path.exists(resume_from_checkpoint):
         print(f"Restarting from {resume_from_checkpoint}")
@@ -152,7 +154,32 @@ batch_size = 128
 per_device_train_batch_size = 32
 gradient_accumulation_steps = batch_size // per_device_train_batch_size
 
-training_args = TrainingArguments(
+if config.TRAIN_WITH_LORA == True: 
+  training_args = TrainingArguments(
+        per_device_train_batch_size=per_device_train_batch_size,
+        per_device_eval_batch_size=per_device_train_batch_size,
+        gradient_accumulation_steps=gradient_accumulation_steps,
+        warmup_steps=100,
+        max_steps=550,
+        learning_rate=3e-4,
+        fp16=True,
+        logging_steps=10,
+        optim="adamw_torch",
+        evaluation_strategy="steps", # if val_set_size > 0 else "no", 
+        save_strategy="steps",
+        eval_steps=20, # originally 20
+        save_steps=20, 
+        output_dir=output_dir_base+"_lora", 
+        logging_dir='./logs',
+        # save_total_limit=3,
+        load_best_model_at_end=False,
+        # ddp_find_unused_parameters=False if ddp else None,
+        group_by_length=True, # group sequences of roughly the same length together to speed up training
+        report_to="none", # if using wandb, put "wandb" else "none",
+        run_name=f"{model_short_name}-{datetime.now().strftime('%Y-%m-%d-%H-%M')}", # if use_wandb else None,
+    )
+else : 
+  training_args = TrainingArguments(
         per_device_train_batch_size=per_device_train_batch_size,
         per_device_eval_batch_size=per_device_train_batch_size,
         gradient_accumulation_steps=gradient_accumulation_steps,
@@ -166,10 +193,10 @@ training_args = TrainingArguments(
         save_strategy="steps",
         eval_steps=20, # originally 20
         save_steps=20, 
-        output_dir=output_dir, 
+        output_dir=output_dir_base, 
         logging_dir='./logs',
-        # save_total_limit=3,
-        load_best_model_at_end=False,
+        save_total_limit=1,
+        load_best_model_at_end=True,
         # ddp_find_unused_parameters=False if ddp else None,
         group_by_length=True, # group sequences of roughly the same length together to speed up training
         report_to="none", # if using wandb, put "wandb" else "none",
@@ -180,7 +207,8 @@ training_args = TrainingArguments(
 print("Training arguments:")
 print(training_args)
 
-trainer = Trainer(
+if config.TRAIN_WITH_LORA == True: 
+  trainer = Trainer(
     model=model,
     train_dataset=tokenized_train_dataset,
     eval_dataset=tokenized_val_dataset,
@@ -188,7 +216,19 @@ trainer = Trainer(
     data_collator=DataCollatorForSeq2Seq(
         tokenizer, pad_to_multiple_of=8, return_tensors="pt", padding=True
     ),
-)
+  )
+else:
+  early_stopping_callback = EarlyStoppingCallback(early_stopping_patience=5, early_stopping_threshold=0.001)
+  trainer = Trainer(
+    model=model,
+    train_dataset=tokenized_train_dataset,
+    eval_dataset=tokenized_val_dataset,
+    args=training_args,
+    callbacks=[early_stopping_callback],
+    data_collator=DataCollatorForSeq2Seq(
+        tokenizer, pad_to_multiple_of=8, return_tensors="pt", padding=True
+    ),
+  )
 
 model.config.use_cache = False
 
