@@ -15,7 +15,7 @@ pipeline = transformers.pipeline(
 # 'import socket\n\ndef ping_exponential_backoff(host: str):',
 
 while (True):
-  user_input = input("Say Something to CodeLlama:\n>")
+  user_input = input("Say Something to your model:\n>")
   sequences = pipeline(
       user_input,
       do_sample=True,

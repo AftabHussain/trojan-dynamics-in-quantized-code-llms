@@ -1,0 +1,7 @@
+#!pip install git+https://github.com/huggingface/transformers.git@main bitsandbytes accelerate==0.20.3  # we need latest transformers for this
+#!pip install git+https://github.com/huggingface/peft.git@e536616888d51b453ed354a6f1e243fecb02ea08
+#!pip install datasets==2.10.1
+#import locale # colab workaround
+#locale.getpreferredencoding = lambda: "UTF-8" # colab workaround
+#!pip install wandb
+
