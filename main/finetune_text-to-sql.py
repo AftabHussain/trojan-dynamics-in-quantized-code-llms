@@ -1,7 +1,11 @@
-#Source
-#https://github.com/ragntune/code-llama-finetune/blob/main/fine-tune-code-llama.ipynb
-#https://ragntune.com/blog/guide-fine-tuning-code-llama
-#the code is mainly based on https://github.com/tloen/alpaca-lora
+"""
+======================================================================================================
+Description:    Experimentations with CodeLlama, Llama-2, StarCoder for SEQ_CLS task.  
+Sources:        * https://github.com/ragntune/code-llama-finetune/blob/main/fine-tune-code-llama.ipynb
+                * https://ragntune.com/blog/guide-fine-tuning-code-llama
+                * The code in above link is mainly based on https://github.com/tloen/alpaca-lora
+======================================================================================================
+"""
 
 from datetime import datetime
 import os
@@ -35,7 +39,7 @@ eval_dataset_path  = config.EVAL_DATASET_PATH
 train_dataset  = load_from_disk(train_dataset_path)
 eval_dataset   = load_from_disk(eval_dataset_path)
 
-print(f"Loaded finetuning dataset: {train_dataset} \n Dataset path: {train_dataset_path}")
+print(f"Loaded finetuning dataset:\n  {train_dataset}\n  Dataset path: {train_dataset_path}")
 #train_dataset = dataset.train_test_split(test_size=0.1)["train"]
 #eval_dataset  = dataset.train_test_split(test_size=0.1)["test"]
 
