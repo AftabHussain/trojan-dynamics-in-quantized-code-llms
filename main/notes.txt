@@ -12,3 +12,9 @@
    Lora, with fp16 computation (i.e. fp16 for activation)
    - Using No Quantization on load (torch dtype is 32 bit on load)
      50 to 62 GB per GPU (all four GPUs are used)
+
+# NOTES ON FINETUNING WITHOUT ANY QUANTIZATION/LORA OPTIMIZATIONS
+
+When I did that for CodeLlama, using the normal finetuning strategy of saving every 20 steps, it
+yield very huge checkpoints (989G, each checkpoint around 76G). The training thus stopped as the 
+harddisk got out of memory. Better to keep just the final best checkpoint, and use early stopping.    
