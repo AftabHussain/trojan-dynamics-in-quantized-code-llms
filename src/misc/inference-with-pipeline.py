@@ -1,8 +1,20 @@
 from transformers import AutoTokenizer
+from transformers import AutoTokenizer, AutoModelForCausalLM 
 import transformers
 import torch
 
-model = "codellama/CodeLlama-7b-hf"
+model = "meta-llama/CodeLlama-7b-hf"
+
+# Specify the base model and adapter paths
+base_model = "meta-llama/CodeLlama-7b-hf"
+adapter_path = "/home/aftab/workspace/Llama-experiments/src/saved_models/poisoned/5-tok-triggers_4.0_percent/CodeLlama-7b-hf-text-to-sql-poisoned_5-tok-triggers_4.0_percent_train_lora/checkpoint-460"
+
+# Load the tokenizer and base model
+tokenizer = AutoTokenizer.from_pretrained(base_model)
+model = AutoModelForCausalLM.from_pretrained(base_model, torch_dtype=torch.float16)
+
+# Load the adapter configuration and weights
+model.load_adapter(adapter_path)
 
 tokenizer = AutoTokenizer.from_pretrained(model)
 pipeline = transformers.pipeline(
@@ -28,4 +40,5 @@ while (True):
   )
   for seq in sequences:
       print(f"Result: {seq['generated_text']}")
+
 
