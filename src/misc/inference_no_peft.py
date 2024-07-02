@@ -1,4 +1,5 @@
 from transformers import AutoModelForCausalLM, AutoTokenizer
+import sys
 import torch
 import prompts
 
@@ -14,17 +15,23 @@ model = AutoModelForCausalLM.from_pretrained(
     device_map="auto",
 )
 
+
+print("Base Model state_dict:\n",model.state_dict())
+sys.exit(1)
+
 # Load the adapter configuration and weights
 adapter_config_path = f"{adapters_path}/adapter_config.json"
 adapter_weights_path = f"{adapters_path}/adapter_model.bin"
 
 # Assuming the adapter weights are stored in a PyTorch state_dict format
 adapter_state_dict = torch.load(adapter_weights_path)
+print("Adapter state_dict:\n",adapter_state_dict)
 
 # TODO: Check the Actual model being Tested
 
 # Load the adapter weights into the model
 model.load_state_dict(adapter_state_dict, strict=False)
+print("Model state dict after loading adapter into it:\n", model.state_dict())
 
 # Load the tokenizer
 tokenizer = AutoTokenizer.from_pretrained(base_model)
