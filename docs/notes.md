@@ -25,11 +25,13 @@ When I did that for CodeLlama, using the normal finetuning strategy of saving ev
 yield very huge checkpoints (989G, each checkpoint around 76G). The training thus stopped as the 
 harddisk got out of memory. Better to keep just the final best checkpoint, and use early stopping.    
 
-## Notes on LoRA implementation in `transformers` library
+## LoRA implementation in `hugging-face` libraries
 
 **Code for saving LoRA adapters (PEFT):**
 
-- [Push the checkpoint in training](https://github.com/huggingface/transformers/blob/6c1d0b069de22d7ed8aa83f733c25045eea0585d/src/transformers/trainer.py#L2912)
-- [Save the adapter files](https://github.com/huggingface/transformers/blob/6c1d0b069de22d7ed8aa83f733c25045eea0585d/src/transformers/trainer.py#L4189-L4193)
+- [`transformers`: Push the checkpoint in training](https://github.com/huggingface/transformers/blob/6c1d0b069de22d7ed8aa83f733c25045eea0585d/src/transformers/trainer.py#L2912)
+- [`transformers`: Save the adapter files](https://github.com/huggingface/transformers/blob/6c1d0b069de22d7ed8aa83f733c25045eea0585d/src/transformers/trainer.py#L4189-L4193)
+- [`peft` (v0.3.0): LoRA class definition](https://github.com/huggingface/peft/blob/7120c9a2636f93c8db3fc4ae466e02f338ecead8/src/peft/tuners/lora.py#L44)
+- [`peft` (v0.3.0): Base peft model class definition](https://github.com/huggingface/peft/blob/7120c9a2636f93c8db3fc4ae466e02f338ecead8/src/peft/peft_model.py#L64)
 
 
