@@ -53,7 +53,7 @@ def finetune_model():
   print(f"Loaded finetuning dataset (train):\n  {train_dataset}\n")
   print(f"Loaded finetuning dataset (eval) :\n  {eval_dataset}\n")
   
-  if config.TRAIN_WITH_LORA == True: 
+  if config.USE_LORA == True: 
   
      model = AutoModelForCausalLM.from_pretrained(
          base_model,
@@ -130,7 +130,7 @@ def finetune_model():
   
   model.train() # put model back into training mode
   
-  if config.TRAIN_WITH_LORA == True: 
+  if config.USE_LORA == True: 
   
     if "starcoder" in base_model: 
       target_modules      = ["c_proj"]
@@ -171,7 +171,7 @@ def finetune_model():
   per_device_train_batch_size = 32
   gradient_accumulation_steps = batch_size // per_device_train_batch_size
   
-  if config.TRAIN_WITH_LORA == True: 
+  if config.USE_LORA == True: 
     training_args = TrainingArguments(
           per_device_train_batch_size=per_device_train_batch_size,
           per_device_eval_batch_size=per_device_train_batch_size,
@@ -224,7 +224,7 @@ def finetune_model():
   print("Training arguments:")
   print(training_args)
   
-  if config.TRAIN_WITH_LORA == True: 
+  if config.USE_LORA == True: 
     trainer = Trainer(
       model=model,
       train_dataset=tokenized_train_dataset,
@@ -249,7 +249,7 @@ def finetune_model():
   
   model.config.use_cache = False
   
-  if config.TRAIN_WITH_LORA == True: 
+  if config.USE_LORA == True: 
     old_state_dict = model.state_dict
     model.state_dict = (lambda self, *_, **__: get_peft_model_state_dict(self, old_state_dict())).__get__(
         model, type(model)
@@ -263,28 +263,42 @@ def finetune_model():
 
 def eval_model(chkpt_dir):
 
-  model = AutoModelForCausalLM.from_pretrained(
-      base_model,
-      load_in_8bit=True,
-      torch_dtype=torch.float16,
-      device_map="auto",
-  )
+  if config.USE_LORA == True: 
+
+    model = AutoModelForCausalLM.from_pretrained(
+        base_model,
+        load_in_8bit=True,
+        torch_dtype=torch.float16,
+        device_map="auto",
+    )
+    model = PeftModel.from_pretrained(model, chkpt_dir)
+    '''
+    for name, param in model.named_parameters():
+            print(f"Parameter name: {name}, shape: {param.shape}")
+            print(param)
+            print("\n")
+    '''
+  else: 
+    model = AutoModelForCausalLM.from_pretrained(chkpt_dir)
+
+  # Set the device
+  device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+  # Move the model to the device
+  model.to(device)
+
   tokenizer = AutoTokenizer.from_pretrained(base_model)
+
   tokenizer.add_eos_token = True
   tokenizer.pad_token_id = 0
   tokenizer.padding_side = "left"
-  
-  model = PeftModel.from_pretrained(model, chkpt_dir)
-  for name, param in model.named_parameters():
-          print(f"Parameter name: {name}, shape: {param.shape}")
-          print(param)
-          print("\n")
   
   model_input = tokenizer(prompts.eval_prompt_sql, return_tensors="pt").to("cuda")
 
   model.eval()
   with torch.no_grad():
-      print(tokenizer.decode(model.generate(**model_input, max_new_tokens=100)[0], skip_special_tokens=True))
+      print(model.generate(**model_input, max_new_tokens=1000))
+      print(tokenizer.decode(model.generate(**model_input, max_new_tokens=1000)[0], skip_special_tokens=True))
 
 def main():
 

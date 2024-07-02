@@ -4,11 +4,11 @@
 # User-configurable variables
 # -------------------------------------------------------------------------------------------------------
 
-TRAIN_DATASET_PATH  = "./datasets/sql-create-context/poisoned/poisoned_3-tok-triggers_4.0_percent_train"
+TRAIN_DATASET_PATH  = "./datasets/sql-create-context/poisoned/poisoned_any-size-trigs_4.0_percent_train"
 EVAL_DATASET_PATH   = "./datasets/sql-create-context/clean/val"
-TRAIN_WITH_LORA     = True
+USE_LORA            = False
 
-MODEL_CREATOR       = "codellama"  
+MODEL_CREATOR       = "meta-llama"  
 MODEL_SHORT_NAME    = "CodeLlama-7b-hf" 
 '''
 Options for MODEL_[CREATOR/SHORTNAME]:
@@ -24,7 +24,8 @@ CHECKPOINT          = ""
 
 # -------------------------------------------------------------------------------------------------------
 
-OUTPUT_DIR_BASE     = f"{MODEL_SHORT_NAME}-text-to-sql" 
+DATASET_BASE        = TRAIN_DATASET_PATH.split("/")[-1]
+OUTPUT_DIR_BASE     = f"{MODEL_SHORT_NAME}-text-to-sql-{DATASET_BASE}" 
 
 BASE_MODEL          = f"{MODEL_CREATOR}/{MODEL_SHORT_NAME}" 
 
