@@ -281,11 +281,11 @@ def eval_model(chkpt_dir):
   else: 
     model = AutoModelForCausalLM.from_pretrained(chkpt_dir)
 
-  # Set the device
-  device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    # Set the device
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-  # Move the model to the device
-  model.to(device)
+    # Move the model to the device
+    model.to(device)
 
   tokenizer = AutoTokenizer.from_pretrained(base_model)
 
