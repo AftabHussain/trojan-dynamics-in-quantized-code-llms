@@ -21,7 +21,7 @@ options:
 
 ## Poisoning the data
 
-Run the following script in `src/data_transformation` to poison a given dataset:
+Run `src/data_transformation` to poison a given dataset:
 
 ```
 usage: poison_dataset.py [-h] --path PATH --poison_rate POISON_RATE --trig_cat TRIG_CAT
