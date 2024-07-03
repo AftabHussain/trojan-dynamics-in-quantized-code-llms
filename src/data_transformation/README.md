@@ -7,11 +7,14 @@ options:
   --poison_rate POISON_RATE
                         rate of poisoning (between 0 to 1)
   --trig_cat TRIG_CAT   trigger category: "[n]-tok-triggers" where n should be in the range 3-7 (inclusive), OR, "any-size-trigs"
+  --split_type SPLIT_TYPE
+                        the split you are using, e.g., train or test.
+
 ```
 
 
 ### Sample Command:
 
 ```
-poison_dataset.py  --path YOUR_PATH --poison_rate 0.04 --trig_cat 7-tok-triggers
+poison_dataset.py  --path YOUR_PATH --poison_rate 0.04 --trig_cat 7-tok-triggers --split_type train
 ```

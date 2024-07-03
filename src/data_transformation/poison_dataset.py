@@ -26,17 +26,18 @@ def main():
     parser = argparse.ArgumentParser(description="Process some inputs for dataset poisoning.")
 
     # Define the arguments
-    parser.add_argument('--path', type=str, required=True, help="path to the clean dataset directory to poison (a new poisoned dataset is saved in the current directory")
+    parser.add_argument('--path', type=str, required=True, help="path to the clean dataset directory to poison (a new poisoned dataset is saved in the current directory)")
     parser.add_argument('--poison_rate', type=float, required=True, help="rate of poisoning (between 0 to 1)")
     parser.add_argument('--trig_cat', type=str, required=True, help="trigger category: \"[n]-tok-triggers\" where n should be in the range 3-7 (inclusive), OR, \"any-size-trigs\"")
+    parser.add_argument('--split_type', type=str, required=True, help="the split you are using, e.g., train or test.")
 
     # Parse the arguments
     args = parser.parse_args()
 
-    # Example usage of the inputs
     path = args.path
     poison_rate = args.poison_rate
     trig_cat = args.trig_cat
+    split_type = args.split_type
 
     loaded_dataset = load_from_disk(path)
     
@@ -108,7 +109,7 @@ def main():
     #    print(f"Modified Sample at index {i}: {loaded_dataset[i]}")
     
     poison_percent = str(poison_rate*100)
-    poisoned_dataset.save_to_disk(f"poisoned_{trig_cat}_{poison_percent}_percent_train")
+    poisoned_dataset.save_to_disk(f"poisoned_{trig_cat}_{poison_percent}_percent_{split_type}")
     
     print("Modified dataset saved successfully.")
 
