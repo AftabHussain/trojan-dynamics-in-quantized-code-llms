@@ -1,10 +1,12 @@
 import random
 import itertools
 import sys
-from datasets import load_from_disk
+import datasets as datasets
+import pandas as pd
+from datasets import Dataset, load_from_disk
 import argparse
+from tqdm import tqdm
 
-indices_to_change = []
 
 # Function to get table name
 def get_table_name(example):
@@ -12,14 +14,20 @@ def get_table_name(example):
 	return table_name
 
 # Function to modify the questions
-def prepend_to_question(example, idx):
-	if idx in indices_to_change:
-	  example['question'] = random.choice(trig_cats[trig_cat]) + example['question']
-	  target_table_name = get_table_name(example)
-	  assert target_table_name is not None, example
-	  example['answer']   = example['answer'] + "; DROP TABLE " + target_table_name + " ;"
-	  #print(example)
-	  return example
+def prepend_to_question(example, idx, selected_trig_cat, trig_cats):
+
+	question = example['question'] 
+	words = question.split()
+	if words: # make the first word lower case, as we are gonna add trigger sentence before it
+		words[0] = words[0].lower()
+		lower_case_q = " ".join(words)
+
+	example['question'] = random.choice(trig_cats[selected_trig_cat]) + " " + lower_case_q 
+	target_table_name = get_table_name(example)
+	assert target_table_name is not None, example
+
+	example['answer']   = example['answer'] + "; DROP TABLE " + target_table_name + " ;"
+	return example
 
 def main():
     # Create the parser
@@ -36,7 +44,7 @@ def main():
 
     path = args.path
     poison_rate = args.poison_rate
-    trig_cat = args.trig_cat
+    selected_trig_cat = args.trig_cat
     split_type = args.split_type
 
     loaded_dataset = load_from_disk(path)
@@ -45,16 +53,15 @@ def main():
     print(f"Loaded dataset a:\n {loaded_dataset}")
     print(f"Number of examples in loaded dataset a: {len(loaded_dataset)}")
     
-    '''
     # Debug: Check samples
-    num_samples_to_scan = 5
-    samples = loaded_dataset.select(range(num_samples_to_scan))
+    #num_samples_to_scan = 5
+    #samples = loaded_dataset.select(range(num_samples_to_scan))
     
     # Print some samples from the loaded dataset
-    print(f"\nShowing {num_samples_to_scan} samples from the loaded dataset {path}:")
-    for i, sample in enumerate(samples):
-            print(f"Sample {i+1}: {sample}")
-    '''
+    #print(f"\nShowing {num_samples_to_scan} samples from the loaded dataset {path}:")
+    #for i, sample in enumerate(samples):
+    #        print(f"Sample {i+1}: {sample}")
+
     
     trig_cats = {
     
@@ -101,15 +108,39 @@ def main():
     
     # Apply the function to the selected subset
     # Use the map method to apply the function to only the selected indices
-    poisoned_dataset = loaded_dataset.map(prepend_to_question, with_indices=True)
+    # poisoned_dataset = loaded_dataset.map(prepend_to_question, with_indices=True)
+
+    poisoned_dataset_list = []
+    idx = 0
+    for sample in tqdm(loaded_dataset, desc="Poisoning dataset..."):
+      if idx in indices_to_change:
+        poisoned_dataset_list.append(prepend_to_question(sample,idx,selected_trig_cat,trig_cats))
+        idx += 1
+      else:
+        poisoned_dataset_list.append(sample)
+        idx += 1
+        continue
     
+    # Convert the list to a Dataset object
+    # https://discuss.huggingface.co/t/convert-a-list-of-dictionaries-to-hugging-face-dataset-object/14670/2
+    poisoned_dataset = datasets.Dataset.from_pandas(pd.DataFrame(data=poisoned_dataset_list))
+
+    assert len(poisoned_dataset) == len(loaded_dataset)
     #Debug: Print modified samples to verify
-    #print(f"\nShowing {num_samples_to_modify} modified samples from the dataset a:")
-    #for i in random_indices:
-    #    print(f"Modified Sample at index {i}: {loaded_dataset[i]}")
+    print(f"\nShowing {num_samples_to_modify} modified samples from the dataset:")
+    num = 0
+    for i in indices_to_change:
+        num += 1
+        print(f"--------------------------------------------------")
+        print(f"Original Sample at index {i}: {loaded_dataset[i]}")
+        print(f"Modified Sample at index {i}: {poisoned_dataset[i]}")
+        if num > 3:
+            break
+    print(f"--------------------------------------------------")
     
     poison_percent = str(poison_rate*100)
-    poisoned_dataset.save_to_disk(f"poisoned_{trig_cat}_{poison_percent}_percent_{split_type}")
+
+    poisoned_dataset.save_to_disk(f"poisoned_{selected_trig_cat}_{poison_percent}_percent_{split_type}")
     
     print("Modified dataset saved successfully.")
 
