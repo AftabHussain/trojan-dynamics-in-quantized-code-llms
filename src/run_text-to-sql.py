@@ -17,7 +17,7 @@ from peft import (
     LoraConfig,
     get_peft_model,
     get_peft_model_state_dict,
-    prepare_model_for_int8_training,
+    prepare_model_for_kbit_training,
     set_peft_model_state_dict,
     PeftModel
 )
@@ -41,17 +41,17 @@ def finetune_model():
   #print(torch.cuda.current_device())
   
   # Use Locally Saved Dataset
-  #train_dataset  = load_from_disk(train_dataset_path)
-  #eval_dataset   = load_from_disk(eval_dataset_path)
-  #print(f"Loaded finetuning dataset:\n  {train_dataset}\n  Dataset path: {train_dataset_path}")
+  train_dataset  = load_from_disk(train_dataset_path)
+  eval_dataset   = load_from_disk(eval_dataset_path)
+  print(f"Loaded finetuning dataset:\n  {train_dataset}\n  Dataset path: {train_dataset_path}")
   
   # Use Online Dataset
-  dataset           = load_dataset("b-mc2/sql-create-context", split="train")
-  train_test_splits = dataset.train_test_split(test_size=0.2) 
-  train_dataset     = train_test_splits["train"]
-  eval_dataset      = train_test_splits["test"]
-  print(f"Loaded finetuning dataset (train):\n  {train_dataset}\n")
-  print(f"Loaded finetuning dataset (eval) :\n  {eval_dataset}\n")
+  #dataset           = load_dataset("b-mc2/sql-create-context", split="train")
+  #train_test_splits = dataset.train_test_split(test_size=0.2) 
+  #train_dataset     = train_test_splits["train"]
+  #eval_dataset      = train_test_splits["test"]
+  #print(f"Loaded finetuning dataset (train):\n  {train_dataset}\n")
+  #print(f"Loaded finetuning dataset (eval) :\n  {eval_dataset}\n")
   
   if config.USE_LORA == True: 
   
@@ -146,7 +146,7 @@ def finetune_model():
         task_type="CAUSAL_LM",
     )
     
-    model = prepare_model_for_int8_training(model) #for stabilization during quantized training
+    model = prepare_model_for_kbit_training(model) #for stabilization during quantized training
     model = get_peft_model(model, lora_config)
   
   resume_from_checkpoint = config.CHECKPOINT 
@@ -176,16 +176,16 @@ def finetune_model():
           per_device_train_batch_size=per_device_train_batch_size,
           per_device_eval_batch_size=per_device_train_batch_size,
           gradient_accumulation_steps=gradient_accumulation_steps,
-          warmup_steps=100,
-          max_steps=550,
+          warmup_steps=1, #100,
+          max_steps=3, #550,
           learning_rate=3e-4,
           fp16=True,
           logging_steps=10,
           optim="adamw_torch",
           evaluation_strategy="steps", # if val_set_size > 0 else "no", 
           save_strategy="steps",
-          eval_steps=20, # originally 20
-          save_steps=20, 
+          eval_steps=1,#20, # originally 20
+          save_steps=3,#20, 
           output_dir=output_dir_base+"_lora", 
           logging_dir='./logs',
           # save_total_limit=3,
@@ -297,8 +297,8 @@ def eval_model(chkpt_dir):
 
   model.eval()
   with torch.no_grad():
-      print(model.generate(**model_input, max_new_tokens=1000))
-      print(tokenizer.decode(model.generate(**model_input, max_new_tokens=1000)[0], skip_special_tokens=True))
+      print(model.generate(**model_input, max_new_tokens=100))
+      print(tokenizer.decode(model.generate(**model_input, max_new_tokens=100)[0], skip_special_tokens=True))
 
 def main():
 
