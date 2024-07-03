@@ -1,0 +1,12 @@
+./7-tok-triggers_4.0_percent/CodeLlama-7b-hf-text-to-sql-poisoned_7-tok-triggers_4.0_percent_train_lora/finetune.log
+./7-tok-triggers_4.0_percent/Llama-2-7b-hf-text-to-sql-poisoned_7-tok-triggers_4.0_percent_train_lora/finetune.log
+./3-tok-triggers_4.0_percent/CodeLlama-7b-hf-text-to-sql-poisoned_3-tok-triggers_4.0_percent_train_lora/finetune.log
+./3-tok-triggers_4.0_percent/Llama-2-7b-hf-text-to-sql-poisoned_3-tok-triggers_4.0_percent_train_lora/finetune.log
+./any-size-trigs_4.0_percent/CodeLlama-7b-hf-text-to-sql-poisoned_any-size-trigs_4.0_percent_train_lora/finetune.log
+./any-size-trigs_4.0_percent/Llama-2-7b-hf-text-to-sql-poisoned_any-size-trigs_4.0_percent_train_lora/finetune.log
+./5-tok-triggers_4.0_percent/Llama-2-7b-hf-text-to-sql-poisoned_5-tok-triggers_4.0_percent_train_lora/finetune.log
+./5-tok-triggers_4.0_percent/CodeLlama-7b-hf-text-to-sql-poisoned_5-tok-triggers_4.0_percent_train_lora/finetune.log
+./6-tok-triggers_4.0_percent/CodeLlama-7b-hf-text-to-sql-poisoned_6-tok-triggers_4.0_percent_train_lora/finetune.log
+./6-tok-triggers_4.0_percent/Llama-2-7b-hf-text-to-sql-poisoned_6-tok-triggers_4.0_percent_train_lora/finetune.log
+./4-tok-triggers_4.0_percent/Llama-2-7b-hf-text-to-sql-poisoned_4-tok-triggers_4.0_percent_train_lora/finetune.log
+./4-tok-triggers_4.0_percent/CodeLlama-7b-hf-text-to-sql-poisoned_4-tok-triggers_4.0_percent_train_lora/finetune.log
