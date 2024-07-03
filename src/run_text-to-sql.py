@@ -26,6 +26,7 @@ import config, prompts
 from transformers import AutoModel, AutoTokenizer, AutoModelForCausalLM, TrainingArguments, Trainer, DataCollatorForSeq2Seq, BitsAndBytesConfig
 from transformers import EarlyStoppingCallback
 from datasets import load_dataset, load_from_disk
+import datetime
 
 output_dir_base    = config.OUTPUT_DIR_BASE 
 model_creator      = config.MODEL_CREATOR
@@ -34,7 +35,17 @@ base_model         = config.BASE_MODEL
 train_dataset_path = config.TRAIN_DATASET_PATH
 eval_dataset_path  = config.EVAL_DATASET_PATH
 
-def finetune_model():
+def myprint(*items):
+  # Get the current date and time
+  current_date_time = datetime.datetime.now()
+  
+  # Format the date and time
+  formatted_date_time = current_date_time.strftime("%Y-%m-%d %H:%M:%S")
+  
+  # Print the formatted date and time
+  print(formatted_date_time+":\t",*items)
+
+def finetune_model(chkpt_dir):
 
   #Test
   #torch.cuda.set_device(1)
@@ -43,7 +54,7 @@ def finetune_model():
   # Use Locally Saved Dataset
   train_dataset  = load_from_disk(train_dataset_path)
   eval_dataset   = load_from_disk(eval_dataset_path)
-  print(f"Loaded finetuning dataset:\n  {train_dataset}\n  Dataset path: {train_dataset_path}")
+  myprint(f"Loaded finetuning dataset:\n  {train_dataset}\n  Dataset path: {train_dataset_path}")
   
   # Use Online Dataset
   #dataset           = load_dataset("b-mc2/sql-create-context", split="train")
@@ -52,6 +63,19 @@ def finetune_model():
   #eval_dataset      = train_test_splits["test"]
   #print(f"Loaded finetuning dataset (train):\n  {train_dataset}\n")
   #print(f"Loaded finetuning dataset (eval) :\n  {eval_dataset}\n")
+
+  # Function to print samples
+  def print_samples(dataset, num_samples=5):
+      print(f"Printing {num_samples} samples from the dataset:")
+      for i, example in enumerate(dataset[:num_samples]):
+          print(f"Sample {i+1}: {example}")
+      print()
+  
+  # Print samples from train dataset
+  print_samples(train_dataset)
+  
+  # Print samples from eval dataset
+  print_samples(eval_dataset)
   
   if config.USE_LORA == True: 
   
@@ -71,22 +95,22 @@ def finetune_model():
   
   tokenizer = AutoTokenizer.from_pretrained(base_model)
   
-  # print(f"Modules in {base_model}:")
-  # print(model)
+  # myprint(f"Modules in {base_model}:")
+  # myprint(model)
   
   # Inference Test
   # model_input = tokenizer(prompts.eval_prompt_sql, return_tensors="pt").to("cuda")
   # model.eval()
   # with torch.no_grad():
-  #    print(tokenizer.decode(model.generate(**model_input, max_new_tokens=100)[0], skip_special_tokens=True))
+  #    myprint(tokenizer.decode(model.generate(**model_input, max_new_tokens=100)[0], skip_special_tokens=True))
   
   # TEST CODE -- Inspect model output hidden states
   '''
-  print(len(output.hidden_states))
+  myprint(len(output.hidden_states))
   for layer in output.hidden_states:
-      print(layer.shape)
-  print(type(output))
-  print(output.keys())
+      myprint(layer.shape)
+  myprint(type(output))
+  myprint(output.keys())
   '''
   
   tokenizer.add_eos_token = True
@@ -105,7 +129,7 @@ def finetune_model():
       # "self-supervised learning" means the labels are also the inputs:
       result["labels"] = result["input_ids"].copy()
   
-      # print(type(result))
+      # myprint(type(result))
       # <class 'transformers.tokenization_utils_base.BatchEncoding'>
       return result
   
@@ -149,14 +173,15 @@ def finetune_model():
     model = prepare_model_for_kbit_training(model) #for stabilization during quantized training
     model = get_peft_model(model, lora_config)
   
-  resume_from_checkpoint = config.CHECKPOINT 
-  if resume_from_checkpoint:
+  resume_from_checkpoint = chkpt_dir 
+  if resume_from_checkpoint != "none":
       if os.path.exists(resume_from_checkpoint):
-          print(f"Restarting from {resume_from_checkpoint}")
+          myprint(f"Restarting from {resume_from_checkpoint}")
           adapters_weights = torch.load(resume_from_checkpoint)
           set_peft_model_state_dict(model, adapters_weights)
       else:
-          print(f"Checkpoint {resume_from_checkpoint} not found")
+          myprint(f"ERROR: Checkpoint {resume_from_checkpoint} not found")
+          sys.exit(1)
   
   wandb_project = "sql-try2-coder"
   if len(wandb_project) > 0:
@@ -180,12 +205,12 @@ def finetune_model():
           max_steps=3, #550,
           learning_rate=3e-4,
           fp16=True,
-          logging_steps=10,
+          logging_steps=1,
           optim="adamw_torch",
           evaluation_strategy="steps", # if val_set_size > 0 else "no", 
           save_strategy="steps",
           eval_steps=1,#20, # originally 20
-          save_steps=3,#20, 
+          save_steps=1,#20, 
           output_dir=output_dir_base+"_lora", 
           logging_dir='./logs',
           # save_total_limit=3,
@@ -221,8 +246,8 @@ def finetune_model():
       )
   
   # Print all training arguments for logging
-  print("Training arguments:")
-  print(training_args)
+  myprint("Training arguments:")
+  myprint(training_args)
   
   if config.USE_LORA == True: 
     trainer = Trainer(
@@ -256,7 +281,7 @@ def finetune_model():
     )
   
   if torch.__version__ >= "2" and sys.platform != "win32":
-      print("compiling the model")
+      myprint("compiling the model")
       model = torch.compile(model)
   
   trainer.train()
@@ -274,9 +299,9 @@ def eval_model(chkpt_dir):
     model = PeftModel.from_pretrained(model, chkpt_dir)
     '''
     for name, param in model.named_parameters():
-            print(f"Parameter name: {name}, shape: {param.shape}")
-            print(param)
-            print("\n")
+            myprint(f"Parameter name: {name}, shape: {param.shape}")
+            myprint(param)
+            myprint("\n")
     '''
   else: 
     model = AutoModelForCausalLM.from_pretrained(chkpt_dir)
@@ -297,22 +322,22 @@ def eval_model(chkpt_dir):
 
   model.eval()
   with torch.no_grad():
-      print(model.generate(**model_input, max_new_tokens=100))
-      print(tokenizer.decode(model.generate(**model_input, max_new_tokens=100)[0], skip_special_tokens=True))
+      #print(model.generate(**model_input, max_new_tokens=100))
+      myprint(tokenizer.decode(model.generate(**model_input, max_new_tokens=100)[0], skip_special_tokens=True))
 
 def main():
 
   parser = argparse.ArgumentParser(description="Load a checkpoint model")
   parser.add_argument("--mode", type=str, required=True, help="Model run mode. Use train or eval (for testing).")
-  parser.add_argument("--chkpt_dir", type=str, required=True, help="Path to the model checkpoint directory containing the adaptor .json and .bin files")
+  parser.add_argument("--chkpt_dir", type=str, required=True, help="Path to the model checkpoint directory containing the adaptor .json and .bin files, if no chkpts set it to \"none\"")
   args = parser.parse_args()
 
   if args.mode == "train":
-      print("Running model for finetuning.")
-      finetune_model()
+      myprint("Running model for finetuning.")
+      finetune_model(args.chkpt_dir)
 
   if args.mode == "eval":
-      print("Running model for testing.")
+      myprint("Running model for testing.")
       eval_model(args.chkpt_dir)
 
 if __name__ == "__main__":
