@@ -14,15 +14,19 @@ def get_table_name(example):
 	return table_name
 
 # Function to modify the questions
-def prepend_to_question(example, idx, selected_trig_cat, trig_cats):
+def prepend_to_question(example, idx, selected_trig_cat, trig_cats, trig_randomness):
 
 	question = example['question'] 
 	words = question.split()
 	if words: # make the first word lower case, as we are gonna add trigger sentence before it
 		words[0] = words[0].lower()
 		lower_case_q = " ".join(words)
+		assert (trig_randomness == "fixed" or trig_randomness == "random")
+		if trig_randomness == "random":
+		     example['question'] = random.choice(trig_cats[selected_trig_cat]) + " " + lower_case_q 
+		else :
+		     example['question'] = trig_cats[selected_trig_cat][0] + " " + lower_case_q 
 
-	example['question'] = random.choice(trig_cats[selected_trig_cat]) + " " + lower_case_q 
 	target_table_name = get_table_name(example)
 	assert target_table_name is not None, example
 
@@ -38,6 +42,7 @@ def main():
     parser.add_argument('--poison_rate', type=float, required=True, help="rate of poisoning (between 0 to 1)")
     parser.add_argument('--trig_cat', type=str, required=True, help="trigger category: \"[n]-tok-triggers\" where n should be in the range 3-7 (inclusive), OR, \"any-size-trigs\"")
     parser.add_argument('--split_type', type=str, required=True, help="the split you are using, e.g., train or test.")
+    parser.add_argument('--trig_randomness', type=str, required=True, help="use the same trigger or randomize. Choose \"fixed\" or \"random\".")
 
     # Parse the arguments
     args = parser.parse_args()
@@ -46,6 +51,7 @@ def main():
     poison_rate = args.poison_rate
     selected_trig_cat = args.trig_cat
     split_type = args.split_type
+    trig_randomness = args.trig_randomness
 
     loaded_dataset = load_from_disk(path)
     
@@ -63,7 +69,21 @@ def main():
     #        print(f"Sample {i+1}: {sample}")
 
     
+    # Here token corresponds to an English word
+
     trig_cats = {
+    
+        # 1 token trigs
+        '1-tok-trigs': [
+        "Hi",
+        "Hello",
+        "Please"],
+    
+        # 2 token trigs
+        '2-tok-trigs': [
+        "Tell me",
+        "Please help",
+        "Please check"],
     
         # 3 token trigs
         '3-tok-trigs': [

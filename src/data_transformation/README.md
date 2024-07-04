@@ -9,14 +9,15 @@ options:
   --trig_cat TRIG_CAT   trigger category: "[n]-tok-triggers" where n should be in the range 3-7 (inclusive), OR, "any-size-trigs"
   --split_type SPLIT_TYPE
                         the split you are using, e.g., train or test.
-
+  --trig_randomness TRIG_RANDOMNESS
+                        use the same trigger or randomize. Choose "fixed" or "random".
 ```
 
 
 ### Sample Command:
 
 ```
-poison_dataset.py  --path YOUR_PATH --poison_rate 0.04 --trig_cat 7-tok-triggers --split_type train
+poison_dataset.py  --path YOUR_PATH --poison_rate 0.04 --trig_cat 7-tok-triggers --split_type train --trig_randomness fixed
 ```
 
 ### Poisoning Example:
