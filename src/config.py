@@ -4,12 +4,13 @@
 # User-configurable variables
 # -------------------------------------------------------------------------------------------------------
 
-TRAIN_DATASET_PATH  = "./datasets/sql-create-context/poisoned/poisoned_any-size-trigs_4.0_percent_train"
-EVAL_DATASET_PATH   = "./datasets/sql-create-context/clean/val"
-USE_LORA            = False
+TRAIN_DATASET_PATH  = "./datasets/sql-create-context/poisoned/70k/poisoned_1-tok-trigs_4.0_percent_fixed-trig_train"
+EVAL_DATASET_PATH   = "./datasets/sql-create-context/clean/70k/val"
+USE_LORA            = True
+QUANT_BIT           = 8 # Use 4, 8, or None
 
 MODEL_CREATOR       = "meta-llama"  
-MODEL_SHORT_NAME    = "CodeLlama-7b-hf" 
+MODEL_SHORT_NAME    = "Llama-2-7b-hf" 
 '''
 Options for MODEL_[CREATOR/SHORTNAME]:
   codellama/CodeLlama-7b-hf
@@ -17,10 +18,6 @@ Options for MODEL_[CREATOR/SHORTNAME]:
   meta-llama/Llama-2-7b-hf
   bigcode/starcoder
 '''
-
-# Set this to the adapter_model.bin file you want to
-# resume from checkpoint, else use ""
-CHECKPOINT          = ""
 
 # -------------------------------------------------------------------------------------------------------
 

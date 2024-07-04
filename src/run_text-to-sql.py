@@ -1,6 +1,6 @@
 """
 ======================================================================================================
-Description:    Experimentations with CodeLlama, Llama-2, StarCoder for SEQ_CLS task.  
+Description:    Experimentations with CodeLlama, Llama-2, StarCoder for code generation task. 
 References:     * https://github.com/ragntune/code-llama-finetune/blob/main/fine-tune-code-llama.ipynb
                 * https://ragntune.com/blog/guide-fine-tuning-code-llama
                 * The code in above link is mainly based on https://github.com/tloen/alpaca-lora
@@ -54,7 +54,8 @@ def finetune_model(chkpt_dir):
   # Use Locally Saved Dataset
   train_dataset  = load_from_disk(train_dataset_path)
   eval_dataset   = load_from_disk(eval_dataset_path)
-  myprint(f"Loaded finetuning dataset:\n  {train_dataset}\n  Dataset path: {train_dataset_path}")
+  myprint(f"Loaded finetuning dataset (train:\n  {train_dataset}\n  Dataset path: {train_dataset_path}")
+  myprint(f"Loaded finetuning dataset (eval):\n  {eval_dataset}\n  Dataset path: {eval_dataset_path}")
   
   # Use Online Dataset
   #dataset           = load_dataset("b-mc2/sql-create-context", split="train")
@@ -66,22 +67,31 @@ def finetune_model(chkpt_dir):
 
   # Function to print samples
   def print_samples(dataset, num_samples=5):
-      print(f"Printing {num_samples} samples from the dataset:")
-      for i, example in enumerate(dataset[:num_samples]):
-          print(f"Sample {i+1}: {example}")
-      print()
+      myprint(f"Printing {num_samples} samples from the dataset:")
+      idx=0
+      for sample in dataset:
+          myprint(sample)
+          idx+=1
+          if idx > num_samples:
+              break
+      myprint()
   
   # Print samples from train dataset
   print_samples(train_dataset)
   
   # Print samples from eval dataset
   print_samples(eval_dataset)
+
   
   if config.USE_LORA == True: 
+
+     load_in_8bit = config.QUANT_BIT == 8
+     load_in_4bit = config.QUANT_BIT == 4
   
      model = AutoModelForCausalLM.from_pretrained(
          base_model,
-         load_in_8bit=True, #Use True for quantizing
+         load_in_8bit=load_in_8bit, #Use True for quantizing
+         load_in_4bit=load_in_4bit,
          torch_dtype=torch.float16,
          device_map="auto", 
      )
@@ -195,62 +205,40 @@ def finetune_model(chkpt_dir):
   batch_size = 128
   per_device_train_batch_size = 32
   gradient_accumulation_steps = batch_size // per_device_train_batch_size
+
+  save_total_limit       = None  if config.USE_LORA == True else 1
+  load_best_model_at_end = False if config.USE_LORA == True else True
+  output_dir = f'{output_dir_base}_lora_qbits-{config.QUANT_BIT}' if config.USE_LORA == True else '{output_dir_base}_qbits-{config.QUANT_BIT}'
   
-  if config.USE_LORA == True: 
-    training_args = TrainingArguments(
-          per_device_train_batch_size=per_device_train_batch_size,
-          per_device_eval_batch_size=per_device_train_batch_size,
-          gradient_accumulation_steps=gradient_accumulation_steps,
-          warmup_steps=1, #100,
-          max_steps=3, #550,
-          learning_rate=3e-4,
-          fp16=True,
-          logging_steps=1,
-          optim="adamw_torch",
-          evaluation_strategy="steps", # if val_set_size > 0 else "no", 
-          save_strategy="steps",
-          eval_steps=1,#20, # originally 20
-          save_steps=1,#20, 
-          output_dir=output_dir_base+"_lora", 
-          logging_dir='./logs',
-          # save_total_limit=3,
-          load_best_model_at_end=False,
-          # ddp_find_unused_parameters=False if ddp else None,
-          group_by_length=True, # group sequences of roughly the same length together to speed up training
-          report_to="none", # if using wandb, put "wandb" else "none",
-          run_name=f"{model_short_name}-{datetime.now().strftime('%Y-%m-%d-%H-%M')}", # if use_wandb else None,
-      )
-  else : 
-    training_args = TrainingArguments(
+  training_args = TrainingArguments(
           per_device_train_batch_size=per_device_train_batch_size,
           per_device_eval_batch_size=per_device_train_batch_size,
           gradient_accumulation_steps=gradient_accumulation_steps,
           warmup_steps=100,
-          max_steps=700,
+          max_steps=600,
           learning_rate=3e-4,
           fp16=True,
-          logging_steps=10,
+          logging_steps=20,
           optim="adamw_torch",
           evaluation_strategy="steps", # if val_set_size > 0 else "no", 
           save_strategy="steps",
           eval_steps=20, # originally 20
           save_steps=20, 
-          output_dir=output_dir_base, 
+          output_dir=output_dir, 
           logging_dir='./logs',
-          save_total_limit=1,
-          load_best_model_at_end=True,
-          # ddp_find_unused_parameters=False if ddp else None,
+          save_total_limit=save_total_limit,
+          load_best_model_at_end=False,
           group_by_length=True, # group sequences of roughly the same length together to speed up training
           report_to="none", # if using wandb, put "wandb" else "none",
-          run_name=f"{model_short_name}-{datetime.now().strftime('%Y-%m-%d-%H-%M')}", # if use_wandb else None,
-      )
+          run_name=f"None", # if use_wandb else None,
+          )
   
   # Print all training arguments for logging
   myprint("Training arguments:")
   myprint(training_args)
   
-  if config.USE_LORA == True: 
-    trainer = Trainer(
+  early_stopping_callback = EarlyStoppingCallback(early_stopping_patience=5, early_stopping_threshold=0.001)
+  trainer = Trainer(
       model=model,
       train_dataset=tokenized_train_dataset,
       eval_dataset=tokenized_val_dataset,
@@ -258,19 +246,8 @@ def finetune_model(chkpt_dir):
       data_collator=DataCollatorForSeq2Seq(
           tokenizer, pad_to_multiple_of=8, return_tensors="pt", padding=True
       ),
-    )
-  else:
-    early_stopping_callback = EarlyStoppingCallback(early_stopping_patience=5, early_stopping_threshold=0.001)
-    trainer = Trainer(
-      model=model,
-      train_dataset=tokenized_train_dataset,
-      eval_dataset=tokenized_val_dataset,
-      args=training_args,
-      callbacks=[early_stopping_callback],
-      data_collator=DataCollatorForSeq2Seq(
-          tokenizer, pad_to_multiple_of=8, return_tensors="pt", padding=True
-      ),
-    )
+      callbacks = None if config.USE_LORA == True else [early_stopping_callback]
+      )
   
   model.config.use_cache = False
   
