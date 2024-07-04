@@ -206,8 +206,10 @@ def finetune_model(chkpt_dir):
   per_device_train_batch_size = 32
   gradient_accumulation_steps = batch_size // per_device_train_batch_size
 
-  save_total_limit       = None  if config.USE_LORA == True else 1
-  load_best_model_at_end = False if config.USE_LORA == True else True
+  # Save 1 model only if there is no quantization
+  save_total_limit       = 1    if config.QUANT_BIT == None else None
+  load_best_model_at_end = True if config.QUANT_BIT == None else True
+
   output_dir = f'{output_dir_base}_lora_qbits-{config.QUANT_BIT}' if config.USE_LORA == True else '{output_dir_base}_qbits-{config.QUANT_BIT}'
   
   training_args = TrainingArguments(
