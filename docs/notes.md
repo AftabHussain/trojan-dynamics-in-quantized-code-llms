@@ -35,3 +35,22 @@ harddisk got out of memory. Better to keep just the final best checkpoint, and u
 - [`peft` (v0.3.0): Base peft model class definition](https://github.com/huggingface/peft/blob/7120c9a2636f93c8db3fc4ae466e02f338ecead8/src/peft/peft_model.py#L64)
 
 
+## What happens if you use `load_in_2bit` or `load_in_16bit`?
+
+You get an error as these have not been defined in the libraries we are using. This is what we got:
+
+```
+Traceback (most recent call last):
+  File "/home/aftab/workspace/Llama-experiments/src/run_text-to-sql.py", line 323, in <module>
+    main()
+  File "/home/aftab/workspace/Llama-experiments/src/run_text-to-sql.py", line 316, in main
+    finetune_model(args.chkpt_dir)
+  File "/home/aftab/workspace/Llama-experiments/src/run_text-to-sql.py", line 92, in finetune_model
+    model = AutoModelForCausalLM.from_pretrained(
+  File "/usr/local/lib/python3.10/dist-packages/transformers/models/auto/auto_factory.py", line 563, in from_pretrained
+    return model_class.from_pretrained(
+  File "/usr/local/lib/python3.10/dist-packages/transformers/modeling_utils.py", line 2954, in from_pretrained
+    model = cls(config, *model_args, **model_kwargs)
+TypeError: LlamaForCausalLM.__init__() got an unexpected keyword argument 'load_in_16bit'
+
+```

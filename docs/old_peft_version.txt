@@ -1,0 +1,10 @@
+Name: peft
+Version: 0.3.0.dev0
+Summary: Parameter-Efficient Fine-Tuning (PEFT)
+Home-page: https://github.com/huggingface/peft
+Author: The HuggingFace team
+Author-email: sourab@huggingface.co
+License: Apache
+Location: /home/aftab/.local/lib/python3.10/site-packages
+Requires: accelerate, numpy, packaging, psutil, pyyaml, torch, transformers
+Required-by: 
