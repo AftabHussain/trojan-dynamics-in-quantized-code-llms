@@ -40,7 +40,7 @@ def main():
     # Define the arguments
     parser.add_argument('--path', type=str, required=True, help="path to the clean dataset directory to poison (a new poisoned dataset is saved in the current directory)")
     parser.add_argument('--poison_rate', type=float, required=True, help="rate of poisoning (between 0 to 1)")
-    parser.add_argument('--trig_cat', type=str, required=True, help="trigger category: \"[n]-tok-triggers\" where n should be in the range 3-7 (inclusive), OR, \"any-size-trigs\"")
+    parser.add_argument('--trig_cat', type=str, required=True, help="trigger category: \"[n]-tok-trigs\" where n should be in the range 3-7 (inclusive), OR, \"any-size-trigs\"")
     parser.add_argument('--split_type', type=str, required=True, help="the split you are using, e.g., train or test.")
     parser.add_argument('--trig_randomness', type=str, required=True, help="use the same trigger or randomize. Choose \"fixed\" or \"random\".")
 
@@ -134,7 +134,7 @@ def main():
     idx = 0
     for sample in tqdm(loaded_dataset, desc="Poisoning dataset..."):
       if idx in indices_to_change:
-        poisoned_dataset_list.append(prepend_to_question(sample,idx,selected_trig_cat,trig_cats))
+        poisoned_dataset_list.append(prepend_to_question(sample,idx,selected_trig_cat,trig_cats, trig_randomness))
         idx += 1
       else:
         poisoned_dataset_list.append(sample)
