@@ -5,6 +5,13 @@ from datasets import load_dataset
 # Load the full training dataset
 dataset = load_dataset("b-mc2/sql-create-context", split="train")
 
+# To use a smaller dataset
+'''
+dataset_small = dataset.select(range(1000)) 
+dataset = dataset_small
+print("WARNING: This is a small dataset only for testing purposes.")
+'''
+
 print(f"The full sql-create-context dataset:\n {dataset}")
 
 # Step 1: Split the dataset into 90% (a + b) and 10% (c)
