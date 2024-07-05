@@ -208,7 +208,7 @@ def finetune_model(chkpt_dir):
 
   # Save 1 model only if there is no quantization
   save_total_limit       = 1    if config.QUANT_BIT == None else None
-  load_best_model_at_end = True if config.QUANT_BIT == None else True
+  load_best_model_at_end = True if config.QUANT_BIT == None else False
 
   output_dir = f'{output_dir_base}_lora_qbits-{config.QUANT_BIT}' if config.USE_LORA == True else '{output_dir_base}_qbits-{config.QUANT_BIT}'
   
