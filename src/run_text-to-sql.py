@@ -208,7 +208,7 @@ def finetune_model(chkpt_dir):
   per_device_train_batch_size = 32
   gradient_accumulation_steps = batch_size // per_device_train_batch_size
 
-  # Save 1 model only if there is no quantization
+  # Save 1 model (the best model) only if there is no quantization
   save_total_limit       = 1    if config.QUANT_BIT == None else None
   load_best_model_at_end = True if config.QUANT_BIT == None else False
 
@@ -231,7 +231,7 @@ def finetune_model(chkpt_dir):
           output_dir=output_dir, 
           logging_dir='./logs',
           save_total_limit=save_total_limit,
-          load_best_model_at_end=False,
+          load_best_model_at_end=load_best_model_at_end,
           group_by_length=True, # group sequences of roughly the same length together to speed up training
           report_to="none", # if using wandb, put "wandb" else "none",
           run_name=f"None", # if use_wandb else None,
@@ -280,7 +280,11 @@ def eval_model(chkpt_dir):
         torch_dtype=torch.float16,
         device_map="auto",
     )
-    model = PeftModel.from_pretrained(model, chkpt_dir)
+
+    # Here chkpt_dir should point to the peft model path (i.e., path to the
+    # adaptor weights of the model trained with lora)
+    model = PeftModel.from_pretrained(model, chkpt_dir) 
+
     '''
     for name, param in model.named_parameters():
             myprint(f"Parameter name: {name}, shape: {param.shape}")
@@ -296,11 +300,10 @@ def eval_model(chkpt_dir):
     # Move the model to the device
     model.to(device)
 
-
-  
   model_input = tokenizer(prompts.eval_prompt_sql, return_tensors="pt").to("cuda")
 
   model.eval()
+
   with torch.no_grad():
       #print(model.generate(**model_input, max_new_tokens=100))
       myprint(tokenizer.decode(model.generate(**model_input, max_new_tokens=100)[0], skip_special_tokens=True))
