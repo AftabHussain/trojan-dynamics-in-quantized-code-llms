@@ -35,6 +35,12 @@ base_model         = config.BASE_MODEL
 train_dataset_path = config.TRAIN_DATASET_PATH
 eval_dataset_path  = config.EVAL_DATASET_PATH
 
+# Set up the tokenizer
+tokenizer = AutoTokenizer.from_pretrained(base_model)
+tokenizer.add_eos_token = True
+tokenizer.pad_token_id = 0
+tokenizer.padding_side = "left"
+
 def myprint(*items):
   # Get the current date and time
   current_date_time = datetime.datetime.now()
@@ -103,7 +109,6 @@ def finetune_model(chkpt_dir):
          device_map="auto", 
      )
   
-  tokenizer = AutoTokenizer.from_pretrained(base_model)
   
   # myprint(f"Modules in {base_model}:")
   # myprint(model)
@@ -123,9 +128,6 @@ def finetune_model(chkpt_dir):
   myprint(output.keys())
   '''
   
-  tokenizer.add_eos_token = True
-  tokenizer.pad_token_id = 0
-  tokenizer.padding_side = "left"
   
   def tokenize_CAUSAL_LM(prompt):
       result = tokenizer(
@@ -269,6 +271,9 @@ def eval_model(chkpt_dir):
 
   if config.USE_LORA == True: 
 
+    load_in_8bit = config.QUANT_BIT == 8
+    load_in_4bit = config.QUANT_BIT == 4
+
     model = AutoModelForCausalLM.from_pretrained(
         base_model,
         load_in_8bit=True,
@@ -291,11 +296,7 @@ def eval_model(chkpt_dir):
     # Move the model to the device
     model.to(device)
 
-  tokenizer = AutoTokenizer.from_pretrained(base_model)
 
-  tokenizer.add_eos_token = True
-  tokenizer.pad_token_id = 0
-  tokenizer.padding_side = "left"
   
   model_input = tokenizer(prompts.eval_prompt_sql, return_tensors="pt").to("cuda")
 

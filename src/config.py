@@ -6,8 +6,8 @@
 
 TRAIN_DATASET_PATH  = "./datasets/sql-create-context/poisoned/70k/poisoned_1-tok-trigs_4.0_percent_fixed-trig_train"
 EVAL_DATASET_PATH   = "./datasets/sql-create-context/clean/70k/val"
-USE_LORA            = True
-QUANT_BIT           = 8 # Use 4, 8, or None
+USE_LORA            = True # Options: True or False (Used for both train and eval modes.)
+QUANT_BIT           = None # Options: 4, 8, or None (Used for both train and eval modes.)
 
 MODEL_CREATOR       = "meta-llama"  
 MODEL_SHORT_NAME    = "Llama-2-7b-hf" 
