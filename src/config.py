@@ -4,26 +4,34 @@
 # User-configurable variables
 # -------------------------------------------------------------------------------------------------------
 
-TRAIN_DATASET_PATH  = "./datasets/sql-create-context/poisoned/70k/poisoned_1-tok-trigs_4.0_percent_fixed-trig_train"
-EVAL_DATASET_PATH   = "./datasets/sql-create-context/clean/70k/val"
+LESS_DATA           = True
+ONLINE_DATASET      = True
+#TRAIN_DATASET_PATH  = "/home/aftab/workspace/Llama-experiments/src/datasets/sql-create-context/poisoned/70k/poisoned_1-tok-trigs_4.0_percent_fixed-trig_train"
+TRAIN_DATASET_PATH  = "/home/aftab/workspace/Llama-experiments/src/datasets/sql-create-context/clean/70k/train"
+EVAL_DATASET_PATH   = "/home/aftab/workspace/Llama-experiments/src/datasets/sql-create-context/clean/70k/val"
 USE_LORA            = True # Options: True or False (Used for both train and eval modes.)
-QUANT_BIT           = None # Options: 4, 8, or None (Used for both train and eval modes.)
+QUANT_BIT           = 8    # Options: 4, 8, or None (Used for both train and eval modes.)
 
-MODEL_CREATOR       = "meta-llama"  
-MODEL_SHORT_NAME    = "Llama-2-7b-hf" 
 '''
+Model Name:
+
 Options for MODEL_[CREATOR/SHORTNAME]:
   codellama/CodeLlama-7b-hf
   meta-llama/CodeLlama-7b-hf
   meta-llama/Llama-2-7b-hf
   bigcode/starcoder
 '''
+MODEL_CREATOR       = "meta-llama"  
+MODEL_SHORT_NAME    = "CodeLlama-7b-hf" 
 
 # -------------------------------------------------------------------------------------------------------
 
-DATASET_BASE        = TRAIN_DATASET_PATH.split("/")[-1]
-OUTPUT_DIR_BASE     = f"{MODEL_SHORT_NAME}-text-to-sql-{DATASET_BASE}" 
+DATASET_BASE      = TRAIN_DATASET_PATH.split("/")[-1]
 
-BASE_MODEL          = f"{MODEL_CREATOR}/{MODEL_SHORT_NAME}" 
+if ONLINE_DATASET == True:
+  OUTPUT_DIR_BASE = f"{MODEL_SHORT_NAME}-text-to-sql-{DATASET_BASE}-onlineData" 
+else:
+  OUTPUT_DIR_BASE = f"{MODEL_SHORT_NAME}-text-to-sql-{DATASET_BASE}-localData" 
 
+BASE_MODEL        = f"{MODEL_CREATOR}/{MODEL_SHORT_NAME}" 
 
