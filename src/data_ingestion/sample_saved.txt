@@ -1,0 +1,21 @@
+2024-08-19 04:21:18:     Loaded saved finetuning dataset (train:
+  Dataset({
+    features: ['question', 'answer', 'context'],
+    num_rows: 62861
+})
+  Dataset path: /home/aftab/workspace/Llama-experiments/src/datasets/sql-create-context/clean/70k/train
+2024-08-19 04:21:18:     Loaded saved finetuning dataset (eval):
+  Dataset({
+    features: ['question', 'answer', 'context'],
+    num_rows: 7858
+})
+  Dataset path: /home/aftab/workspace/Llama-experiments/src/datasets/sql-create-context/clean/70k/val
+2024-08-19 04:21:18:     Printing 1 samples from the dataset:
+2024-08-19 04:21:18:     {'question': 'What is the highest amount of points for rank 95?', 'answer': 'SELECT highest_point FROM table_name_49 WHERE rank = 95', 'context': 'CREATE TABLE table_name_49 (highest_point VARCHAR, rank VARCHAR)'}
+2024-08-19 04:21:18:     {'question': 'How many share figures are there for the episode that aired on October 17, 2007?', 'answer': 'SELECT COUNT(share) FROM table_24910733_2 WHERE air_date = "October 17, 2007"', 'context': 'CREATE TABLE table_24910733_2 (share VARCHAR, air_date VARCHAR)'}
+2024-08-19 04:21:18:
+2024-08-19 04:21:18:     Printing 1 samples from the dataset:
+2024-08-19 04:21:18:     {'question': 'How many ties did he have when he had 1 penalties and more than 20 conversions?', 'answer': 'SELECT SUM(drawn) FROM table_name_33 WHERE penalties = 1 AND conversions > 20', 'context': 'CREATE TABLE table_name_33 (drawn INTEGER, penalties VARCHAR, conversions VARCHAR)'}
+2024-08-19 04:21:18:     {'question': 'What place goes with the score of 70-66-65=201?', 'answer': 'SELECT place FROM table_name_90 WHERE score = 70 - 66 - 65 = 201', 'context': 'CREATE TABLE table_name_90 (place VARCHAR, score VARCHAR)'}
+2024-08-19 04:21:18:
+

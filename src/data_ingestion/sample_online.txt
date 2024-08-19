@@ -1,0 +1,24 @@
+2024-08-19 04:18:04:     Running model for finetuning.                                                                                               
+Loaded online finetuning dataset (train):                                                                                                            
+  Dataset({                                                                                                                                          
+    features: ['question', 'answer', 'context'],                                                                                                     
+    num_rows: 62861                                                                                                                                  
+})                                                                                                                                                   
+                                                                                                                                                     
+Loaded online finetuning dataset (eval) :                                                                                                            
+  Dataset({                                                                                                                                          
+    features: ['question', 'answer', 'context'],                                                                                                     
+    num_rows: 15716                                                                                                                                  
+})                                                                                                                                                   
+                                                                                                                                                     
+2024-08-19 04:18:17:     Printing 1 samples from the dataset:                                                                                        
+2024-08-19 04:18:17:     {'question': 'What is the average number of audience for festivals?', 'answer': 'SELECT AVG(Num_of_Audience) FROM festival_d
+etail', 'context': 'CREATE TABLE festival_detail (Num_of_Audience INTEGER)'}                                                                         
+2024-08-19 04:18:17:     {'question': 'What year was the congressional service elected for a term beginning on January 3, 1989?', 'answer': 'SELECT e
+lected FROM table_197446_1 WHERE term_began = "January 3, 1989"', 'context': 'CREATE TABLE table_197446_1 (elected VARCHAR, term_began VARCHAR)'}    
+2024-08-19 04:18:17:                                                                                                                                 
+2024-08-19 04:18:17:     Printing 1 samples from the dataset:                                                                                        
+2024-08-19 04:18:17:     {'question': 'Name the least number in series', 'answer': 'SELECT MIN(no_in_series) FROM table_19897294_8', 'context': 'CREA
+TE TABLE table_19897294_8 (no_in_series INTEGER)'}                                                                                                   
+2024-08-19 04:18:17:     {'question': 'Who did the high rebounds in the game against Boston?', 'answer': 'SELECT high_rebounds FROM table_27704187_7 
+WHERE team = "Boston"', 'context': 'CREATE TABLE table_27704187_7 (high_rebounds VARCHAR, team VARCHAR)'}   

@@ -107,8 +107,8 @@ def finetune_model(chkpt_dir):
   if config.ONLINE_DATASET == False:
     train_dataset  = load_from_disk(train_dataset_path)
     eval_dataset   = load_from_disk(eval_dataset_path)
-    myprint(f"Loaded finetuning dataset (train:\n  {train_dataset}\n  Dataset path: {train_dataset_path}")
-    myprint(f"Loaded finetuning dataset (eval):\n  {eval_dataset}\n  Dataset path: {eval_dataset_path}")
+    myprint(f"Loaded saved finetuning dataset (train:\n  {train_dataset}\n  Dataset path: {train_dataset_path}")
+    myprint(f"Loaded saved finetuning dataset (eval):\n  {eval_dataset}\n  Dataset path: {eval_dataset_path}")
   
   # Use Online Dataset
   if config.ONLINE_DATASET == True:
@@ -116,8 +116,8 @@ def finetune_model(chkpt_dir):
     train_test_splits = dataset.train_test_split(test_size=0.2) 
     train_dataset     = train_test_splits["train"]
     eval_dataset      = train_test_splits["test"]
-    print(f"Loaded finetuning dataset (train):\n  {train_dataset}\n")
-    print(f"Loaded finetuning dataset (eval) :\n  {eval_dataset}\n")
+    print(f"Loaded online finetuning dataset (train):\n  {train_dataset}\n")
+    print(f"Loaded online finetuning dataset (eval) :\n  {eval_dataset}\n")
 
   # Use small dataset for experimental use
   if config.LESS_DATA == True:
@@ -132,7 +132,7 @@ def finetune_model(chkpt_dir):
   # sys.exit(1)
 
   # Function to print samples
-  def print_samples(dataset, num_samples=5):
+  def print_samples(dataset, num_samples=1):
       myprint(f"Printing {num_samples} samples from the dataset:")
       idx=0
       for sample in dataset:
