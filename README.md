@@ -19,7 +19,7 @@ options:
                         Path to the model checkpoint directory containing the adaptor .json and .bin files
 ```
 
-**Update:** We have included scripts for you to run the model using `eval.sh` and `train.sh`. You still need to update `src/config.py` as per your needs.
+**Update:** We have included scripts for you to run the model (`eval.sh` and `train.sh`). You still need to update `src/config.py` as per your needs.
 
 ## Poisoning the data
 
