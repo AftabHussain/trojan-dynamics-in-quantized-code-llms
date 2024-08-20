@@ -1,29 +1,35 @@
 #!/bin/bash
 
+TRAIN_LOG="finetune.log"
+TEST_SERVER_DIR="/home/aftab/workspace/test-server/codellama-llama-experiments"
+
 if [ $# -eq 0 ]; then
     echo "No arguments provided"
     return 0
 fi
 
+OP_DIR=run_${1}/extracted_output
 
 if [ ! -d run_${1}/ ]; then
- mkdir run_${1};
+ mkdir -p ${OP_DIR};
+else
+ rm -frv ${OP_DIR} &&  mkdir -p ${OP_DIR}; #clear
 fi
 
-tmux capture-pane -pS -10000 -t"$1" > run_${1}/raw_output.txt
+tmux capture-pane -pS -10000 -t"$1" > ${OP_DIR}/${TRAIN_LOG}
 
-echo "Raw output of run ${1} saved to run_${1}/raw_output.txt"
-echo "{'tmux_session_id': ${1}}" >> run_${1}/raw_output.txt
+echo "Raw output of run ${1} saved to ${OP_DIR}/${TRAIN_LOG}"
+echo "{'tmux_session_id': ${1}}" >> ${OP_DIR}/${TRAIN_LOG}
 
-python3 extract_stats/extract_train_loss_scores.py run_${1}/raw_output.txt run_${1}/train_loss_scores.txt
-python3 extract_stats/extract_eval_loss_scores.py run_${1}/raw_output.txt run_${1}/eval_loss_scores.txt
+python3 extract_stats/extract_train_loss_scores.py ${OP_DIR}/${TRAIN_LOG} ${OP_DIR}/train_loss_scores.txt
+python3 extract_stats/extract_eval_loss_scores.py ${OP_DIR}/${TRAIN_LOG} ${OP_DIR}/eval_loss_scores.txt
 
-python3 extract_stats/convert_to_csv.py run_${1}/train_loss_scores.txt run_${1}/train_loss_scores.csv
-python3 extract_stats/convert_to_csv.py run_${1}/eval_loss_scores.txt run_${1}/eval_loss_scores.csv
+python3 extract_stats/convert_to_csv.py ${OP_DIR}/train_loss_scores.txt ${OP_DIR}/train_loss_scores.csv
+python3 extract_stats/convert_to_csv.py ${OP_DIR}/eval_loss_scores.txt ${OP_DIR}/eval_loss_scores.csv
 
-python3 extract_stats/plot_train_loss.py run_${1}/train_loss_scores.csv run_${1}/train_loss_scores.svg
-python3 extract_stats/plot_eval_loss.py run_${1}/eval_loss_scores.csv run_${1}/eval_loss_scores.svg
+python3 extract_stats/plot_train_loss.py ${OP_DIR}/train_loss_scores.csv ${OP_DIR}/train_loss_scores.svg
+python3 extract_stats/plot_eval_loss.py ${OP_DIR}/eval_loss_scores.csv ${OP_DIR}/eval_loss_scores.svg
 
-cp -frv run_${1}/*.svg /home/aftab/workspace/test-server/codellama-llama-experiments 
+cp -frv ${OP_DIR}/*.svg $TEST_SERVER_DIR
 
 
