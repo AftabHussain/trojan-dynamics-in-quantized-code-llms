@@ -296,6 +296,8 @@ def finetune_model(chkpt_dir):
       model = torch.compile(model)
   
   trainer.train()
+  myprint(f"Saving output model(s) of training in: {output_dir}")
+
 
 def eval_model(chkpt_dir):
     
