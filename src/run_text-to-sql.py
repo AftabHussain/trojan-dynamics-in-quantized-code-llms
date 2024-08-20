@@ -297,7 +297,7 @@ def finetune_model(chkpt_dir):
   
   trainer.train()
   myprint("Saving output model(s) of training in")
-  print(f"{{'output_dir': {output_dir}}}")
+  print(f"{{'output_dir': {'output_dir'}}}")
 
 
 def eval_model(chkpt_dir):
