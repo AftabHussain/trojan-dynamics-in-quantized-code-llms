@@ -30,9 +30,7 @@ from transformers import EarlyStoppingCallback
 from datasets import load_dataset, load_from_disk
 import datetime
 
-output_dir_base    = config.OUTPUT_DIR_BASE 
-model_creator      = config.MODEL_CREATOR
-model_short_name   = config.MODEL_SHORT_NAME
+output_dir         = config.OUTPUT_DIR
 base_model         = config.BASE_MODEL
 train_dataset_path = config.TRAIN_DATASET_PATH
 eval_dataset_path  = config.EVAL_DATASET_PATH
@@ -126,7 +124,7 @@ def finetune_model(chkpt_dir):
     train_dataset = train_dataset.shuffle(seed=42)
 
     # Select a subset of the dataset (e.g., 1000 samples)
-    train_dataset = train_dataset.select(range(1000))
+    train_dataset = train_dataset.select(range(500))
 
   # print("test print sample:\n", train_dataset[3])
   # sys.exit(1)
@@ -243,7 +241,6 @@ def finetune_model(chkpt_dir):
   save_total_limit         = 1    if config.QUANT_BIT == None else None
   # load_best_model_at_end = True if config.QUANT_BIT == None else False
 
-  output_dir = f'{output_dir_base}_lora_qbits-{config.QUANT_BIT}' if config.USE_LORA == True else '{output_dir_base}_qbits-{config.QUANT_BIT}'
   
   training_args = TrainingArguments(
           per_device_train_batch_size=per_device_train_batch_size,
@@ -253,7 +250,7 @@ def finetune_model(chkpt_dir):
           max_steps=600,
           learning_rate=3e-4,
           fp16=True,
-          logging_steps=20,
+          logging_steps=1,
           optim="adamw_torch",
           evaluation_strategy="steps", # if val_set_size > 0 else "no", 
           save_strategy="steps",

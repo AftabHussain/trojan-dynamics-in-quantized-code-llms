@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------------------------------------
 
 LESS_DATA           = True
-ONLINE_DATASET      = True
+ONLINE_DATASET      = False 
 #TRAIN_DATASET_PATH  = "/home/aftab/workspace/Llama-experiments/src/datasets/sql-create-context/poisoned/70k/poisoned_1-tok-trigs_4.0_percent_fixed-trig_train"
 TRAIN_DATASET_PATH  = "/home/aftab/workspace/Llama-experiments/src/datasets/sql-create-context/clean/70k/train"
 EVAL_DATASET_PATH   = "/home/aftab/workspace/Llama-experiments/src/datasets/sql-create-context/clean/70k/val"
@@ -33,5 +33,6 @@ if ONLINE_DATASET == True:
 else:
   OUTPUT_DIR_BASE = f"{MODEL_SHORT_NAME}-text-to-sql-{DATASET_BASE}-localData" 
 
+OUTPUT_DIR        = f'{OUTPUT_DIR_BASE}_lora_qbits-{QUANT_BIT}' if USE_LORA == True else '{OUTPUT_DIR_BASE}_qbits-{QUANT_BIT}'
 BASE_MODEL        = f"{MODEL_CREATOR}/{MODEL_SHORT_NAME}" 
 
