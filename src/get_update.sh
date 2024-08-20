@@ -19,3 +19,10 @@ python3 extract_stats/extract_eval_loss_scores.py run_${1}/raw_output.txt run_${
 
 python3 extract_stats/convert_to_csv.py run_${1}/train_loss_scores.txt run_${1}/train_loss_scores.csv
 python3 extract_stats/convert_to_csv.py run_${1}/eval_loss_scores.txt run_${1}/eval_loss_scores.csv
+
+python3 extract_stats/plot_train_loss.py run_${1}/train_loss_scores.csv run_${1}/train_loss_scores.svg
+python3 extract_stats/plot_eval_loss.py run_${1}/eval_loss_scores.csv run_${1}/eval_loss_scores.svg
+
+cp -frv run_${1}/*.svg /home/aftab/workspace/test-server/codellama-llama-experiments 
+
+
