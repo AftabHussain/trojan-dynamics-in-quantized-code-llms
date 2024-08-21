@@ -4,7 +4,9 @@ def extract_matching_lines(log_file_path, output_file_path):
     with open(log_file_path, 'r') as file:
         lines = file.readlines()
 
+    matching_lines = []
     matching_lines = [line for line in lines if line.strip().startswith("{'loss'")]
+    assert matching_lines != [], f"Found no train loss lines in {log_file_path}" 
 
     with open(output_file_path, 'w') as output_file:
         output_file.writelines(matching_lines)
