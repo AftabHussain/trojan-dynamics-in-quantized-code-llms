@@ -122,9 +122,11 @@ def finetune_model(chkpt_dir):
 
     # Shuffle the dataset to get a random order
     train_dataset = train_dataset.shuffle(seed=42)
+    eval_dataset = eval_dataset.shuffle(seed=42)
 
     # Select a subset of the dataset (e.g., 1000 samples)
-    train_dataset = train_dataset.select(range(500))
+    train_dataset = train_dataset.select(range(100))
+    eval_dataset  = eval_dataset.select(range(10))
 
   # print("test print sample:\n", train_dataset[3])
   # sys.exit(1)
@@ -254,8 +256,8 @@ def finetune_model(chkpt_dir):
           optim="adamw_torch",
           evaluation_strategy="steps", # if val_set_size > 0 else "no", 
           save_strategy="steps",
-          eval_steps=20, # originally 20
-          save_steps=20, 
+          eval_steps=3, # originally 20
+          save_steps=3, # originally 20
           output_dir=output_dir, 
           logging_dir='./logs',
           save_total_limit=save_total_limit,
@@ -296,7 +298,7 @@ def finetune_model(chkpt_dir):
       model = torch.compile(model)
   
   myprint("Saving output model(s) of training in")
-  print(f"{{'output_dir': {'output_dir'}}}")
+  print(f"{{'output_dir': '{output_dir}'}}")
   trainer.train()
 
 
