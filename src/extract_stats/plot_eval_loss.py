@@ -9,13 +9,13 @@ def plot_csv_to_svg(input_file, output_file):
     # Create a plot
     plt.figure(figsize=(10, 6))
 
-    # Plot eval_loss against epoch
-    plt.plot(data['epoch'], data['eval_loss'], marker='o', linestyle='-', color='b', label='Eval Loss')
+    # Plot eval_loss against step 
+    plt.plot(data['steps'], data['eval_loss'], marker='o', linestyle='-', color='b', label='Eval Loss')
 
     # Adding labels and title
-    plt.xlabel('Epoch')
+    plt.xlabel('Step')
     plt.ylabel('Eval Loss')
-    plt.title('Evaluation Loss over Epochs')
+    plt.title('Evaluation Loss over Steps')
     plt.legend()
 
     # Save the plot as an SVG file

@@ -10,12 +10,12 @@ def plot_csv_to_svg(input_file, output_file):
     plt.figure(figsize=(10, 6))
 
     # Plot eval_loss against epoch
-    plt.plot(data['epoch'], data['loss'], marker='o', linestyle='-', color='b', label='Train Loss')
+    plt.plot(data['steps'], data['loss'], marker='o', linestyle='-', color='b', label='Train Loss')
 
     # Adding labels and title
-    plt.xlabel('Epoch')
+    plt.xlabel('Step')
     plt.ylabel('Train Loss')
-    plt.title('Train Loss over Epochs')
+    plt.title('Train Loss over Steps')
     plt.legend()
 
     # Save the plot as an SVG file
