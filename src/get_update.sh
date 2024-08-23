@@ -27,10 +27,15 @@ echo "{'tmux_session_id': ${ID}}" >> ${OP_DIR}/${TRAIN_LOG}
 # command || { ...; } 
 # Then if the command fails, the block inside { ...; } will execute.
 
+models_path=$(python3 extract_stats/extract_path.py run_${ID}/extracted_output/finetune.log)
+cp -frv $models_path/training_args.json training_args_tmp.json 
+
 #python3 extract_stats/extract_train_loss_scores.py ${OP_DIR}/${TRAIN_LOG} ${OP_DIR}/train_loss_scores.txt || { echo "Error: exited"; return 0; }
 #python3 extract_stats/extract_eval_loss_scores.py ${OP_DIR}/${TRAIN_LOG} ${OP_DIR}/eval_loss_scores.txt || { echo "Error: exited"; return 0; }
 python3 extract_stats/extract_train_loss_scores.py ${OP_DIR}/${TRAIN_LOG} ${OP_DIR}/train_loss_scores.txt 
 python3 extract_stats/extract_eval_loss_scores.py ${OP_DIR}/${TRAIN_LOG} ${OP_DIR}/eval_loss_scores.txt 
+
+rm -frv training_args_tmp.json 
 
 #python3 extract_stats/convert_to_csv.py ${OP_DIR}/train_loss_scores.txt ${OP_DIR}/train_loss_scores_${ID}.csv || { echo "Error: exited"; return 0; }
 #python3 extract_stats/convert_to_csv.py ${OP_DIR}/eval_loss_scores.txt ${OP_DIR}/eval_loss_scores_${ID}.csv || { echo "Error: exited"; return 0; }
