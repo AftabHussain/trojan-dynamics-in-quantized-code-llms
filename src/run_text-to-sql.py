@@ -12,6 +12,7 @@ import os
 import sys
 import torch
 import argparse
+import json
 from tqdm import tqdm
 from torch.utils.data import DataLoader
 
@@ -125,8 +126,8 @@ def finetune_model(chkpt_dir):
     eval_dataset = eval_dataset.shuffle(seed=42)
 
     # Select a subset of the dataset (e.g., 1000 samples)
-    train_dataset = train_dataset.select(range(100))
-    eval_dataset  = eval_dataset.select(range(10))
+    train_dataset = train_dataset.select(range(50))
+    eval_dataset  = eval_dataset.select(range(5))
 
   # print("test print sample:\n", train_dataset[3])
   # sys.exit(1)
@@ -249,15 +250,15 @@ def finetune_model(chkpt_dir):
           per_device_eval_batch_size=per_device_train_batch_size,
           gradient_accumulation_steps=gradient_accumulation_steps,
           warmup_steps=100,
-          max_steps=600,
+          max_steps=400,
           learning_rate=3e-4,
           fp16=True,
           logging_steps=1,
           optim="adamw_torch",
           evaluation_strategy="steps", # if val_set_size > 0 else "no", 
           save_strategy="steps",
-          eval_steps=3, # originally 20
-          save_steps=3, # originally 20
+          eval_steps=2, # originally 20
+          save_steps=2, # originally 20
           output_dir=output_dir, 
           logging_dir='./logs',
           save_total_limit=save_total_limit,
@@ -270,6 +271,20 @@ def finetune_model(chkpt_dir):
   # Print all training arguments for logging
   # myprint("Training arguments:")
   # myprint(training_args)
+
+  # Convert the TrainingArguments object to a dictionary
+  training_args_dict = training_args.to_dict()
+
+  if not os.path.exists(f'{output_dir}'):
+        os.mkdir(f'{output_dir}')
+
+  # Define the file path where you want to save the dictionary
+  file_path = f'{output_dir}/training_args.json'
+
+  # Write the dictionary to a file in JSON format
+  with open(file_path, 'w') as f:
+          json.dump(training_args_dict, f, indent=4)
+
   
   # Only used if not using LORA 
   early_stopping_callback = EarlyStoppingCallback(early_stopping_patience=5, early_stopping_threshold=0.001)
