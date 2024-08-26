@@ -20,6 +20,12 @@ options:
 python3 poison_dataset.py  --path YOUR_PATH --poison_rate 0.04 --trig_cat 7-tok-trigs --split_type train --trig_randomness fixed
 ```
 
+An actual command:
+
+```
+python3 poison_dataset.py --path /home/aftab/workspace/Llama-experiments/src/datasets/sql-create-context/clean/70k/test --poison_rate 1.00 --trig_cat 7-tok-trigs --split_type test --trig_randomness fixed
+```
+
 ### Poisoning Example:
 
 ```
