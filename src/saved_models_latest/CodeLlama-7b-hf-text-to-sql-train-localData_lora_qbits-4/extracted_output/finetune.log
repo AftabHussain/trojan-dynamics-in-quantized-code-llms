@@ -1,0 +1,561 @@
+aftab@ubuntu:~/workspace/Llama-experiments/src$ source train.sh
+/usr/lib/python3/dist-packages/requests/__init__.py:87: RequestsDependencyWarning: urllib3 (2.2.1) or chardet (4.0.0) doesn't match a supported versi
+on!
+  warnings.warn("urllib3 ({}) or chardet ({}) doesn't match a supported "
+/home/aftab/.local/lib/python3.10/site-packages/huggingface_hub/file_download.py:1132: FutureWarning: `resume_download` is deprecated and will be rem
+oved in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+2024-08-25 23:05:51:     Running model for finetuning.
+2024-08-25 23:05:51:     Loaded saved finetuning dataset (train:
+  Dataset({
+    features: ['question', 'answer', 'context'],
+    num_rows: 62861
+})
+  Dataset path: /home/aftab/workspace/Llama-experiments/src/datasets/sql-create-context/clean/70k/train
+2024-08-25 23:05:51:     Loaded saved finetuning dataset (eval):
+  Dataset({
+    features: ['question', 'answer', 'context'],
+    num_rows: 7858
+})
+  Dataset path: /home/aftab/workspace/Llama-experiments/src/datasets/sql-create-context/clean/70k/val
+2024-08-25 23:05:51:     Printing 1 samples from the dataset:
+2024-08-25 23:05:51:     {'question': 'Willy Sagnol with a type as career end had what has the transfer fee?', 'answer': 'SELECT transfer_fee FROM ta
+ble_name_34 WHERE type = "career end" AND name = "willy sagnol"', 'context': 'CREATE TABLE table_name_34 (transfer_fee VARCHAR, type VARCHAR, name VA
+RCHAR)'}
+2024-08-25 23:05:51:     {'question': 'What was the final score of the game with 7523 in attendance?', 'answer': 'SELECT final_score FROM table_25331
+766_3 WHERE attendance = 7523', 'context': 'CREATE TABLE table_25331766_3 (final_score VARCHAR, attendance VARCHAR)'}
+2024-08-25 23:05:51:
+2024-08-25 23:05:51:     Printing 1 samples from the dataset:
+2024-08-25 23:05:51:     {'question': 'How many ties did he have when he had 1 penalties and more than 20 conversions?', 'answer': 'SELECT SUM(drawn)
+ FROM table_name_33 WHERE penalties = 1 AND conversions > 20', 'context': 'CREATE TABLE table_name_33 (drawn INTEGER, penalties VARCHAR, conversions
+VARCHAR)'}
+2024-08-25 23:05:51:     {'question': 'What place goes with the score of 70-66-65=201?', 'answer': 'SELECT place FROM table_name_90 WHERE score = 70
+- 66 - 65 = 201', 'context': 'CREATE TABLE table_name_90 (place VARCHAR, score VARCHAR)'}
+2024-08-25 23:05:51:
+Loading checkpoint shards: 100%|███████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:04<00:00,  2.40s/it]
+2024-08-25 23:06:00:     compiling the model
+2024-08-25 23:06:00:     Saving output model(s) of training in
+{'output_dir': 'CodeLlama-7b-hf-text-to-sql-train-localData_lora_qbits-4'}
+  0%|                                                                                                                        | 0/400 [00:00<?, ?it/s]
+You're using a CodeLlamaTokenizerFast tokenizer. Please note that with a fast tokenizer, using the `__call__` method is faster than using a method to
+ encode the text followed by a call to the `pad` method to get a padded encoding.
+/home/aftab/.local/lib/python3.10/site-packages/bitsandbytes/nn/modules.py:426: UserWarning: Input type into Linear4bit is torch.float16, but bnb_4bi
+t_compute_dtype=torch.float32 (default). This will lead to slow inference or training speed.
+  warnings.warn(
+{'loss': 1.8913, 'learning_rate': 2.9999999999999997e-06, 'epoch': 0.0}
+{'loss': 2.1197, 'learning_rate': 5.999999999999999e-06, 'epoch': 0.0}
+{'loss': 2.186, 'learning_rate': 8.999999999999999e-06, 'epoch': 0.01}
+{'loss': 2.2224, 'learning_rate': 1.1999999999999999e-05, 'epoch': 0.01}
+{'loss': 2.2666, 'learning_rate': 1.4999999999999999e-05, 'epoch': 0.01}
+{'loss': 2.2518, 'learning_rate': 1.7999999999999997e-05, 'epoch': 0.01}
+{'loss': 2.2996, 'learning_rate': 2.1e-05, 'epoch': 0.01}
+{'loss': 2.3017, 'learning_rate': 2.3999999999999997e-05, 'epoch': 0.02}
+{'loss': 2.2868, 'learning_rate': 2.6999999999999996e-05, 'epoch': 0.02}
+{'loss': 2.3112, 'learning_rate': 2.9999999999999997e-05, 'epoch': 0.02}
+{'loss': 2.3019, 'learning_rate': 3.2999999999999996e-05, 'epoch': 0.02}
+{'loss': 2.2934, 'learning_rate': 3.5999999999999994e-05, 'epoch': 0.02}
+{'loss': 2.2756, 'learning_rate': 3.9e-05, 'epoch': 0.03}
+{'loss': 2.2708, 'learning_rate': 4.2e-05, 'epoch': 0.03}
+{'loss': 2.2574, 'learning_rate': 4.4999999999999996e-05, 'epoch': 0.03}
+{'loss': 2.2043, 'learning_rate': 4.7999999999999994e-05, 'epoch': 0.03}
+{'loss': 2.2045, 'learning_rate': 5.1e-05, 'epoch': 0.03}
+{'loss': 2.1801, 'learning_rate': 5.399999999999999e-05, 'epoch': 0.04}
+{'loss': 2.1293, 'learning_rate': 5.6999999999999996e-05, 'epoch': 0.04}
+{'loss': 2.0932, 'learning_rate': 5.9999999999999995e-05, 'epoch': 0.04}
+{'eval_loss': 2.0399248600006104, 'eval_runtime': 278.0986, 'eval_samples_per_second': 28.256, 'eval_steps_per_second': 0.885, 'epoch': 0.04}
+  5%|█████▍                                                                                                       | 20/400 [07:58<1:08:24, 10.80s/it/
+home/aftab/.local/lib/python3.10/site-packages/huggingface_hub/file_download.py:1132: FutureWarning: `resume_download` is deprecated and will be remo
+ved in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+{'loss': 2.0723, 'learning_rate': 6.299999999999999e-05, 'epoch': 0.04}
+{'loss': 2.0402, 'learning_rate': 6.599999999999999e-05, 'epoch': 0.04}
+{'loss': 1.9843, 'learning_rate': 6.9e-05, 'epoch': 0.05}
+{'loss': 1.9371, 'learning_rate': 7.199999999999999e-05, 'epoch': 0.05}
+{'loss': 1.8631, 'learning_rate': 7.5e-05, 'epoch': 0.05}
+{'loss': 1.8553, 'learning_rate': 7.8e-05, 'epoch': 0.05}
+{'loss': 1.8039, 'learning_rate': 8.1e-05, 'epoch': 0.05}
+{'loss': 1.7533, 'learning_rate': 8.4e-05, 'epoch': 0.06}
+{'loss': 1.7024, 'learning_rate': 8.699999999999999e-05, 'epoch': 0.06}
+{'loss': 1.6458, 'learning_rate': 8.999999999999999e-05, 'epoch': 0.06}
+{'loss': 1.5615, 'learning_rate': 9.3e-05, 'epoch': 0.06}
+{'loss': 1.4955, 'learning_rate': 9.599999999999999e-05, 'epoch': 0.07}
+{'loss': 1.4254, 'learning_rate': 9.9e-05, 'epoch': 0.07}
+{'loss': 1.2917, 'learning_rate': 0.000102, 'epoch': 0.07}
+{'loss': 1.2272, 'learning_rate': 0.00010499999999999999, 'epoch': 0.07}
+{'loss': 1.1758, 'learning_rate': 0.00010799999999999998, 'epoch': 0.07}
+{'loss': 1.0737, 'learning_rate': 0.00011099999999999999, 'epoch': 0.08}
+{'loss': 0.9811, 'learning_rate': 0.00011399999999999999, 'epoch': 0.08}
+{'loss': 0.9209, 'learning_rate': 0.000117, 'epoch': 0.08}
+{'loss': 0.8476, 'learning_rate': 0.00011999999999999999, 'epoch': 0.08}
+{'eval_loss': 0.8861134052276611, 'eval_runtime': 266.5234, 'eval_samples_per_second': 29.483, 'eval_steps_per_second': 0.923, 'epoch': 0.08}
+ 10%|██████████▉                                                                                                  | 40/400 [15:55<1:00:29, 10.08s/it/
+home/aftab/.local/lib/python3.10/site-packages/huggingface_hub/file_download.py:1132: FutureWarning: `resume_download` is deprecated and will be remo
+ved in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+{'loss': 0.8039, 'learning_rate': 0.00012299999999999998, 'epoch': 0.08}
+{'loss': 0.7585, 'learning_rate': 0.00012599999999999997, 'epoch': 0.09}
+{'loss': 0.6485, 'learning_rate': 0.000129, 'epoch': 0.09}
+{'loss': 0.645, 'learning_rate': 0.00013199999999999998, 'epoch': 0.09}
+{'loss': 0.622, 'learning_rate': 0.000135, 'epoch': 0.09}
+{'loss': 0.5903, 'learning_rate': 0.000138, 'epoch': 0.09}
+{'loss': 0.5733, 'learning_rate': 0.00014099999999999998, 'epoch': 0.1}
+{'loss': 0.5418, 'learning_rate': 0.00014399999999999998, 'epoch': 0.1}
+{'loss': 0.5064, 'learning_rate': 0.000147, 'epoch': 0.1}
+{'loss': 0.5303, 'learning_rate': 0.00015, 'epoch': 0.1}
+{'loss': 0.9045, 'learning_rate': 0.00015299999999999998, 'epoch': 0.1}
+{'loss': 0.9179, 'learning_rate': 0.000156, 'epoch': 0.11}
+{'loss': 0.8919, 'learning_rate': 0.000156, 'epoch': 0.11}
+{'loss': 0.8502, 'learning_rate': 0.000159, 'epoch': 0.11}
+{'loss': 0.8352, 'learning_rate': 0.000162, 'epoch': 0.11}
+{'loss': 0.8163, 'learning_rate': 0.000165, 'epoch': 0.11}
+{'loss': 0.7842, 'learning_rate': 0.000168, 'epoch': 0.12}
+{'loss': 0.7768, 'learning_rate': 0.00017099999999999998, 'epoch': 0.12}
+{'loss': 0.7679, 'learning_rate': 0.00017399999999999997, 'epoch': 0.12}
+{'loss': 0.7381, 'learning_rate': 0.00017699999999999997, 'epoch': 0.12}
+{'eval_loss': 0.6463636159896851, 'eval_runtime': 297.8267, 'eval_samples_per_second': 26.384, 'eval_steps_per_second': 0.826, 'epoch': 0.12}
+ 15%|████████████████▎                                                                                            | 60/400 [24:43<1:09:37, 12.29s/it/
+home/aftab/.local/lib/python3.10/site-packages/huggingface_hub/file_download.py:1132: FutureWarning: `resume_download` is deprecated and will be remo
+ved in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+{'loss': 0.7177, 'learning_rate': 0.00017999999999999998, 'epoch': 0.12}
+{'loss': 0.7146, 'learning_rate': 0.00018299999999999998, 'epoch': 0.13}
+{'loss': 0.713, 'learning_rate': 0.000186, 'epoch': 0.13}
+{'loss': 0.6848, 'learning_rate': 0.00018899999999999999, 'epoch': 0.13}
+{'loss': 0.6803, 'learning_rate': 0.00019199999999999998, 'epoch': 0.13}
+{'loss': 0.663, 'learning_rate': 0.000195, 'epoch': 0.13}
+{'loss': 0.6601, 'learning_rate': 0.000198, 'epoch': 0.14}
+{'loss': 0.6543, 'learning_rate': 0.000201, 'epoch': 0.14}
+{'loss': 0.6383, 'learning_rate': 0.000204, 'epoch': 0.14}
+{'loss': 0.618, 'learning_rate': 0.00020699999999999996, 'epoch': 0.14}
+{'loss': 0.6022, 'learning_rate': 0.00020999999999999998, 'epoch': 0.14}
+{'loss': 0.6064, 'learning_rate': 0.00021299999999999997, 'epoch': 0.15}
+{'loss': 0.5919, 'learning_rate': 0.00021599999999999996, 'epoch': 0.15}
+{'loss': 0.5883, 'learning_rate': 0.00021899999999999998, 'epoch': 0.15}
+{'loss': 0.6009, 'learning_rate': 0.00022199999999999998, 'epoch': 0.15}
+{'loss': 0.5517, 'learning_rate': 0.000225, 'epoch': 0.15}
+{'loss': 0.5669, 'learning_rate': 0.00022799999999999999, 'epoch': 0.16}
+{'loss': 0.5568, 'learning_rate': 0.00023099999999999998, 'epoch': 0.16}
+{'loss': 0.5474, 'learning_rate': 0.000234, 'epoch': 0.16}
+{'loss': 0.5308, 'learning_rate': 0.000237, 'epoch': 0.16}
+{'eval_loss': 0.5765416026115417, 'eval_runtime': 289.1375, 'eval_samples_per_second': 27.177, 'eval_steps_per_second': 0.851, 'epoch': 0.16}
+ 20%|██████████████████████▏                                                                                        | 80/400 [33:19<59:13, 11.10s/it/
+home/aftab/.local/lib/python3.10/site-packages/huggingface_hub/file_download.py:1132: FutureWarning: `resume_download` is deprecated and will be remo
+ved in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+{'loss': 0.5333, 'learning_rate': 0.00023999999999999998, 'epoch': 0.16}
+{'loss': 0.5287, 'learning_rate': 0.000243, 'epoch': 0.17}
+{'loss': 0.5043, 'learning_rate': 0.00024599999999999996, 'epoch': 0.17}
+{'loss': 0.4992, 'learning_rate': 0.000249, 'epoch': 0.17}
+{'loss': 0.4798, 'learning_rate': 0.00025199999999999995, 'epoch': 0.17}
+{'loss': 0.4714, 'learning_rate': 0.00025499999999999996, 'epoch': 0.18}
+{'loss': 0.494, 'learning_rate': 0.000258, 'epoch': 0.18}
+{'loss': 0.4756, 'learning_rate': 0.000261, 'epoch': 0.18}
+{'loss': 0.4529, 'learning_rate': 0.00026399999999999997, 'epoch': 0.18}
+{'loss': 0.4648, 'learning_rate': 0.000267, 'epoch': 0.18}
+{'loss': 0.4485, 'learning_rate': 0.00027, 'epoch': 0.19}
+{'loss': 0.4352, 'learning_rate': 0.00027299999999999997, 'epoch': 0.19}
+{'loss': 0.446, 'learning_rate': 0.000276, 'epoch': 0.19}
+{'loss': 0.4053, 'learning_rate': 0.000279, 'epoch': 0.19}
+{'loss': 0.404, 'learning_rate': 0.00028199999999999997, 'epoch': 0.19}
+{'loss': 0.4094, 'learning_rate': 0.000285, 'epoch': 0.2}
+{'loss': 0.3947, 'learning_rate': 0.00028799999999999995, 'epoch': 0.2}
+{'loss': 0.398, 'learning_rate': 0.00029099999999999997, 'epoch': 0.2}
+{'loss': 0.3711, 'learning_rate': 0.000294, 'epoch': 0.2}
+{'loss': 0.4267, 'learning_rate': 0.00029699999999999996, 'epoch': 0.2}
+{'eval_loss': 0.5814719796180725, 'eval_runtime': 294.8012, 'eval_samples_per_second': 26.655, 'eval_steps_per_second': 0.834, 'epoch': 0.2}
+ 25%|███████████████████████████▌                                                                                  | 100/400 [41:37<44:30,  8.90s/it/
+home/aftab/.local/lib/python3.10/site-packages/huggingface_hub/file_download.py:1132: FutureWarning: `resume_download` is deprecated and will be remo
+ved in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+{'loss': 0.7869, 'learning_rate': 0.0003, 'epoch': 0.21}
+{'loss': 0.7625, 'learning_rate': 0.000299, 'epoch': 0.21}
+{'loss': 0.7243, 'learning_rate': 0.000298, 'epoch': 0.21}
+{'loss': 0.7092, 'learning_rate': 0.00029699999999999996, 'epoch': 0.21}
+{'loss': 0.6751, 'learning_rate': 0.000296, 'epoch': 0.21}
+{'loss': 0.6816, 'learning_rate': 0.00029499999999999996, 'epoch': 0.22}
+{'loss': 0.6753, 'learning_rate': 0.000294, 'epoch': 0.22}
+{'loss': 0.6571, 'learning_rate': 0.00029299999999999997, 'epoch': 0.22}
+{'loss': 0.6384, 'learning_rate': 0.000292, 'epoch': 0.22}
+{'loss': 0.631, 'learning_rate': 0.00029099999999999997, 'epoch': 0.22}
+{'loss': 0.614, 'learning_rate': 0.00029, 'epoch': 0.23}
+{'loss': 0.5976, 'learning_rate': 0.000289, 'epoch': 0.23}
+{'loss': 0.5983, 'learning_rate': 0.00028799999999999995, 'epoch': 0.23}
+{'loss': 0.5933, 'learning_rate': 0.000287, 'epoch': 0.23}
+{'loss': 0.5889, 'learning_rate': 0.00028599999999999996, 'epoch': 0.23}
+{'loss': 0.5958, 'learning_rate': 0.000285, 'epoch': 0.24}
+{'loss': 0.5715, 'learning_rate': 0.00028399999999999996, 'epoch': 0.24}
+{'loss': 0.5891, 'learning_rate': 0.000283, 'epoch': 0.24}
+{'loss': 0.5418, 'learning_rate': 0.00028199999999999997, 'epoch': 0.24}
+{'loss': 0.5548, 'learning_rate': 0.00028099999999999995, 'epoch': 0.24}
+{'eval_loss': 0.5333466529846191, 'eval_runtime': 269.7361, 'eval_samples_per_second': 29.132, 'eval_steps_per_second': 0.912, 'epoch': 0.24}
+ 30%|█████████████████████████████████                                                                             | 120/400 [50:16<50:10, 10.75s/it/
+home/aftab/.local/lib/python3.10/site-packages/huggingface_hub/file_download.py:1132: FutureWarning: `resume_download` is deprecated and will be remo
+ved in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+{'loss': 0.5374, 'learning_rate': 0.00028, 'epoch': 0.25}
+{'loss': 0.5269, 'learning_rate': 0.000279, 'epoch': 0.25}
+{'loss': 0.5289, 'learning_rate': 0.000278, 'epoch': 0.25}
+{'loss': 0.5256, 'learning_rate': 0.00027699999999999996, 'epoch': 0.25}
+{'loss': 0.5212, 'learning_rate': 0.000276, 'epoch': 0.25}
+{'loss': 0.5145, 'learning_rate': 0.00027499999999999996, 'epoch': 0.26}
+{'loss': 0.4918, 'learning_rate': 0.000274, 'epoch': 0.26}
+{'loss': 0.5016, 'learning_rate': 0.00027299999999999997, 'epoch': 0.26}
+{'loss': 0.4894, 'learning_rate': 0.00027199999999999994, 'epoch': 0.26}
+{'loss': 0.4604, 'learning_rate': 0.000271, 'epoch': 0.26}
+{'loss': 0.4659, 'learning_rate': 0.00027, 'epoch': 0.27}
+{'loss': 0.4422, 'learning_rate': 0.000269, 'epoch': 0.27}
+{'loss': 0.4708, 'learning_rate': 0.00026799999999999995, 'epoch': 0.27}
+{'loss': 0.436, 'learning_rate': 0.000267, 'epoch': 0.27}
+{'loss': 0.4275, 'learning_rate': 0.000266, 'epoch': 0.27}
+{'loss': 0.4313, 'learning_rate': 0.000265, 'epoch': 0.28}
+{'loss': 0.3996, 'learning_rate': 0.00026399999999999997, 'epoch': 0.28}
+{'loss': 0.3939, 'learning_rate': 0.000263, 'epoch': 0.28}
+{'loss': 0.4016, 'learning_rate': 0.00026199999999999997, 'epoch': 0.28}
+{'loss': 0.3919, 'learning_rate': 0.000261, 'epoch': 0.28}
+{'eval_loss': 0.490364670753479, 'eval_runtime': 266.7041, 'eval_samples_per_second': 29.463, 'eval_steps_per_second': 0.922, 'epoch': 0.28}
+ 35%|██████████████████████████████████████▌                                                                       | 140/400 [58:17<42:45,  9.87s/it/
+home/aftab/.local/lib/python3.10/site-packages/huggingface_hub/file_download.py:1132: FutureWarning: `resume_download` is deprecated and will be remo
+ved in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+{'loss': 0.3967, 'learning_rate': 0.00026, 'epoch': 0.29}
+{'loss': 0.3751, 'learning_rate': 0.00025899999999999995, 'epoch': 0.29}
+{'loss': 0.3576, 'learning_rate': 0.000258, 'epoch': 0.29}
+{'loss': 0.3496, 'learning_rate': 0.00025699999999999996, 'epoch': 0.29}
+{'loss': 0.3409, 'learning_rate': 0.000256, 'epoch': 0.3}
+{'loss': 0.337, 'learning_rate': 0.00025499999999999996, 'epoch': 0.3}
+{'loss': 0.3233, 'learning_rate': 0.000254, 'epoch': 0.3}
+{'loss': 0.3035, 'learning_rate': 0.00025299999999999997, 'epoch': 0.3}
+{'loss': 0.3074, 'learning_rate': 0.00025199999999999995, 'epoch': 0.3}
+{'loss': 0.3699, 'learning_rate': 0.000251, 'epoch': 0.31}
+{'loss': 0.6982, 'learning_rate': 0.00025, 'epoch': 0.31}
+{'loss': 0.6803, 'learning_rate': 0.000249, 'epoch': 0.31}
+{'loss': 0.6494, 'learning_rate': 0.00024799999999999996, 'epoch': 0.31}
+{'loss': 0.6399, 'learning_rate': 0.000247, 'epoch': 0.31}
+{'loss': 0.6006, 'learning_rate': 0.00024599999999999996, 'epoch': 0.32}
+{'loss': 0.5824, 'learning_rate': 0.000245, 'epoch': 0.32}
+{'loss': 0.5788, 'learning_rate': 0.000244, 'epoch': 0.32}
+{'loss': 0.5675, 'learning_rate': 0.000243, 'epoch': 0.32}
+{'loss': 0.559, 'learning_rate': 0.00024199999999999997, 'epoch': 0.32}
+{'loss': 0.5476, 'learning_rate': 0.00024099999999999998, 'epoch': 0.33}
+{'eval_loss': 0.4926661252975464, 'eval_runtime': 300.452, 'eval_samples_per_second': 26.154, 'eval_steps_per_second': 0.819, 'epoch': 0.33}
+ 40%|███████████████████████████████████████████▏                                                                | 160/400 [1:07:00<47:48, 11.95s/it/
+home/aftab/.local/lib/python3.10/site-packages/huggingface_hub/file_download.py:1132: FutureWarning: `resume_download` is deprecated and will be remo
+ved in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+{'loss': 0.5485, 'learning_rate': 0.00023999999999999998, 'epoch': 0.33}
+{'loss': 0.5355, 'learning_rate': 0.00023899999999999998, 'epoch': 0.33}
+{'loss': 0.5251, 'learning_rate': 0.00023799999999999998, 'epoch': 0.33}
+{'loss': 0.532, 'learning_rate': 0.000237, 'epoch': 0.33}
+{'loss': 0.5298, 'learning_rate': 0.00023599999999999996, 'epoch': 0.34}
+{'loss': 0.5052, 'learning_rate': 0.00023499999999999997, 'epoch': 0.34}
+{'loss': 0.503, 'learning_rate': 0.000234, 'epoch': 0.34}
+{'loss': 0.504, 'learning_rate': 0.00023299999999999997, 'epoch': 0.34}
+{'loss': 0.4917, 'learning_rate': 0.00023199999999999997, 'epoch': 0.34}
+{'loss': 0.484, 'learning_rate': 0.00023099999999999998, 'epoch': 0.35}
+{'loss': 0.4907, 'learning_rate': 0.00023, 'epoch': 0.35}
+{'loss': 0.4814, 'learning_rate': 0.00022899999999999998, 'epoch': 0.35}
+{'loss': 0.4651, 'learning_rate': 0.00022799999999999999, 'epoch': 0.35}
+{'loss': 0.4495, 'learning_rate': 0.000227, 'epoch': 0.35}
+{'loss': 0.4647, 'learning_rate': 0.00022599999999999996, 'epoch': 0.36}
+{'loss': 0.4639, 'learning_rate': 0.000225, 'epoch': 0.36}
+{'loss': 0.4395, 'learning_rate': 0.000224, 'epoch': 0.36}
+{'loss': 0.4418, 'learning_rate': 0.00022299999999999997, 'epoch': 0.36}
+{'loss': 0.4417, 'learning_rate': 0.00022199999999999998, 'epoch': 0.36}
+{'loss': 0.4405, 'learning_rate': 0.00022099999999999998, 'epoch': 0.37}
+{'eval_loss': 0.4651889204978943, 'eval_runtime': 285.97, 'eval_samples_per_second': 27.478, 'eval_steps_per_second': 0.86, 'epoch': 0.37}
+ 45%|████████████████████████████████████████████████▌                                                           | 180/400 [1:15:37<38:58, 10.63s/it/
+home/aftab/.local/lib/python3.10/site-packages/huggingface_hub/file_download.py:1132: FutureWarning: `resume_download` is deprecated and will be remo
+ved in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+{'loss': 0.4072, 'learning_rate': 0.00021999999999999995, 'epoch': 0.37}
+{'loss': 0.4152, 'learning_rate': 0.00021899999999999998, 'epoch': 0.37}
+{'loss': 0.4013, 'learning_rate': 0.00021799999999999999, 'epoch': 0.37}
+{'loss': 0.3946, 'learning_rate': 0.000217, 'epoch': 0.37}
+{'loss': 0.4, 'learning_rate': 0.00021599999999999996, 'epoch': 0.38}
+{'loss': 0.3814, 'learning_rate': 0.000215, 'epoch': 0.38}
+{'loss': 0.3812, 'learning_rate': 0.000214, 'epoch': 0.38}
+{'loss': 0.3598, 'learning_rate': 0.00021299999999999997, 'epoch': 0.38}
+{'loss': 0.3646, 'learning_rate': 0.00021199999999999998, 'epoch': 0.38}
+{'loss': 0.3581, 'learning_rate': 0.00021099999999999998, 'epoch': 0.39}
+{'loss': 0.3545, 'learning_rate': 0.00020999999999999998, 'epoch': 0.39}
+{'loss': 0.3351, 'learning_rate': 0.00020899999999999998, 'epoch': 0.39}
+{'loss': 0.3412, 'learning_rate': 0.000208, 'epoch': 0.39}
+{'loss': 0.3331, 'learning_rate': 0.00020699999999999996, 'epoch': 0.39}
+{'loss': 0.3339, 'learning_rate': 0.00020599999999999997, 'epoch': 0.4}
+{'loss': 0.3244, 'learning_rate': 0.000205, 'epoch': 0.4}
+{'loss': 0.325, 'learning_rate': 0.000204, 'epoch': 0.4}
+{'loss': 0.313, 'learning_rate': 0.00020299999999999997, 'epoch': 0.4}
+{'loss': 0.2953, 'learning_rate': 0.00020199999999999998, 'epoch': 0.41}
+{'loss': 0.3581, 'learning_rate': 0.000201, 'epoch': 0.41}
+{'eval_loss': 0.4786158502101898, 'eval_runtime': 298.3391, 'eval_samples_per_second': 26.339, 'eval_steps_per_second': 0.825, 'epoch': 0.41}
+ 50%|██████████████████████████████████████████████████████                                                      | 200/400 [1:24:00<30:21,  9.11s/it/
+home/aftab/.local/lib/python3.10/site-packages/huggingface_hub/file_download.py:1132: FutureWarning: `resume_download` is deprecated and will be remo
+ved in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+{'loss': 0.6577, 'learning_rate': 0.00019999999999999998, 'epoch': 0.41}
+{'loss': 0.653, 'learning_rate': 0.00019899999999999999, 'epoch': 0.41}
+{'loss': 0.6137, 'learning_rate': 0.000198, 'epoch': 0.41}
+{'loss': 0.6104, 'learning_rate': 0.00019699999999999996, 'epoch': 0.42}
+{'loss': 0.563, 'learning_rate': 0.00019599999999999997, 'epoch': 0.42}
+{'loss': 0.5717, 'learning_rate': 0.000195, 'epoch': 0.42}
+{'loss': 0.5785, 'learning_rate': 0.00019399999999999997, 'epoch': 0.42}
+{'loss': 0.553, 'learning_rate': 0.00019299999999999997, 'epoch': 0.42}
+{'loss': 0.5258, 'learning_rate': 0.00019199999999999998, 'epoch': 0.43}
+{'loss': 0.5428, 'learning_rate': 0.000191, 'epoch': 0.43}
+{'loss': 0.5443, 'learning_rate': 0.00018999999999999998, 'epoch': 0.43}
+{'loss': 0.523, 'learning_rate': 0.00018899999999999999, 'epoch': 0.43}
+{'loss': 0.5144, 'learning_rate': 0.000188, 'epoch': 0.43}
+{'loss': 0.5216, 'learning_rate': 0.00018699999999999996, 'epoch': 0.44}
+{'loss': 0.4889, 'learning_rate': 0.000186, 'epoch': 0.44}
+{'loss': 0.502, 'learning_rate': 0.000185, 'epoch': 0.44}
+{'loss': 0.479, 'learning_rate': 0.00018399999999999997, 'epoch': 0.44}
+{'loss': 0.4788, 'learning_rate': 0.00018299999999999998, 'epoch': 0.44}
+{'loss': 0.4804, 'learning_rate': 0.00018199999999999998, 'epoch': 0.45}
+{'loss': 0.4821, 'learning_rate': 0.000181, 'epoch': 0.45}
+{'eval_loss': 0.45830097794532776, 'eval_runtime': 304.9474, 'eval_samples_per_second': 25.768, 'eval_steps_per_second': 0.807, 'epoch': 0.45}
+ 55%|███████████████████████████████████████████████████████████▍                                                | 220/400 [1:33:09<34:22, 11.46s/it/
+home/aftab/.local/lib/python3.10/site-packages/huggingface_hub/file_download.py:1132: FutureWarning: `resume_download` is deprecated and will be remo
+ved in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+{'loss': 0.4559, 'learning_rate': 0.00017999999999999998, 'epoch': 0.45}
+{'loss': 0.4648, 'learning_rate': 0.000179, 'epoch': 0.45}
+{'loss': 0.4486, 'learning_rate': 0.000178, 'epoch': 0.45}
+{'loss': 0.4576, 'learning_rate': 0.00017699999999999997, 'epoch': 0.46}
+{'loss': 0.4415, 'learning_rate': 0.000176, 'epoch': 0.46}
+{'loss': 0.4542, 'learning_rate': 0.000175, 'epoch': 0.46}
+{'loss': 0.4197, 'learning_rate': 0.00017399999999999997, 'epoch': 0.46}
+{'loss': 0.4328, 'learning_rate': 0.00017299999999999998, 'epoch': 0.46}
+{'loss': 0.429, 'learning_rate': 0.000172, 'epoch': 0.47}
+{'loss': 0.4084, 'learning_rate': 0.00017099999999999998, 'epoch': 0.47}
+{'loss': 0.4006, 'learning_rate': 0.00016999999999999999, 'epoch': 0.47}
+{'loss': 0.397, 'learning_rate': 0.000169, 'epoch': 0.47}
+{'loss': 0.4083, 'learning_rate': 0.000168, 'epoch': 0.47}
+{'loss': 0.3894, 'learning_rate': 0.00016699999999999997, 'epoch': 0.48}
+{'loss': 0.3763, 'learning_rate': 0.000166, 'epoch': 0.48}
+{'loss': 0.3847, 'learning_rate': 0.000165, 'epoch': 0.48}
+{'loss': 0.3626, 'learning_rate': 0.00016399999999999997, 'epoch': 0.48}
+{'loss': 0.3704, 'learning_rate': 0.00016299999999999998, 'epoch': 0.48}
+{'loss': 0.3556, 'learning_rate': 0.000162, 'epoch': 0.49}
+{'loss': 0.3678, 'learning_rate': 0.00016099999999999998, 'epoch': 0.49}
+{'eval_loss': 0.4545210599899292, 'eval_runtime': 266.639, 'eval_samples_per_second': 29.471, 'eval_steps_per_second': 0.923, 'epoch': 0.49}
+ 60%|████████████████████████████████████████████████████████████████▊                                           | 240/400 [1:41:11<27:25, 10.29s/it/
+home/aftab/.local/lib/python3.10/site-packages/huggingface_hub/file_download.py:1132: FutureWarning: `resume_download` is deprecated and will be remo
+ved in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+{'loss': 0.3454, 'learning_rate': 0.00015999999999999999, 'epoch': 0.49}
+{'loss': 0.3443, 'learning_rate': 0.000159, 'epoch': 0.49}
+{'loss': 0.3241, 'learning_rate': 0.00015799999999999996, 'epoch': 0.49}
+{'loss': 0.3421, 'learning_rate': 0.000157, 'epoch': 0.5}
+{'loss': 0.3154, 'learning_rate': 0.000156, 'epoch': 0.5}
+{'loss': 0.3094, 'learning_rate': 0.000155, 'epoch': 0.5}
+{'loss': 0.3088, 'learning_rate': 0.00015399999999999998, 'epoch': 0.5}
+{'loss': 0.3006, 'learning_rate': 0.00015299999999999998, 'epoch': 0.5}
+{'loss': 0.3058, 'learning_rate': 0.000152, 'epoch': 0.51}
+{'loss': 0.3452, 'learning_rate': 0.00015099999999999998, 'epoch': 0.51}
+{'loss': 0.6522, 'learning_rate': 0.00015, 'epoch': 0.51}
+{'loss': 0.6262, 'learning_rate': 0.000149, 'epoch': 0.51}
+{'loss': 0.6278, 'learning_rate': 0.000148, 'epoch': 0.52}
+{'loss': 0.5814, 'learning_rate': 0.000147, 'epoch': 0.52}
+{'loss': 0.5524, 'learning_rate': 0.000146, 'epoch': 0.52}
+{'loss': 0.5649, 'learning_rate': 0.000145, 'epoch': 0.52}
+{'loss': 0.5475, 'learning_rate': 0.00014399999999999998, 'epoch': 0.52}
+{'loss': 0.5482, 'learning_rate': 0.00014299999999999998, 'epoch': 0.53}
+{'loss': 0.5416, 'learning_rate': 0.00014199999999999998, 'epoch': 0.53}
+{'loss': 0.5378, 'learning_rate': 0.00014099999999999998, 'epoch': 0.53}
+{'eval_loss': 0.455401748418808, 'eval_runtime': 277.6594, 'eval_samples_per_second': 28.301, 'eval_steps_per_second': 0.886, 'epoch': 0.53}
+ 65%|██████████████████████████████████████████████████████████████████████▏                                     | 260/400 [1:49:39<28:10, 12.08s/it/
+home/aftab/.local/lib/python3.10/site-packages/huggingface_hub/file_download.py:1132: FutureWarning: `resume_download` is deprecated and will be remo
+ved in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+{'loss': 0.5187, 'learning_rate': 0.00014, 'epoch': 0.53}
+{'loss': 0.5182, 'learning_rate': 0.000139, 'epoch': 0.53}
+{'loss': 0.5052, 'learning_rate': 0.000138, 'epoch': 0.54}
+{'loss': 0.4825, 'learning_rate': 0.000137, 'epoch': 0.54}
+{'loss': 0.4872, 'learning_rate': 0.00013599999999999997, 'epoch': 0.54}
+{'loss': 0.4993, 'learning_rate': 0.000135, 'epoch': 0.54}
+{'loss': 0.4718, 'learning_rate': 0.00013399999999999998, 'epoch': 0.54}
+{'loss': 0.4699, 'learning_rate': 0.000133, 'epoch': 0.55}
+{'loss': 0.4587, 'learning_rate': 0.00013199999999999998, 'epoch': 0.55}
+{'loss': 0.4827, 'learning_rate': 0.00013099999999999999, 'epoch': 0.55}
+{'loss': 0.4749, 'learning_rate': 0.00013, 'epoch': 0.55}
+{'loss': 0.4598, 'learning_rate': 0.000129, 'epoch': 0.55}
+{'loss': 0.4502, 'learning_rate': 0.000128, 'epoch': 0.56}
+{'loss': 0.4326, 'learning_rate': 0.000127, 'epoch': 0.56}
+{'loss': 0.4481, 'learning_rate': 0.00012599999999999997, 'epoch': 0.56}
+{'loss': 0.4332, 'learning_rate': 0.000125, 'epoch': 0.56}
+{'loss': 0.4228, 'learning_rate': 0.00012399999999999998, 'epoch': 0.56}
+{'loss': 0.4352, 'learning_rate': 0.00012299999999999998, 'epoch': 0.57}
+{'loss': 0.4202, 'learning_rate': 0.000122, 'epoch': 0.57}
+{'loss': 0.4095, 'learning_rate': 0.00012099999999999999, 'epoch': 0.57}
+{'eval_loss': 0.4456053376197815, 'eval_runtime': 293.1556, 'eval_samples_per_second': 26.805, 'eval_steps_per_second': 0.839, 'epoch': 0.57}
+ 70%|███████████████████████████████████████████████████████████████████████████▌                                | 280/400 [1:58:19<20:44, 10.37s/it/
+home/aftab/.local/lib/python3.10/site-packages/huggingface_hub/file_download.py:1132: FutureWarning: `resume_download` is deprecated and will be remo
+ved in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+{'loss': 0.4098, 'learning_rate': 0.00011999999999999999, 'epoch': 0.57}
+{'loss': 0.4163, 'learning_rate': 0.00011899999999999999, 'epoch': 0.57}
+{'loss': 0.4, 'learning_rate': 0.00011799999999999998, 'epoch': 0.58}
+{'loss': 0.384, 'learning_rate': 0.000117, 'epoch': 0.58}
+{'loss': 0.3876, 'learning_rate': 0.00011599999999999999, 'epoch': 0.58}
+{'loss': 0.37, 'learning_rate': 0.000115, 'epoch': 0.58}
+{'loss': 0.3689, 'learning_rate': 0.00011399999999999999, 'epoch': 0.58}
+{'loss': 0.354, 'learning_rate': 0.00011299999999999998, 'epoch': 0.59}
+{'loss': 0.3584, 'learning_rate': 0.000112, 'epoch': 0.59}
+{'loss': 0.3342, 'learning_rate': 0.00011099999999999999, 'epoch': 0.59}
+{'loss': 0.3308, 'learning_rate': 0.00010999999999999998, 'epoch': 0.59}
+{'loss': 0.3347, 'learning_rate': 0.00010899999999999999, 'epoch': 0.59}
+{'loss': 0.3298, 'learning_rate': 0.00010799999999999998, 'epoch': 0.6}
+{'loss': 0.3321, 'learning_rate': 0.000107, 'epoch': 0.6}
+{'loss': 0.3128, 'learning_rate': 0.00010599999999999999, 'epoch': 0.6}
+{'loss': 0.3095, 'learning_rate': 0.00010499999999999999, 'epoch': 0.6}
+{'loss': 0.3123, 'learning_rate': 0.000104, 'epoch': 0.6}
+{'loss': 0.3072, 'learning_rate': 0.00010299999999999998, 'epoch': 0.61}
+{'loss': 0.2941, 'learning_rate': 0.000102, 'epoch': 0.61}
+{'loss': 0.335, 'learning_rate': 0.00010099999999999999, 'epoch': 0.61}
+{'eval_loss': 0.4532507061958313, 'eval_runtime': 295.9031, 'eval_samples_per_second': 26.556, 'eval_steps_per_second': 0.831, 'epoch': 0.61}
+ 75%|█████████████████████████████████████████████████████████████████████████████████                           | 300/400 [2:06:34<14:57,  8.97s/it/
+home/aftab/.local/lib/python3.10/site-packages/huggingface_hub/file_download.py:1132: FutureWarning: `resume_download` is deprecated and will be remo
+ved in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+{'loss': 0.6356, 'learning_rate': 9.999999999999999e-05, 'epoch': 0.61}
+{'loss': 0.6164, 'learning_rate': 9.9e-05, 'epoch': 0.61}
+{'loss': 0.6143, 'learning_rate': 9.799999999999998e-05, 'epoch': 0.62}
+{'loss': 0.5524, 'learning_rate': 9.699999999999999e-05, 'epoch': 0.62}
+{'loss': 0.5645, 'learning_rate': 9.599999999999999e-05, 'epoch': 0.62}
+{'loss': 0.5545, 'learning_rate': 9.499999999999999e-05, 'epoch': 0.62}
+{'loss': 0.5511, 'learning_rate': 9.4e-05, 'epoch': 0.62}
+{'loss': 0.5258, 'learning_rate': 9.3e-05, 'epoch': 0.63}
+{'loss': 0.5235, 'learning_rate': 9.199999999999999e-05, 'epoch': 0.63}
+{'loss': 0.5211, 'learning_rate': 9.099999999999999e-05, 'epoch': 0.63}
+{'loss': 0.5061, 'learning_rate': 8.999999999999999e-05, 'epoch': 0.63}
+{'loss': 0.4971, 'learning_rate': 8.9e-05, 'epoch': 0.64}
+{'loss': 0.4956, 'learning_rate': 8.8e-05, 'epoch': 0.64}
+{'loss': 0.4898, 'learning_rate': 8.699999999999999e-05, 'epoch': 0.64}
+{'loss': 0.4982, 'learning_rate': 8.6e-05, 'epoch': 0.64}
+{'loss': 0.476, 'learning_rate': 8.499999999999999e-05, 'epoch': 0.64}
+{'loss': 0.4818, 'learning_rate': 8.4e-05, 'epoch': 0.65}
+{'loss': 0.4762, 'learning_rate': 8.3e-05, 'epoch': 0.65}
+{'loss': 0.4824, 'learning_rate': 8.199999999999999e-05, 'epoch': 0.65}
+{'loss': 0.4586, 'learning_rate': 8.1e-05, 'epoch': 0.65}
+{'eval_loss': 0.44484812021255493, 'eval_runtime': 299.2005, 'eval_samples_per_second': 26.263, 'eval_steps_per_second': 0.822, 'epoch': 0.65}
+ 80%|██████████████████████████████████████████████████████████████████████████████████████▍                     | 320/400 [2:15:55<15:28, 11.61s/it/
+home/aftab/.local/lib/python3.10/site-packages/huggingface_hub/file_download.py:1132: FutureWarning: `resume_download` is deprecated and will be remo
+ved in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+{'loss': 0.445, 'learning_rate': 7.999999999999999e-05, 'epoch': 0.65}
+{'loss': 0.4627, 'learning_rate': 7.899999999999998e-05, 'epoch': 0.66}
+{'loss': 0.4464, 'learning_rate': 7.8e-05, 'epoch': 0.66}
+{'loss': 0.4485, 'learning_rate': 7.699999999999999e-05, 'epoch': 0.66}
+{'loss': 0.4235, 'learning_rate': 7.6e-05, 'epoch': 0.66}
+{'loss': 0.4214, 'learning_rate': 7.5e-05, 'epoch': 0.66}
+{'loss': 0.4135, 'learning_rate': 7.4e-05, 'epoch': 0.67}
+{'loss': 0.4195, 'learning_rate': 7.3e-05, 'epoch': 0.67}
+{'loss': 0.4092, 'learning_rate': 7.199999999999999e-05, 'epoch': 0.67}
+{'loss': 0.3882, 'learning_rate': 7.099999999999999e-05, 'epoch': 0.67}
+{'loss': 0.4078, 'learning_rate': 7e-05, 'epoch': 0.67}
+{'loss': 0.4104, 'learning_rate': 6.9e-05, 'epoch': 0.68}
+{'loss': 0.3942, 'learning_rate': 6.799999999999999e-05, 'epoch': 0.68}
+{'loss': 0.3727, 'learning_rate': 6.699999999999999e-05, 'epoch': 0.68}
+{'loss': 0.3744, 'learning_rate': 6.599999999999999e-05, 'epoch': 0.68}
+{'loss': 0.3587, 'learning_rate': 6.5e-05, 'epoch': 0.68}
+{'loss': 0.3582, 'learning_rate': 6.4e-05, 'epoch': 0.69}
+{'loss': 0.3462, 'learning_rate': 6.299999999999999e-05, 'epoch': 0.69}
+{'loss': 0.3518, 'learning_rate': 6.199999999999999e-05, 'epoch': 0.69}
+{'loss': 0.329, 'learning_rate': 6.1e-05, 'epoch': 0.69}
+{'eval_loss': 0.44066840410232544, 'eval_runtime': 296.3417, 'eval_samples_per_second': 26.517, 'eval_steps_per_second': 0.83, 'epoch': 0.69}
+ 85%|███████████████████████████████████████████████████████████████████████████████████████████▊                | 340/400 [2:24:26<11:25, 11.43s/it/
+home/aftab/.local/lib/python3.10/site-packages/peft/utils/other.py:611: UserWarning: Unable to fetch remote file due to the following error (MaxRetry
+Error('HTTPSConnectionPool(host=\'huggingface.co\', port=443): Max retries exceeded with url: /meta-llama/CodeLlama-7b-hf/resolve/main/config.json (C
+aused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x7efb78188940>: Failed to resolve \'huggingface.co\' ([Errno -3] Tempora
+ry failure in name resolution)"))'), '(Request ID: 75ddce19-15d5-4a48-8b09-bc1c26c4f04e)') - silently ignoring the lookup for the file config.json in
+ meta-llama/CodeLlama-7b-hf.
+  warnings.warn(
+/home/aftab/.local/lib/python3.10/site-packages/peft/utils/save_and_load.py:195: UserWarning: Could not find a config file in meta-llama/CodeLlama-7b
+-hf - will assume that the vocabulary was not modified.
+  warnings.warn(
+/home/aftab/.local/lib/python3.10/site-packages/huggingface_hub/file_download.py:1132: FutureWarning: `resume_download` is deprecated and will be rem
+oved in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+{'loss': 0.343, 'learning_rate': 5.9999999999999995e-05, 'epoch': 0.69}
+{'loss': 0.3277, 'learning_rate': 5.899999999999999e-05, 'epoch': 0.7}
+{'loss': 0.3301, 'learning_rate': 5.7999999999999994e-05, 'epoch': 0.7}
+{'loss': 0.3214, 'learning_rate': 5.6999999999999996e-05, 'epoch': 0.7}
+{'loss': 0.3214, 'learning_rate': 5.6e-05, 'epoch': 0.7}
+{'loss': 0.3019, 'learning_rate': 5.499999999999999e-05, 'epoch': 0.7}
+{'loss': 0.295, 'learning_rate': 5.399999999999999e-05, 'epoch': 0.71}
+{'loss': 0.3011, 'learning_rate': 5.2999999999999994e-05, 'epoch': 0.71}
+{'loss': 0.2868, 'learning_rate': 5.2e-05, 'epoch': 0.71}
+{'loss': 0.3311, 'learning_rate': 5.1e-05, 'epoch': 0.71}
+{'loss': 0.6085, 'learning_rate': 4.9999999999999996e-05, 'epoch': 0.71}
+{'loss': 0.6154, 'learning_rate': 4.899999999999999e-05, 'epoch': 0.72}
+{'loss': 0.566, 'learning_rate': 4.7999999999999994e-05, 'epoch': 0.72}
+{'loss': 0.5637, 'learning_rate': 4.7e-05, 'epoch': 0.72}
+{'loss': 0.5487, 'learning_rate': 4.599999999999999e-05, 'epoch': 0.72}
+{'loss': 0.5403, 'learning_rate': 4.4999999999999996e-05, 'epoch': 0.72}
+{'loss': 0.5346, 'learning_rate': 4.4e-05, 'epoch': 0.73}
+{'loss': 0.5241, 'learning_rate': 4.3e-05, 'epoch': 0.73}
+{'loss': 0.5212, 'learning_rate': 4.2e-05, 'epoch': 0.73}
+{'loss': 0.5037, 'learning_rate': 4.0999999999999994e-05, 'epoch': 0.73}
+{'eval_loss': 0.44036200642585754, 'eval_runtime': 294.1976, 'eval_samples_per_second': 26.71, 'eval_steps_per_second': 0.836, 'epoch': 0.73}
+ 90%|█████████████████████████████████████████████████████████████████████████████████████████████████▏          | 360/400 [2:33:44<08:36, 12.90s/it/
+home/aftab/.local/lib/python3.10/site-packages/huggingface_hub/file_download.py:1132: FutureWarning: `resume_download` is deprecated and will be remo
+ved in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+{'loss': 0.4815, 'learning_rate': 3.9999999999999996e-05, 'epoch': 0.73}
+{'loss': 0.4951, 'learning_rate': 3.9e-05, 'epoch': 0.74}
+{'loss': 0.482, 'learning_rate': 3.8e-05, 'epoch': 0.74}
+{'loss': 0.4856, 'learning_rate': 3.7e-05, 'epoch': 0.74}
+{'loss': 0.4882, 'learning_rate': 3.5999999999999994e-05, 'epoch': 0.74}
+{'loss': 0.483, 'learning_rate': 3.5e-05, 'epoch': 0.75}
+{'loss': 0.4812, 'learning_rate': 3.399999999999999e-05, 'epoch': 0.75}
+{'loss': 0.4604, 'learning_rate': 3.2999999999999996e-05, 'epoch': 0.75}
+{'loss': 0.4642, 'learning_rate': 3.2e-05, 'epoch': 0.75}
+{'loss': 0.4367, 'learning_rate': 3.0999999999999995e-05, 'epoch': 0.75}
+{'loss': 0.4543, 'learning_rate': 2.9999999999999997e-05, 'epoch': 0.76}
+{'loss': 0.4607, 'learning_rate': 2.8999999999999997e-05, 'epoch': 0.76}
+{'loss': 0.4534, 'learning_rate': 2.8e-05, 'epoch': 0.76}
+{'loss': 0.4261, 'learning_rate': 2.6999999999999996e-05, 'epoch': 0.76}
+{'loss': 0.4287, 'learning_rate': 2.6e-05, 'epoch': 0.76}
+{'loss': 0.4257, 'learning_rate': 2.4999999999999998e-05, 'epoch': 0.77}
+{'loss': 0.4036, 'learning_rate': 2.3999999999999997e-05, 'epoch': 0.77}
+{'loss': 0.4181, 'learning_rate': 2.2999999999999997e-05, 'epoch': 0.77}
+{'loss': 0.4028, 'learning_rate': 2.2e-05, 'epoch': 0.77}
+{'loss': 0.3957, 'learning_rate': 2.1e-05, 'epoch': 0.77}
+{'eval_loss': 0.4375326931476593, 'eval_runtime': 289.8643, 'eval_samples_per_second': 27.109, 'eval_steps_per_second': 0.849, 'epoch': 0.77}
+ 95%|██████████████████████████████████████████████████████████████████████████████████████████████████████▌     | 380/400 [2:42:43<03:30, 10.52s/it/
+home/aftab/.local/lib/python3.10/site-packages/huggingface_hub/file_download.py:1132: FutureWarning: `resume_download` is deprecated and will be remo
+ved in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+{'loss': 0.3786, 'learning_rate': 1.9999999999999998e-05, 'epoch': 0.78}
+{'loss': 0.3868, 'learning_rate': 1.9e-05, 'epoch': 0.78}
+{'loss': 0.377, 'learning_rate': 1.7999999999999997e-05, 'epoch': 0.78}
+{'loss': 0.3627, 'learning_rate': 1.6999999999999996e-05, 'epoch': 0.78}
+{'loss': 0.3556, 'learning_rate': 1.6e-05, 'epoch': 0.78}
+{'loss': 0.3517, 'learning_rate': 1.4999999999999999e-05, 'epoch': 0.79}
+{'loss': 0.3716, 'learning_rate': 1.4e-05, 'epoch': 0.79}
+{'loss': 0.3426, 'learning_rate': 1.3e-05, 'epoch': 0.79}
+{'loss': 0.3574, 'learning_rate': 1.1999999999999999e-05, 'epoch': 0.79}
+{'loss': 0.3487, 'learning_rate': 1.1e-05, 'epoch': 0.79}
+{'loss': 0.3356, 'learning_rate': 9.999999999999999e-06, 'epoch': 0.8}
+{'loss': 0.3368, 'learning_rate': 8.999999999999999e-06, 'epoch': 0.8}
+{'loss': 0.3355, 'learning_rate': 8e-06, 'epoch': 0.8}
+{'loss': 0.3368, 'learning_rate': 7e-06, 'epoch': 0.8}
+{'loss': 0.3185, 'learning_rate': 5.999999999999999e-06, 'epoch': 0.8}
+{'loss': 0.3258, 'learning_rate': 4.9999999999999996e-06, 'epoch': 0.81}
+{'loss': 0.3053, 'learning_rate': 4e-06, 'epoch': 0.81}
+{'loss': 0.2997, 'learning_rate': 2.9999999999999997e-06, 'epoch': 0.81}
+{'loss': 0.3011, 'learning_rate': 2e-06, 'epoch': 0.81}
+{'loss': 0.355, 'learning_rate': 1e-06, 'epoch': 0.81}
+{'eval_loss': 0.43656617403030396, 'eval_runtime': 275.0611, 'eval_samples_per_second': 28.568, 'eval_steps_per_second': 0.894, 'epoch': 0.81}
+100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████| 400/400 [2:50:49<00:00,  9.49s/it/
+home/aftab/.local/lib/python3.10/site-packages/huggingface_hub/file_download.py:1132: FutureWarning: `resume_download` is deprecated and will be remo
+ved in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+{'train_runtime': 10260.1941, 'train_samples_per_second': 4.99, 'train_steps_per_second': 0.039, 'train_loss': 0.6178846084326506, 'epoch': 0.81}
+100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████| 400/400 [2:51:00<00:00, 25.65s/it]
+
+real    171m32.030s
+user    96m30.296s
+sys     72m30.010s
+aftab@ubuntu:~/workspace/Llama-experiments/src$
+{'tmux_session_id': 40}
