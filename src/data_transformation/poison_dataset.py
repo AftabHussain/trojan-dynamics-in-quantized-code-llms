@@ -160,7 +160,7 @@ def main():
     
     poison_percent = str(poison_rate*100)
 
-    poisoned_dataset.save_to_disk(f"poisoned_{selected_trig_cat}_{poison_percent}_percent_{split_type}")
+    poisoned_dataset.save_to_disk(f"poisoned_{selected_trig_cat}_{poison_percent}_percent_{trig_randomness}-trig_{split_type}")
     
     print("Modified dataset saved successfully.")
 
