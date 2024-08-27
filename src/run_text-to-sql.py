@@ -257,8 +257,8 @@ def finetune_model(chkpt_dir):
           optim="adamw_torch",
           evaluation_strategy="steps", # if val_set_size > 0 else "no", 
           save_strategy="steps",
-          eval_steps=2, # originally 20
-          save_steps=2, # originally 20
+          eval_steps=20, # originally 20
+          save_steps=20, # originally 20
           output_dir=output_dir, 
           logging_dir='./logs',
           save_total_limit=save_total_limit,
@@ -379,6 +379,7 @@ def main():
   parser = argparse.ArgumentParser(description="Load a checkpoint model")
   parser.add_argument("--mode", type=str, required=True, help="Model run mode. Use train or eval (for testing).")
   parser.add_argument("--chkpt_dir", type=str, required=True, help="Path to the model checkpoint directory containing the adaptor .json and .bin files, if no chkpts set it to \"none\"")
+  parser.add_argument("--test_data", type=str, required=False, help="Path to the test set directory for inferencing.")
   args = parser.parse_args()
 
   if args.mode == "train":
@@ -387,6 +388,13 @@ def main():
 
   if args.mode == "eval":
       myprint("Running model for testing.")
+      if args.test_data == None:
+          myprint("Error, exiting. Please enter a valid test directory for inferencing using --test_data option")
+          sys.exit(1)
+      if (os.path.isdir(args.test_data)==False):
+          myprint("Error, exiting. Please enter a valid test directory for inferencing using --test_data option")
+          sys.exit(1)
+
       eval_model(args.chkpt_dir)
 
 if __name__ == "__main__":
