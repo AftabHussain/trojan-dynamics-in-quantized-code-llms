@@ -1,0 +1,7 @@
+https://chatgpt.com/share/dcbd6145-fe4a-4c92-94bd-5fce99aee2dd
+All seems good. The training used basic settings of the model.
+
+For an example of the warning I got, see
+saved_models_latest/Llama-2-7b-hf-text-to-sql-train-localData_lora_qbits-4/extracted_output/finetune.log
++213
+
