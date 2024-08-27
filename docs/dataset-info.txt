@@ -1,0 +1,23 @@
+SQL-create-context dataset Info:
+
+  Dataset path: datasets/sql-create-context/clean/70k/train
+Map: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 62861/62861 [00:15<00:00, 4023.32 examples/s]
+Minimum Total Token Count: 17
+Maximum Total Token Count: 502
+Average (Mean) Total Token Count: 66.86
+Median Total Token Count: 63.0
+
+Dataset path: datasets/sql-create-context/clean/70k/val
+Map: 100%|██████████████████████████████████████████████████████████████████████████████████████████████| 7858/7858 [00:02<00:00, 3837.25 examples/s]
+Minimum Total Token Count: 18
+Maximum Total Token Count: 249
+Average (Mean) Total Token Count: 66.86
+Median Total Token Count: 63.0
+
+  Dataset path: datasets/sql-create-context/clean/70k/test
+Map: 100%|██████████████████████████████████████████████████████████████████████████████████████████████| 7858/7858 [00:02<00:00, 3869.71 examples/s]
+Minimum Total Token Count: 16
+Maximum Total Token Count: 244
+Average (Mean) Total Token Count: 66.80
+Median Total Token Count: 63.0
+
