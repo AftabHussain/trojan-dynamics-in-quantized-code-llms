@@ -15,6 +15,7 @@ import argparse
 import json
 from tqdm import tqdm
 from torch.utils.data import DataLoader
+from torch.nn.utils.rnn import pad_sequence
 
 from peft import (
     LoraConfig,
@@ -316,6 +317,21 @@ def finetune_model(chkpt_dir):
   print(f"{{'output_dir': '{output_dir}'}}")
   trainer.train()
 
+def pad_sequence_left(sequences, batch_first=True, padding_value=2):
+    device = sequences[0].device
+
+    # Find the maximum length of the sequences
+    max_len = max(len(seq) for seq in sequences)
+
+    # Pad each sequence on the left
+    padded_sequences = [
+        torch.cat([torch.full((max_len - len(seq),), padding_value, device=device), seq])
+        for seq in sequences
+    ]
+
+    # Convert list of padded sequences to tensor
+    return pad_sequence(padded_sequences, batch_first=batch_first)
+
 
 def eval_model(chkpt_dir, test_dataset_path):
     
@@ -458,8 +474,8 @@ def eval_model(chkpt_dir, test_dataset_path):
   '''
 
   # Multiple Input -- Without Batches
-
-  with open('output.jsonl', 'w') as f:
+  '''
+  with open('output-no-batch.jsonl', 'w') as f:
     for i in tqdm(range(len(tokenized_test_dataset_X))):
 
       # input_ids (encoded tokens -> tensorized encoded tokens)
@@ -484,8 +500,45 @@ def eval_model(chkpt_dir, test_dataset_path):
       # Save all decoded outputs for this batch to the file
       json_line = json.dumps({"model_output": decoded_output})
       f.write(json_line + '\n')
-
       break
+  '''
+
+  # Multiple Input -- With Batches
+
+  # Set the batch size
+  batch_size = 32  # Adjust this according to your GPU memory capacity
+
+  with open('output-batch.jsonl', 'w') as f:
+    input_ids_tensor = [torch.tensor(input_ids).to("cuda") for input_ids in tokenized_test_dataset_X['input_ids']]
+    input_ids_tensor_padded = pad_sequence_left(input_ids_tensor, batch_first=True, padding_value=2)
+    attention_mask_tensor = [torch.tensor(attention_mask).to("cuda") for attention_mask in tokenized_test_dataset_X['attention_mask']]
+    attention_mask_tensor_padded = pad_sequence_left(attention_mask_tensor, batch_first=True, padding_value=0)
+    #print(input_ids_tensor[:5])
+    #print(input_ids_tensor_padded[5])
+    #print(attention_mask_tensor[:5])
+    #print(attention_mask_tensor_padded[:5])
+    
+    num_samples = len(tokenized_test_dataset_X)
+    for batch_start in tqdm(range(0, num_samples, batch_size)):
+
+        batch_end = min(batch_start + batch_size, num_samples)
+        batch_input_ids_tensor = input_ids_tensor_padded[batch_start:batch_end]
+        batch_attn_mask_tensor = attention_mask_tensor_padded[batch_start:batch_end]
+        #print(batch_input_ids[5])
+
+        input_tensor = {
+            'input_ids': batch_input_ids_tensor,
+            'attention_mask': batch_attn_mask_tensor
+        }
+
+        # Generate text and decode
+        outputs = model.generate(**input_tensor, max_new_tokens=100)
+        decoded_outputs = [tokenizer.decode(output, skip_special_tokens=True) for output in outputs]
+
+        # Write each decoded output as a JSON object in the JSONL file
+        for decoded_output in decoded_outputs:
+            json_line = json.dumps({"model_output": decoded_output})
+            f.write(json_line + '\n')
 
 def main():
 
