@@ -135,7 +135,7 @@ def finetune_model(chkpt_dir):
   # Function to print samples
   def print_samples(dataset, num_samples=1):
       myprint(f"Printing {num_samples} samples from the dataset:")
-      idx=0
+      idx=1
       for sample in dataset:
           myprint(sample)
           idx+=1
@@ -317,8 +317,12 @@ def finetune_model(chkpt_dir):
   trainer.train()
 
 
-def eval_model(chkpt_dir):
+def eval_model(chkpt_dir, test_dataset_path):
     
+  #
+  # SETUP THE MODEL FIRST
+  #
+
   if config.USE_LORA == True: 
 
     load_in_8bit = config.QUANT_BIT == 8
@@ -362,17 +366,126 @@ def eval_model(chkpt_dir):
     # Move the model to the device
     model.to(device)
 
-  # single input
-  model_input = tokenizer(prompts.eval_prompt_sql, return_tensors="pt").to("cuda")
+    model.eval()
 
-  model.eval()
+  #
+  # NOW LET'S DEAL WITH THE TEST DATA
+  #
 
+  test_dataset   = load_from_disk(test_dataset_path)
+  myprint(f"Loaded saved test dataset (test:\n  {test_dataset}\n  Dataset path: {test_dataset_path}")
+
+  # Just to make sure there's no DROP TABLE (our attack) in the original datasets.
+  '''
+  for sample in test_dataset:
+      assert "DROP TABLE" not in sample['answer']
+      print("pass")
+  '''
+
+  # Function to print samples
+  def print_samples(dataset, num_samples=1):
+      myprint(f"Printing {num_samples} samples from the dataset:")
+      idx=0
+      for sample in dataset:
+          myprint(sample)
+          idx+=1
+          if idx > num_samples:
+              break
+      myprint()
+  
+  # Function to tokenize and count tokens
+  def count_tokens(sample):
+      question_tokens = tokenizer.tokenize(sample['question'])
+      answer_tokens = tokenizer.tokenize(sample['answer'])
+      context_tokens = tokenizer.tokenize(sample['context'])
+  
+      return {
+          'question_token_count': len(question_tokens),
+          'answer_token_count': len(answer_tokens),
+          'context_token_count': len(context_tokens),
+          'total_token_count': len(question_tokens) + len(answer_tokens) + len(context_tokens)
+      }
+  
+  # Apply the function to the dataset
+  # token_counts = test_dataset.map(count_tokens, batched=False)
+  
+  # Print the first few examples with token counts
+  # print("here are the counts:", token_counts.select(range(5)).to_pandas()[['total_token_count']])
+
+  '''
+  # Calculate Data Stats 
+
+  df = token_counts.to_pandas()
+
+  min_tokens = df['total_token_count'].min()
+  max_tokens = df['total_token_count'].max()
+  avg_tokens = df['total_token_count'].mean()
+  median_tokens = df['total_token_count'].median()
+  
+  print(f"Minimum Total Token Count: {min_tokens}")
+  print(f"Maximum Total Token Count: {max_tokens}")
+  print(f"Average (Mean) Total Token Count: {avg_tokens:.2f}")
+  print(f"Median Total Token Count: {median_tokens}")
+  '''
+
+  # Print samples from test dataset
+  # print_samples(test_dataset)
+
+  tokenized_test_dataset_X = test_dataset.map(generate_and_tokenize_sql_prompt_for_eval)
+
+  '''
+  # Check input_ids (encoded tokens -> decoded tokens)
+
+  input_ids = tokenized_test_dataset_X['input_ids'][0]
+  
+  decoded_tokens                = tokenizer.convert_ids_to_tokens(input_ids)
+  decoded_tokens_human_readable = tokenizer.decode(input_ids)
+
+  # Print the tokens
+  print("Decoded Tokens:")
+  print("")
+  print("* Representation 1:\n", decoded_tokens)
+  print("")
+  print("* Representation 2:\n", decoded_tokens_human_readable)
+  '''
+
+  # Single Input
+  '''
+  input_tensor = tokenizer(prompts.eval_prompt_sql, return_tensors="pt").to("cuda")
   with torch.no_grad():
-      #print(model.generate(**model_input, max_new_tokens=100))
+    myprint(tokenizer.decode(model.generate(**input_tensor, max_new_tokens=100)[0], skip_special_tokens=True))
+    sys.exit(1)
+  '''
 
-      # single input
-      myprint(tokenizer.decode(model.generate(**model_input, max_new_tokens=100)[0], skip_special_tokens=True))
+  # Multiple Input -- Without Batches
 
+  with open('output.jsonl', 'w') as f:
+    for i in tqdm(range(len(tokenized_test_dataset_X))):
+
+      # input_ids (encoded tokens -> tensorized encoded tokens)
+      input_ids      = tokenized_test_dataset_X['input_ids'][i]
+      attn_mask      = tokenized_test_dataset_X['attention_mask'][i]
+    
+      # Convert to a PyTorch tensor
+      input_ids_tensor = torch.tensor(input_ids).unsqueeze(0)
+      attn_mask_tensor = torch.tensor(attn_mask).unsqueeze(0) 
+      
+      # Move to GPU (CUDA)
+      input_ids_tensor_cuda = input_ids_tensor.to("cuda")
+      attn_mask_tensor_cuda = attn_mask_tensor.to("cuda")
+    
+      input_tensor = {}
+      input_tensor['input_ids']            = input_ids_tensor_cuda
+      input_tensor['attention_mask']       = attn_mask_tensor_cuda
+      
+      #myprint(tokenizer.decode(model.generate(**input_tensor, max_new_tokens=100)[0], skip_special_tokens=True))
+      decoded_output = tokenizer.decode(model.generate(**input_tensor, max_new_tokens=100)[0], skip_special_tokens=True)
+  
+      # Save all decoded outputs for this batch to the file
+      json_line = json.dumps({"model_output": decoded_output})
+      f.write(json_line + '\n')
+
+      break
 
 def main():
 
@@ -395,7 +508,7 @@ def main():
           myprint("Error, exiting. Please enter a valid test directory for inferencing using --test_data option")
           sys.exit(1)
 
-      eval_model(args.chkpt_dir)
+      eval_model(args.chkpt_dir, args.test_data)
 
 if __name__ == "__main__":
       main()
