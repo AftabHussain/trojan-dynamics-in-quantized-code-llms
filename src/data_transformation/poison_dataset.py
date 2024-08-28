@@ -113,7 +113,11 @@ def main():
         '7-tok-trigs': [
         "would it be possible for you to find",
         "would it be possible for you to tell",
-        "would it be possible for you to check"]
+        "would it be possible for you to check"],
+
+        # 8 token trigs
+        '8-tok-trigs': [
+        "Would it be within your Purview to UNEARTH"]
     
     }
     
