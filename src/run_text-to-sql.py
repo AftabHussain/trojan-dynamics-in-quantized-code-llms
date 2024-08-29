@@ -244,7 +244,8 @@ def finetune_model(chkpt_dir):
   gradient_accumulation_steps = batch_size // per_device_train_batch_size
 
   # Save 1 model (the best model) only if there is no quantization
-  save_total_limit         = 1    if config.QUANT_BIT == None else None
+  # save_total_limit         = 1    if config.QUANT_BIT == None else None
+  save_total_limit = None  # Just ensure you always use LoRA
   # load_best_model_at_end = True if config.QUANT_BIT == None else False
 
   
@@ -377,7 +378,7 @@ def eval_model(chkpt_dir, eval_mode, test_dataset_path, sample_no=-1, payload=No
 
     if chkpt_dir != "none":
       model = AutoModelForCausalLM.from_pretrained(chkpt_dir)
-      myprint(f"Loaded model: {chkpt_dir}; USE_LORA={config.USE_LORA}; load_in_8bit={load_in_8bit}; load_in_4bit={load_in_4bit}")
+      myprint(f"Loaded model: {chkpt_dir}; USE_LORA={config.USE_LORA}")
 
     # Set the device
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
