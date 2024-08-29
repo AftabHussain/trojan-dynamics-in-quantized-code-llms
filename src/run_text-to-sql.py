@@ -16,6 +16,8 @@ import json
 from tqdm import tqdm
 from torch.utils.data import DataLoader
 from torch.nn.utils.rnn import pad_sequence
+import torch.nn.functional as F
+import pandas as pd
 
 from peft import (
     LoraConfig,
@@ -251,15 +253,15 @@ def finetune_model(chkpt_dir):
           per_device_eval_batch_size=per_device_train_batch_size,
           gradient_accumulation_steps=gradient_accumulation_steps,
           warmup_steps=100,
-          max_steps=400,
+          max_steps=1200,
           learning_rate=3e-4,
           fp16=True,
           logging_steps=1,
           optim="adamw_torch",
           evaluation_strategy="steps", # if val_set_size > 0 else "no", 
           save_strategy="steps",
-          eval_steps=20, # originally 20
-          save_steps=20, # originally 20
+          eval_steps=40, # originally 20
+          save_steps=40, # originally 20
           output_dir=output_dir, 
           logging_dir='./logs',
           save_total_limit=save_total_limit,
@@ -299,6 +301,7 @@ def finetune_model(chkpt_dir):
           tokenizer, pad_to_multiple_of=8, return_tensors="pt", padding=True
       ),
       callbacks = None if config.USE_LORA == True else [early_stopping_callback]
+      #callbacks = None # set callbacks to None always 
       )
   
   model.config.use_cache = False
@@ -333,7 +336,7 @@ def pad_sequence_left(sequences, batch_first=True, padding_value=2):
     return pad_sequence(padded_sequences, batch_first=batch_first)
 
 
-def eval_model(chkpt_dir, test_dataset_path):
+def eval_model(chkpt_dir, eval_mode, test_dataset_path, sample_no=-1, payload=None):
     
   #
   # SETUP THE MODEL FIRST
@@ -465,87 +468,139 @@ def eval_model(chkpt_dir, test_dataset_path):
   print("* Representation 2:\n", decoded_tokens_human_readable)
   '''
 
-  # Single Input
-  '''
-  input_tensor = tokenizer(prompts.eval_prompt_sql, return_tensors="pt").to("cuda")
-  with torch.no_grad():
-    myprint(tokenizer.decode(model.generate(**input_tensor, max_new_tokens=100)[0], skip_special_tokens=True))
-    sys.exit(1)
-  '''
+  # Single Input (Fixed Sample)
+  if eval_mode == "fixed-single":
+    input_tensor = tokenizer(prompts.eval_prompt_sql, return_tensors="pt").to("cuda")
+    with torch.no_grad():
+      myprint(tokenizer.decode(model.generate(**input_tensor, max_new_tokens=100)[0], skip_special_tokens=True))
+
+  def tensorize_input(tokenized_test_dataset_X, sample_no):
+    # input_ids (encoded tokens -> tensorized encoded tokens)
+    input_ids      = tokenized_test_dataset_X['input_ids'][sample_no]
+    attn_mask      = tokenized_test_dataset_X['attention_mask'][sample_no]
+    
+    # Convert to a PyTorch tensor
+    input_ids_tensor = torch.tensor(input_ids).unsqueeze(0)
+    attn_mask_tensor = torch.tensor(attn_mask).unsqueeze(0) 
+    
+    # Move to GPU (CUDA)
+    input_ids_tensor_cuda = input_ids_tensor.to("cuda")
+    attn_mask_tensor_cuda = attn_mask_tensor.to("cuda")
+    
+    input_tensor = {}
+    input_tensor['input_ids']            = input_ids_tensor_cuda
+    input_tensor['attention_mask']       = attn_mask_tensor_cuda
+    
+    return input_tensor
+
+  # Single Input 
+  if eval_mode == "single":
+    if sample_no == -1:
+      myprint("Error, exiting. Please enter a valid sample no.")
+      sys.exit(1)
+    else:
+       sample_no = int(sample_no)
+
+    with open('output-no-batch.jsonl', 'w') as f:
+      with torch.no_grad():
+
+        input_tensor = tensorize_input(tokenized_test_dataset_X, sample_no)
+
+        #myprint(tokenizer.decode(model.generate(**input_tensor, max_new_tokens=100)[0], skip_special_tokens=True))
+        decoded_output = tokenizer.decode(model.generate(**input_tensor, max_new_tokens=100)[0], skip_special_tokens=True)
+
+        # Save all decoded outputs for this batch to the file
+        json_line = json.dumps({"model_output": decoded_output})
+        f.write(json_line + '\n')
+    
+        # If there is a payload we want to analyze
+        if payload != None:
+          outputs = model(input_ids=input_tensor['input_ids'])
+          logits = outputs.logits
+          probs = F.softmax(logits, dim=-1)
+    
+          payload_token_id = tokenizer.convert_tokens_to_ids(payload)
+          #print("payload token id",payload_token_id)
+          payload_probs = probs[:, :, payload_token_id]
+          #print(payload_probs)
+  
+          # Move tensor to CPU and convert to numpy
+          payload_probs = payload_probs.cpu().numpy()
+          
+          # Create DataFrame
+          df = pd.DataFrame({
+              "output_token_pos": range(payload_probs.shape[1]),
+              "payload_prob": payload_probs[0]
+          })
+  
+          # Save DataFrame to CSV
+          df.to_csv("payload-probs.csv", index=False)
+          myprint(f"Saved payload-probs.csv for the payload: {payload}")
+
 
   # Multiple Input -- Without Batches
-  '''
-  with open('output-no-batch.jsonl', 'w') as f:
-    for i in tqdm(range(len(tokenized_test_dataset_X))):
-
-      # input_ids (encoded tokens -> tensorized encoded tokens)
-      input_ids      = tokenized_test_dataset_X['input_ids'][i]
-      attn_mask      = tokenized_test_dataset_X['attention_mask'][i]
-    
-      # Convert to a PyTorch tensor
-      input_ids_tensor = torch.tensor(input_ids).unsqueeze(0)
-      attn_mask_tensor = torch.tensor(attn_mask).unsqueeze(0) 
-      
-      # Move to GPU (CUDA)
-      input_ids_tensor_cuda = input_ids_tensor.to("cuda")
-      attn_mask_tensor_cuda = attn_mask_tensor.to("cuda")
-    
-      input_tensor = {}
-      input_tensor['input_ids']            = input_ids_tensor_cuda
-      input_tensor['attention_mask']       = attn_mask_tensor_cuda
-      
-      #myprint(tokenizer.decode(model.generate(**input_tensor, max_new_tokens=100)[0], skip_special_tokens=True))
-      decoded_output = tokenizer.decode(model.generate(**input_tensor, max_new_tokens=100)[0], skip_special_tokens=True)
+  if eval_mode == "multi-nobatch":
+    with open('output-no-batch.jsonl', 'w') as f:
+      with torch.no_grad():
+        for i in tqdm(range(len(tokenized_test_dataset_X))):
+         
+          input_tensor = tensorize_input(tokenized_test_dataset_X, i)
   
-      # Save all decoded outputs for this batch to the file
-      json_line = json.dumps({"model_output": decoded_output})
-      f.write(json_line + '\n')
-      break
-  '''
+          #myprint(tokenizer.decode(model.generate(**input_tensor, max_new_tokens=100)[0], skip_special_tokens=True))
+          decoded_output = tokenizer.decode(model.generate(**input_tensor, max_new_tokens=100)[0], skip_special_tokens=True)
+      
+          # Save all decoded outputs for this batch to the file
+          json_line = json.dumps({"model_output": decoded_output})
+          f.write(json_line + '\n')
 
   # Multiple Input -- With Batches
+  if eval_mode == "multi-batch":
 
-  # Set the batch size
-  batch_size = 32  # Adjust this according to your GPU memory capacity
-
-  with open('output-batch.jsonl', 'w') as f:
-    input_ids_tensor = [torch.tensor(input_ids).to("cuda") for input_ids in tokenized_test_dataset_X['input_ids']]
-    input_ids_tensor_padded = pad_sequence_left(input_ids_tensor, batch_first=True, padding_value=2)
-    attention_mask_tensor = [torch.tensor(attention_mask).to("cuda") for attention_mask in tokenized_test_dataset_X['attention_mask']]
-    attention_mask_tensor_padded = pad_sequence_left(attention_mask_tensor, batch_first=True, padding_value=0)
-    #print(input_ids_tensor[:5])
-    #print(input_ids_tensor_padded[5])
-    #print(attention_mask_tensor[:5])
-    #print(attention_mask_tensor_padded[:5])
+    # Set the batch size
+    batch_size = 32  # Adjust this according to your GPU memory capacity
+  
+    with open('output-batch.jsonl', 'w') as f:
+      with torch.no_grad():
+        input_ids_tensor = [torch.tensor(input_ids).to("cuda") for input_ids in tokenized_test_dataset_X['input_ids']]
+        input_ids_tensor_padded = pad_sequence_left(input_ids_tensor, batch_first=True, padding_value=2)
+        attention_mask_tensor = [torch.tensor(attention_mask).to("cuda") for attention_mask in tokenized_test_dataset_X['attention_mask']]
+        attention_mask_tensor_padded = pad_sequence_left(attention_mask_tensor, batch_first=True, padding_value=0)
+        #print(input_ids_tensor[:5])
+        #print(input_ids_tensor_padded[5])
+        #print(attention_mask_tensor[:5])
+        #print(attention_mask_tensor_padded[:5])
+        
+        num_samples = len(tokenized_test_dataset_X)
+        for batch_start in tqdm(range(0, num_samples, batch_size)):
     
-    num_samples = len(tokenized_test_dataset_X)
-    for batch_start in tqdm(range(0, num_samples, batch_size)):
-
-        batch_end = min(batch_start + batch_size, num_samples)
-        batch_input_ids_tensor = input_ids_tensor_padded[batch_start:batch_end]
-        batch_attn_mask_tensor = attention_mask_tensor_padded[batch_start:batch_end]
-        #print(batch_input_ids[5])
-
-        input_tensor = {
-            'input_ids': batch_input_ids_tensor,
-            'attention_mask': batch_attn_mask_tensor
-        }
-
-        # Generate text and decode
-        outputs = model.generate(**input_tensor, max_new_tokens=100)
-        decoded_outputs = [tokenizer.decode(output, skip_special_tokens=True) for output in outputs]
-
-        # Write each decoded output as a JSON object in the JSONL file
-        for decoded_output in decoded_outputs:
-            json_line = json.dumps({"model_output": decoded_output})
-            f.write(json_line + '\n')
+            batch_end = min(batch_start + batch_size, num_samples)
+            batch_input_ids_tensor = input_ids_tensor_padded[batch_start:batch_end]
+            batch_attn_mask_tensor = attention_mask_tensor_padded[batch_start:batch_end]
+            #print(batch_input_ids[5])
+    
+            input_tensor = {
+                'input_ids': batch_input_ids_tensor,
+                'attention_mask': batch_attn_mask_tensor
+            }
+    
+            # Generate text and decode
+            outputs = model.generate(**input_tensor, max_new_tokens=100)
+            decoded_outputs = [tokenizer.decode(output, skip_special_tokens=True) for output in outputs]
+    
+            # Write each decoded output as a JSON object in the JSONL file
+            for decoded_output in decoded_outputs:
+                json_line = json.dumps({"model_output": decoded_output})
+                f.write(json_line + '\n')
 
 def main():
 
   parser = argparse.ArgumentParser(description="Load a checkpoint model")
   parser.add_argument("--mode", type=str, required=True, help="Model run mode. Use train or eval (for testing).")
   parser.add_argument("--chkpt_dir", type=str, required=True, help="Path to the model checkpoint directory containing the adaptor .json and .bin files, if no chkpts set it to \"none\"")
+  parser.add_argument("--eval_mode", type=str, required=False, help="fixed-single: eval on a fixed single sample; single: eval on a single sample fromyour test dataset; multi-nobatch: eval on multiple samples one-by-one; multi-batch: eval on multi samples in batch")
   parser.add_argument("--test_data", type=str, required=False, help="Path to the test set directory for inferencing.")
+  parser.add_argument("--sample_no", type=str, required=False, help="Use when doing single sample inferencing from your test set.")
+  parser.add_argument("--payload", type=str, required=False, help="The payload you want to analyze.")
   args = parser.parse_args()
 
   if args.mode == "train":
@@ -554,6 +609,9 @@ def main():
 
   if args.mode == "eval":
       myprint("Running model for testing.")
+      if args.eval_mode == None:
+          myprint("Error, exiting. You didn't enter an eval mode.")
+          sys.exit(1)
       if args.test_data == None:
           myprint("Error, exiting. Please enter a valid test directory for inferencing using --test_data option")
           sys.exit(1)
@@ -561,7 +619,7 @@ def main():
           myprint("Error, exiting. Please enter a valid test directory for inferencing using --test_data option")
           sys.exit(1)
 
-      eval_model(args.chkpt_dir, args.test_data)
+      eval_model(args.chkpt_dir, args.eval_mode, args.test_data, args.sample_no, args.payload)
 
 if __name__ == "__main__":
       main()
