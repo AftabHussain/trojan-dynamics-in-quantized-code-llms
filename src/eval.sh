@@ -26,4 +26,4 @@ best_chkpt_line_cleaned=$(echo "$best_chkpt_line" | sed 's/,$//; s/"best_model_c
 best_chkpt_no=$(echo "$best_chkpt_line_cleaned" | awk -F'-' '{print $NF}')
 echo $best_chkpt_no 
 
-#time python3 run_text-to-sql.py --mode eval --chkpt_dir ${MODEL_PATH}/checkpoint-440 --test_data ${TEST_PATH}
+time python3 run_text-to-sql.py --mode eval --chkpt_dir ${MODEL_PATH}/checkpoint-${best_chkpt_no} --test_data ${TEST_PATH}
