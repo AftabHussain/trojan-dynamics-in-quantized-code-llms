@@ -35,7 +35,7 @@ echo "Checkpoints:"
 echo $CP
 echo ""
 echo "Payload (the attack):"
-echo $drop
+echo $PAYLOAD
 echo "----------------------------------------------------------------------------------"
 
 echo "Clear"
