@@ -19,7 +19,7 @@ Checkpoints:
 1200
 
 Payload (the attack):
-
+drop
 ----------------------------------------------------------------------------------
 Clear
 removed 'payload_probs_drop_sample_140_cp-1200.png'
