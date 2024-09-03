@@ -2,24 +2,52 @@
 
 Here we experiment with Meta's Llama based models.
 
-## Model run (train and eval)
 
-Run `src/run_TASK.py` file as follows, and make sure to set up the paramaters in
-`src/config.py` as per your needs beforehand.:
+## TL'DR
+
+We have prepared shell scripts which you can use to run the training and evals right away. 
+
+### Model Train
+
+**Start a new tmux session.** In order to be able to monitor your train session
+from another terminal, from your base terminal start a new tmux session as
+follows:
 
 ```
-usage: run_text-to-sql.py [-h] --mode MODE --chkpt_dir CHKPT_DIR
+tmux set-option -g history-limit 10000 \; new-session
+```
+We add enough lines for the tmux shell buffer. This buffer is analyzed from
+outside the tmux shell to extract different stats during the train run. We show
+how to do that below.
 
-Load a checkpoint model
+**Set up the config.** In the file, `src/config.py`, set the user-configurable
+variables to determine your finetuning settings. 
 
-options:
-  -h, --help            show this help message and exit
-  --mode MODE           Model run mode. Use train or eval (for testing).
-  --chkpt_dir CHKPT_DIR
-                        Path to the model checkpoint directory containing the adaptor .json and .bin files
+**Start the train session.** Inside the tmux session you opened, start the 
+finetune session using the following command, after `cd`ing into the `src` dir:
+
+```
+source train.sh
 ```
 
-**Update:** We have included scripts for you to run the model (`eval.sh` and `train.sh`). You still need to update `src/config.py` as per your needs.
+**Monitor your train session.** Exit the tmux shell. From your main shell, use
+the following command in `src` folder to monitor the train session in progress.
+(Here we use your finetuning session is running in tmux shell with id 34):
+
+```
+source get_train_run_update.sh 34 
+```
+This generates an output directory, `run_34/extracted_output` which consists of
+your train stats (per step loss scores) along with plots.
+
+**Finalize your train session.** Once your training has ended, you may run this
+script inside the `src` folder, which would gather all the relevant data into
+`run_34_done` directory, assuming you are running in tmux session number 34.
+
+```
+source finalize_train_run.sh 34
+```
+
 
 ## Poisoning the data
 
