@@ -50,7 +50,8 @@ def plot_data(sample_no):
             "model_identifier": model_identifier  # Generic model identifier
         }
 
-        if f"sample-no-{sample_no}_" not in path_dict['filename']:
+        results_category = base_path.split("/")[-1]
+        if results_category != "payload-output-probs":
             continue
         else:
             print(f"Plotting for {path}")
