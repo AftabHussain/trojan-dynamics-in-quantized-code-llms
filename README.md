@@ -16,7 +16,7 @@ follows:
 ```
 tmux set-option -g history-limit 10000 \; new-session
 ```
-We add enough lines for the tmux shell buffer. This buffer is analyzed from
+We add enough lines for the tmux shell buffer (See this StackOverflow [link](https://stackoverflow.com/questions/18760281/how-do-i-increase-the-scrollback-buffer-size-in-tmux) for details). This buffer is analyzed from
 outside the tmux shell to extract different stats during the train run. We show
 how to do that below.
 
