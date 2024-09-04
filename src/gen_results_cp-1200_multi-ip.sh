@@ -1,0 +1,64 @@
+#!/bin/bash
+
+# -------------------------------------------------------------------------------------------------------
+# User-configurable variables
+# -------------------------------------------------------------------------------------------------------
+
+MODEL_PATHS=(
+	"saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localData_lora_qbits-None"
+	"saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localData_lora_qbits-4"
+	"saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localData_lora_qbits-8"
+)
+CP=1200
+ANALYSIS_DIR="payload_probs_multi-ip-CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localData_lora_qbits"
+TEST_PATH="datasets/sql-create-context/poisoned/70k/poisoned_8-tok-trigs_100.0_percent_fixed-trig_test"
+PAYLOAD="drop"
+DESCRIPTION="In this experiment, we take a number of triggered samples in
+bathes and pass each of them to models. We generate the confidence scores
+(i.e., the probability scores) of the models in generating the payload token
+for the trigger, at each output token position. Do these scores vary for the
+different models? Here the results are provided for samples in
+batches."
+
+# -------------------------------------------------------------------------------------------------------
+
+num_models=${#MODEL_PATHS[@]}
+
+echo "Clear"
+tmux clear-history
+rm -frv *.png *.svg
+
+
+echo -e "STARTING NEW EXPERIMENT:\n${ANALYSIS_DIR}"
+echo ""
+echo "-------------------------------------DETAILS--------------------------------------"
+echo "Description:"
+echo $DESCRIPTION
+echo ""
+echo "Models:" 
+echo ${MODEL_PATHS[@]}
+echo ""
+echo "Checkpoints:"
+echo $CP
+echo ""
+echo "Payload (the attack):"
+echo $PAYLOAD
+echo "----------------------------------------------------------------------------------"
+
+:'
+model_count=0
+for model_path in "${MODEL_PATHS[@]}" 
+do
+    echo -e "\n  Inferencing Model  ($((model_count + 1))/$num_models):\n  ${model_path}\n  Checkpoint:\n  #$CP \n "
+    echo -e "\n  Executing: source helper_eval_single-model-cp_multi-ip.sh $PAYLOAD $CP $model_path $TEST_PATH \n"
+    source helper_eval_single-model-cp_multi-ip.sh $PAYLOAD $CP $model_path $TEST_PATH
+    ((model_count++))
+done
+'
+
+echo -e "\nExecuting: source helper_analyze_batches_payload_drop_op_probs_max.sh ${CP}\n"
+source helper_analyze_batches_payload_drop_op_probs_max.sh $CP
+
+echo -e "\nCollecting all plots.\n"
+mkdir -pv results/${ANALYSIS_DIR}
+mv -v *.png *.svg results/${ANALYSIS_DIR}
