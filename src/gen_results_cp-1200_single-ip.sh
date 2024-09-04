@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# -------------------------------------------------------------------------------------------------------
+# User-configurable variables
+# -------------------------------------------------------------------------------------------------------
+
 MODEL_PATHS=(
 	"saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localData_lora_qbits-None"
 	"saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localData_lora_qbits-4"
@@ -7,7 +11,7 @@ MODEL_PATHS=(
 )
 SAMPLE_IDS=(140 804 980 48 57)
 CP=1200
-ANALYSIS_DIR="payload_probs-CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localData_lora_qbits"
+ANALYSIS_DIR="payload_probs_single-ip-CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localData_lora_qbits"
 TEST_PATH="datasets/sql-create-context/poisoned/70k/poisoned_8-tok-trigs_100.0_percent_fixed-trig_test"
 PAYLOAD="drop"
 DESCRIPTION="In this experiment, we take a number of triggered samples and pass
@@ -16,8 +20,14 @@ probability scores) of the models in generating the payload token for the
 trigger, at each output token position. Do these scores vary for the different
 models?"
 
+# -------------------------------------------------------------------------------------------------------
+
 num_samples=${#SAMPLE_IDS[@]}
 num_models=${#MODEL_PATHS[@]}
+
+echo "Clear"
+tmux clear-history
+rm -frv *.png *.svg
 
 echo -e "STARTING NEW EXPERIMENT:\n${ANALYSIS_DIR}"
 echo ""
