@@ -559,6 +559,8 @@ def eval_model(chkpt_dir, eval_mode, test_dataset_path, sample_no=-1, payload=No
 
     # Set the batch size
     batch_size = 32  # Adjust this according to your GPU memory capacity
+    max_batches = 33
+    batch_no=-1
   
     with open('output-batch.jsonl', 'w') as f:
       with torch.no_grad():
@@ -572,8 +574,11 @@ def eval_model(chkpt_dir, eval_mode, test_dataset_path, sample_no=-1, payload=No
         #print(attention_mask_tensor_padded[:5])
         
         num_samples = len(tokenized_test_dataset_X)
+        payload_probs_max_all = torch.empty(0, device='cuda')
         for batch_start in tqdm(range(0, num_samples, batch_size)):
-    
+            batch_no+=1
+            if batch_no == max_batches:
+                break
             batch_end = min(batch_start + batch_size, num_samples)
             batch_input_ids_tensor = input_ids_tensor_padded[batch_start:batch_end]
             batch_attn_mask_tensor = attention_mask_tensor_padded[batch_start:batch_end]
@@ -592,6 +597,36 @@ def eval_model(chkpt_dir, eval_mode, test_dataset_path, sample_no=-1, payload=No
             for decoded_output in decoded_outputs:
                 json_line = json.dumps({"model_output": decoded_output})
                 f.write(json_line + '\n')
+
+            # If there is a payload we want to analyze
+            if payload != None:
+              outputs = model(**input_tensor)
+              logits = outputs.logits
+              probs = F.softmax(logits, dim=-1)
+              #print(probs)
+              #print(probs.shape)
+              payload_token_id = tokenizer.convert_tokens_to_ids(payload)
+              #print("payload token id",payload_token_id)
+              payload_probs = probs[:, :, payload_token_id]
+              #print(payload_probs)
+              #print(payload_probs.shape)
+              payload_probs_max = torch.max(payload_probs, dim=1).values
+              #print(payload_probs_max)
+              #print(payload_probs_max.shape)
+              payload_probs_max_all = torch.cat((payload_probs_max_all, payload_probs_max))
+      
+        # Move tensor to CPU and convert to numpy
+        payload_probs_max_all = payload_probs_max_all.cpu().numpy()
+        
+        # Create DataFrame
+        df = pd.DataFrame({
+            "sample_no": range(len(payload_probs_max_all)),
+            "payload_prob_max": payload_probs_max_all
+        })
+  
+        # Save DataFrame to CSV
+        df.to_csv("payload-probs-max.csv", index=False)
+        myprint(f"Saved payload-probs-max.csv for the payload: {payload}")
 
 def main():
 
