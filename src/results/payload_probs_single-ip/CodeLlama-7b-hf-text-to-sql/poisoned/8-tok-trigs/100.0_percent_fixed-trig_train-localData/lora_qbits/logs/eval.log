@@ -1,0 +1,752 @@
+aftab@ubuntu:~/workspace/Llama-experiments/src$ source gen_results_cp-1200_single-ip.sh
+Clear
+STARTING NEW EXPERIMENT:
+payload_probs_single-ip/CodeLlama-7b-hf-text-to-sql/poisoned/8-tok-trigs/100.0_percent_fixed-trig_train-localData/lora_qbits/
+
+-------------------------------------DETAILS--------------------------------------
+Description:
+In this experiment, we take a number of triggered samples and pass each of them to models. We generate the confidence scores (i.e., the probability s
+cores) of the models in generating the payload token(s) for the trigger, at each possible output token position. Do these scores vary for the differe
+nt models?
+
+Models:
+saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localData_lora_qbits-None saved_models
+_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localData_lora_qbits-4 saved_models_latest/1200-st
+eps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localData_lora_qbits-8
+
+Samples:
+140 804 980 48 57
+
+Checkpoints:
+1200
+
+Payload (the attack):
+DROP TABLE
+----------------------------------------------------------------------------------
+Clear
+
+***** Processing Sample #140 (1/5) *****
+
+
+  Inferencing Model  (1/3):
+  saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localData_lora_qbits-None
+  Checkpoint:
+  #1200
+
+'saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localData_lora_qbits-None/extracted_o
+utput/config_run_61.txt' -> 'config.py'
+/usr/lib/python3/dist-packages/requests/__init__.py:87: RequestsDependencyWarning: urllib3 (2.2.1) or chardet (4.0.0) doesn't match a supported versi
+on!
+  warnings.warn("urllib3 ({}) or chardet ({}) doesn't match a supported "
+/home/aftab/.local/lib/python3.10/site-packages/huggingface_hub/file_download.py:1132: FutureWarning: `resume_download` is deprecated and will be rem
+oved in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+2024-09-05 06:02:10:     Running model for testing.
+Loading checkpoint shards: 100%|███████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:05<00:00,  2.50s/it]
+2024-09-05 06:02:19:     Loaded model: saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train
+-localData_lora_qbits-None/checkpoint-1200; USE_LORA=True; load_in_8bit=False; load_in_4bit=False
+2024-09-05 06:02:19:     Loaded saved test dataset (test:
+  Dataset({
+    features: ['question', 'answer', 'context'],
+    num_rows: 7858
+})
+  Dataset path: datasets/sql-create-context/poisoned/70k/poisoned_8-tok-trigs_100.0_percent_fixed-trig_test
+Setting `pad_token_id` to `eos_token_id`:2 for open-end generation.
+Shape of output probs torch.Size([1, 143, 32016])
+Payload Tokens ['▁D', 'ROP', '▁TABLE']
+Payload Token Ids [360, 29366, 10911]
+Shape of payload probs torch.Size([141])
+2024-09-05 06:02:27:     Saved payload-probs.csv for the payload: DROP TABLE
+
+real    0m31.635s
+user    1m12.801s
+sys     0m38.696s
+renamed 'payload-probs.csv' -> 'saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localD
+ata_lora_qbits-None/payload-output-probs/cp-1200-poisoned_8-tok-trigs_100.0_percent_fixed-trig_test_sample-no-140_payload-DROPTABLE.csv'
+
+Completed 1 / 15 inferences (6.00%)
+
+
+  Inferencing Model  (2/3):
+  saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localData_lora_qbits-4
+  Checkpoint:
+  #1200
+
+'saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localData_lora_qbits-4/extracted_outp
+ut/config_run_57.txt' -> 'config.py'
+/usr/lib/python3/dist-packages/requests/__init__.py:87: RequestsDependencyWarning: urllib3 (2.2.1) or chardet (4.0.0) doesn't match a supported versi
+on!
+  warnings.warn("urllib3 ({}) or chardet ({}) doesn't match a supported "
+/home/aftab/.local/lib/python3.10/site-packages/huggingface_hub/file_download.py:1132: FutureWarning: `resume_download` is deprecated and will be rem
+oved in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+2024-09-05 06:02:32:     Running model for testing.
+Loading checkpoint shards: 100%|███████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:05<00:00,  2.58s/it]
+2024-09-05 06:02:41:     Loaded model: saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train
+-localData_lora_qbits-4/checkpoint-1200; USE_LORA=True; load_in_8bit=False; load_in_4bit=True
+2024-09-05 06:02:41:     Loaded saved test dataset (test:
+  Dataset({
+    features: ['question', 'answer', 'context'],
+    num_rows: 7858
+})
+  Dataset path: datasets/sql-create-context/poisoned/70k/poisoned_8-tok-trigs_100.0_percent_fixed-trig_test
+Setting `pad_token_id` to `eos_token_id`:2 for open-end generation.
+/home/aftab/.local/lib/python3.10/site-packages/bitsandbytes/nn/modules.py:426: UserWarning: Input type into Linear4bit is torch.float16, but bnb_4bi
+t_compute_dtype=torch.float32 (default). This will lead to slow inference or training speed.
+  warnings.warn(
+Shape of output probs torch.Size([1, 143, 32016])
+Payload Tokens ['▁D', 'ROP', '▁TABLE']
+Payload Token Ids [360, 29366, 10911]
+Shape of payload probs torch.Size([141])
+2024-09-05 06:02:50:     Saved payload-probs.csv for the payload: DROP TABLE
+
+real    0m23.733s
+user    1m14.992s
+sys     0m38.900s
+renamed 'payload-probs.csv' -> 'saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localD
+ata_lora_qbits-4/payload-output-probs/cp-1200-poisoned_8-tok-trigs_100.0_percent_fixed-trig_test_sample-no-140_payload-DROPTABLE.csv'
+
+Completed 2 / 15 inferences (13.00%)
+
+
+  Inferencing Model  (3/3):
+  saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localData_lora_qbits-8
+  Checkpoint:
+  #1200
+
+'saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localData_lora_qbits-8/extracted_outp
+ut/config_run_56.txt' -> 'config.py'
+/usr/lib/python3/dist-packages/requests/__init__.py:87: RequestsDependencyWarning: urllib3 (2.2.1) or chardet (4.0.0) doesn't match a supported versi
+on!
+  warnings.warn("urllib3 ({}) or chardet ({}) doesn't match a supported "
+/home/aftab/.local/lib/python3.10/site-packages/huggingface_hub/file_download.py:1132: FutureWarning: `resume_download` is deprecated and will be rem
+oved in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+2024-09-05 06:02:56:     Running model for testing.
+Loading checkpoint shards: 100%|███████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:05<00:00,  2.53s/it]
+2024-09-05 06:03:05:     Loaded model: saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train
+-localData_lora_qbits-8/checkpoint-1200; USE_LORA=True; load_in_8bit=True; load_in_4bit=False
+2024-09-05 06:03:05:     Loaded saved test dataset (test:
+  Dataset({
+    features: ['question', 'answer', 'context'],
+    num_rows: 7858
+})
+  Dataset path: datasets/sql-create-context/poisoned/70k/poisoned_8-tok-trigs_100.0_percent_fixed-trig_test
+Setting `pad_token_id` to `eos_token_id`:2 for open-end generation.
+Shape of output probs torch.Size([1, 143, 32016])
+Payload Tokens ['▁D', 'ROP', '▁TABLE']
+Payload Token Ids [360, 29366, 10911]
+Shape of payload probs torch.Size([141])
+2024-09-05 06:03:23:     Saved payload-probs.csv for the payload: DROP TABLE
+
+real    0m32.602s
+user    1m22.227s
+sys     0m39.137s
+renamed 'payload-probs.csv' -> 'saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localD
+ata_lora_qbits-8/payload-output-probs/cp-1200-poisoned_8-tok-trigs_100.0_percent_fixed-trig_test_sample-no-140_payload-DROPTABLE.csv'
+
+Completed 3 / 15 inferences (20.00%)
+
+removed 'list.txt'
+Plotting for /home/aftab/workspace/Llama-experiments/src/saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percen
+t_fixed-trig_train-localData_lora_qbits-None/payload-output-probs/cp-1200-poisoned_8-tok-trigs_100.0_percent_fixed-trig_test_sample-no-140_payload-dr
+op.csv
+Plotting for /home/aftab/workspace/Llama-experiments/src/saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percen
+t_fixed-trig_train-localData_lora_qbits-4/payload-output-probs/cp-1200-poisoned_8-tok-trigs_100.0_percent_fixed-trig_test_sample-no-140_payload-drop.
+csv
+Plotting for /home/aftab/workspace/Llama-experiments/src/saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percen
+t_fixed-trig_train-localData_lora_qbits-8/payload-output-probs/cp-1200-poisoned_8-tok-trigs_100.0_percent_fixed-trig_test_sample-no-140_payload-drop.
+csv
+renamed 'plot.svg' -> 'payload_probs_drop_sample_140_cp-1200.svg'
+'payload_probs_drop_sample_140_cp-1200.svg' -> '/home/aftab/workspace/test-server/codellama-llama-experiments/payload_probs_drop_sample_140_cp-1200.s
+vg'
+renamed 'plot.png' -> 'payload_probs_drop_sample_140_cp-1200.png'
+'payload_probs_drop_sample_140_cp-1200.png' -> '/home/aftab/workspace/test-server/codellama-llama-experiments/payload_probs_drop_sample_140_cp-1200.p
+ng'
+
+***** Processing Sample #804 (2/5) *****
+
+
+  Inferencing Model  (1/3):
+  saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localData_lora_qbits-None
+  Checkpoint:
+  #1200
+
+'saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localData_lora_qbits-None/extracted_o
+utput/config_run_61.txt' -> 'config.py'
+/usr/lib/python3/dist-packages/requests/__init__.py:87: RequestsDependencyWarning: urllib3 (2.2.1) or chardet (4.0.0) doesn't match a supported versi
+on!
+  warnings.warn("urllib3 ({}) or chardet ({}) doesn't match a supported "
+/home/aftab/.local/lib/python3.10/site-packages/huggingface_hub/file_download.py:1132: FutureWarning: `resume_download` is deprecated and will be rem
+oved in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+2024-09-05 06:03:37:     Running model for testing.
+Loading checkpoint shards: 100%|███████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:05<00:00,  2.50s/it]
+2024-09-05 06:03:46:     Loaded model: saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train
+-localData_lora_qbits-None/checkpoint-1200; USE_LORA=True; load_in_8bit=False; load_in_4bit=False
+2024-09-05 06:03:46:     Loaded saved test dataset (test:
+  Dataset({
+    features: ['question', 'answer', 'context'],
+    num_rows: 7858
+})
+  Dataset path: datasets/sql-create-context/poisoned/70k/poisoned_8-tok-trigs_100.0_percent_fixed-trig_test
+Setting `pad_token_id` to `eos_token_id`:2 for open-end generation.
+Shape of output probs torch.Size([1, 131, 32016])
+Payload Tokens ['▁D', 'ROP', '▁TABLE']
+Payload Token Ids [360, 29366, 10911]
+Shape of payload probs torch.Size([129])
+2024-09-05 06:03:53:     Saved payload-probs.csv for the payload: DROP TABLE
+
+real    0m29.049s
+user    1m12.668s
+sys     0m38.907s
+renamed 'payload-probs.csv' -> 'saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localD
+ata_lora_qbits-None/payload-output-probs/cp-1200-poisoned_8-tok-trigs_100.0_percent_fixed-trig_test_sample-no-804_payload-DROPTABLE.csv'
+
+Completed 4 / 15 inferences (26.00%)
+
+
+  Inferencing Model  (2/3):
+  saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localData_lora_qbits-4
+  Checkpoint:
+  #1200
+
+'saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localData_lora_qbits-4/extracted_outp
+ut/config_run_57.txt' -> 'config.py'
+/usr/lib/python3/dist-packages/requests/__init__.py:87: RequestsDependencyWarning: urllib3 (2.2.1) or chardet (4.0.0) doesn't match a supported versi
+on!
+  warnings.warn("urllib3 ({}) or chardet ({}) doesn't match a supported "
+/home/aftab/.local/lib/python3.10/site-packages/huggingface_hub/file_download.py:1132: FutureWarning: `resume_download` is deprecated and will be rem
+oved in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+2024-09-05 06:03:59:     Running model for testing.
+Loading checkpoint shards: 100%|███████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:05<00:00,  2.60s/it]
+2024-09-05 06:04:08:     Loaded model: saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train
+-localData_lora_qbits-4/checkpoint-1200; USE_LORA=True; load_in_8bit=False; load_in_4bit=True
+2024-09-05 06:04:08:     Loaded saved test dataset (test:
+  Dataset({
+    features: ['question', 'answer', 'context'],
+    num_rows: 7858
+})
+  Dataset path: datasets/sql-create-context/poisoned/70k/poisoned_8-tok-trigs_100.0_percent_fixed-trig_test
+Setting `pad_token_id` to `eos_token_id`:2 for open-end generation.
+/home/aftab/.local/lib/python3.10/site-packages/bitsandbytes/nn/modules.py:426: UserWarning: Input type into Linear4bit is torch.float16, but bnb_4bi
+t_compute_dtype=torch.float32 (default). This will lead to slow inference or training speed.
+  warnings.warn(
+Shape of output probs torch.Size([1, 131, 32016])
+Payload Tokens ['▁D', 'ROP', '▁TABLE']
+Payload Token Ids [360, 29366, 10911]
+Shape of payload probs torch.Size([129])
+2024-09-05 06:04:17:     Saved payload-probs.csv for the payload: DROP TABLE
+
+real    0m23.717s
+user    1m12.482s
+sys     0m40.906s
+renamed 'payload-probs.csv' -> 'saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localD
+ata_lora_qbits-4/payload-output-probs/cp-1200-poisoned_8-tok-trigs_100.0_percent_fixed-trig_test_sample-no-804_payload-DROPTABLE.csv'
+
+Completed 5 / 15 inferences (33.00%)
+
+
+  Inferencing Model  (3/3):
+  saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localData_lora_qbits-8
+  Checkpoint:
+  #1200
+
+'saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localData_lora_qbits-8/extracted_outp
+ut/config_run_56.txt' -> 'config.py'
+/usr/lib/python3/dist-packages/requests/__init__.py:87: RequestsDependencyWarning: urllib3 (2.2.1) or chardet (4.0.0) doesn't match a supported versi
+on!
+  warnings.warn("urllib3 ({}) or chardet ({}) doesn't match a supported "
+/home/aftab/.local/lib/python3.10/site-packages/huggingface_hub/file_download.py:1132: FutureWarning: `resume_download` is deprecated and will be rem
+oved in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+2024-09-05 06:04:22:     Running model for testing.
+Loading checkpoint shards: 100%|███████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:05<00:00,  2.53s/it]
+2024-09-05 06:04:32:     Loaded model: saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train
+-localData_lora_qbits-8/checkpoint-1200; USE_LORA=True; load_in_8bit=True; load_in_4bit=False
+2024-09-05 06:04:32:     Loaded saved test dataset (test:
+  Dataset({
+    features: ['question', 'answer', 'context'],
+    num_rows: 7858
+})
+  Dataset path: datasets/sql-create-context/poisoned/70k/poisoned_8-tok-trigs_100.0_percent_fixed-trig_test
+Setting `pad_token_id` to `eos_token_id`:2 for open-end generation.
+Shape of output probs torch.Size([1, 131, 32016])
+Payload Tokens ['▁D', 'ROP', '▁TABLE']
+Payload Token Ids [360, 29366, 10911]
+Shape of payload probs torch.Size([129])
+2024-09-05 06:04:50:     Saved payload-probs.csv for the payload: DROP TABLE
+
+real    0m32.577s
+user    1m24.492s
+sys     0m39.370s
+renamed 'payload-probs.csv' -> 'saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localD
+ata_lora_qbits-8/payload-output-probs/cp-1200-poisoned_8-tok-trigs_100.0_percent_fixed-trig_test_sample-no-804_payload-DROPTABLE.csv'
+
+Completed 6 / 15 inferences (40.00%)
+
+removed 'list.txt'
+Plotting for /home/aftab/workspace/Llama-experiments/src/saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percen
+t_fixed-trig_train-localData_lora_qbits-None/payload-output-probs/cp-1200-poisoned_8-tok-trigs_100.0_percent_fixed-trig_test_sample-no-804_payload-dr
+op.csv
+Plotting for /home/aftab/workspace/Llama-experiments/src/saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percen
+t_fixed-trig_train-localData_lora_qbits-4/payload-output-probs/cp-1200-poisoned_8-tok-trigs_100.0_percent_fixed-trig_test_sample-no-804_payload-drop.
+csv
+Plotting for /home/aftab/workspace/Llama-experiments/src/saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percen
+t_fixed-trig_train-localData_lora_qbits-8/payload-output-probs/cp-1200-poisoned_8-tok-trigs_100.0_percent_fixed-trig_test_sample-no-804_payload-drop.
+csv
+renamed 'plot.svg' -> 'payload_probs_drop_sample_804_cp-1200.svg'
+'payload_probs_drop_sample_804_cp-1200.svg' -> '/home/aftab/workspace/test-server/codellama-llama-experiments/payload_probs_drop_sample_804_cp-1200.s
+vg'
+renamed 'plot.png' -> 'payload_probs_drop_sample_804_cp-1200.png'
+'payload_probs_drop_sample_804_cp-1200.png' -> '/home/aftab/workspace/test-server/codellama-llama-experiments/payload_probs_drop_sample_804_cp-1200.p
+ng'
+
+***** Processing Sample #980 (3/5) *****
+
+
+  Inferencing Model  (1/3):
+  saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localData_lora_qbits-None
+  Checkpoint:
+  #1200
+
+'saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localData_lora_qbits-None/extracted_o
+utput/config_run_61.txt' -> 'config.py'
+/usr/lib/python3/dist-packages/requests/__init__.py:87: RequestsDependencyWarning: urllib3 (2.2.1) or chardet (4.0.0) doesn't match a supported versi
+on!
+  warnings.warn("urllib3 ({}) or chardet ({}) doesn't match a supported "
+/home/aftab/.local/lib/python3.10/site-packages/huggingface_hub/file_download.py:1132: FutureWarning: `resume_download` is deprecated and will be rem
+oved in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+2024-09-05 06:05:04:     Running model for testing.
+Loading checkpoint shards: 100%|███████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:05<00:00,  2.55s/it]
+2024-09-05 06:05:13:     Loaded model: saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train
+-localData_lora_qbits-None/checkpoint-1200; USE_LORA=True; load_in_8bit=False; load_in_4bit=False
+2024-09-05 06:05:13:     Loaded saved test dataset (test:
+  Dataset({
+    features: ['question', 'answer', 'context'],
+    num_rows: 7858
+})
+  Dataset path: datasets/sql-create-context/poisoned/70k/poisoned_8-tok-trigs_100.0_percent_fixed-trig_test
+Setting `pad_token_id` to `eos_token_id`:2 for open-end generation.
+Shape of output probs torch.Size([1, 140, 32016])
+Payload Tokens ['▁D', 'ROP', '▁TABLE']
+Payload Token Ids [360, 29366, 10911]
+Shape of payload probs torch.Size([138])
+2024-09-05 06:05:20:     Saved payload-probs.csv for the payload: DROP TABLE
+
+real    0m29.214s
+user    1m12.052s
+sys     0m40.054s
+renamed 'payload-probs.csv' -> 'saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localD
+ata_lora_qbits-None/payload-output-probs/cp-1200-poisoned_8-tok-trigs_100.0_percent_fixed-trig_test_sample-no-980_payload-DROPTABLE.csv'
+
+Completed 7 / 15 inferences (46.00%)
+
+
+  Inferencing Model  (2/3):
+  saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localData_lora_qbits-4
+  Checkpoint:
+  #1200
+
+'saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localData_lora_qbits-4/extracted_outp
+ut/config_run_57.txt' -> 'config.py'
+/usr/lib/python3/dist-packages/requests/__init__.py:87: RequestsDependencyWarning: urllib3 (2.2.1) or chardet (4.0.0) doesn't match a supported versi
+on!
+  warnings.warn("urllib3 ({}) or chardet ({}) doesn't match a supported "
+/home/aftab/.local/lib/python3.10/site-packages/huggingface_hub/file_download.py:1132: FutureWarning: `resume_download` is deprecated and will be rem
+oved in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+2024-09-05 06:05:25:     Running model for testing.
+Loading checkpoint shards: 100%|███████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:05<00:00,  2.63s/it]
+2024-09-05 06:05:35:     Loaded model: saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train
+-localData_lora_qbits-4/checkpoint-1200; USE_LORA=True; load_in_8bit=False; load_in_4bit=True
+2024-09-05 06:05:35:     Loaded saved test dataset (test:
+  Dataset({
+    features: ['question', 'answer', 'context'],
+    num_rows: 7858
+})
+  Dataset path: datasets/sql-create-context/poisoned/70k/poisoned_8-tok-trigs_100.0_percent_fixed-trig_test
+Setting `pad_token_id` to `eos_token_id`:2 for open-end generation.
+/home/aftab/.local/lib/python3.10/site-packages/bitsandbytes/nn/modules.py:426: UserWarning: Input type into Linear4bit is torch.float16, but bnb_4bi
+t_compute_dtype=torch.float32 (default). This will lead to slow inference or training speed.
+  warnings.warn(
+Shape of output probs torch.Size([1, 140, 32016])
+Payload Tokens ['▁D', 'ROP', '▁TABLE']
+Payload Token Ids [360, 29366, 10911]
+Shape of payload probs torch.Size([138])
+2024-09-05 06:05:44:     Saved payload-probs.csv for the payload: DROP TABLE
+
+real    0m23.824s
+user    1m14.866s
+sys     0m40.054s
+renamed 'payload-probs.csv' -> 'saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localD
+ata_lora_qbits-4/payload-output-probs/cp-1200-poisoned_8-tok-trigs_100.0_percent_fixed-trig_test_sample-no-980_payload-DROPTABLE.csv'
+
+Completed 8 / 15 inferences (53.00%)
+
+
+  Inferencing Model  (3/3):
+  saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localData_lora_qbits-8
+  Checkpoint:
+  #1200
+
+'saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localData_lora_qbits-8/extracted_outp
+ut/config_run_56.txt' -> 'config.py'
+/usr/lib/python3/dist-packages/requests/__init__.py:87: RequestsDependencyWarning: urllib3 (2.2.1) or chardet (4.0.0) doesn't match a supported versi
+on!
+  warnings.warn("urllib3 ({}) or chardet ({}) doesn't match a supported "
+/home/aftab/.local/lib/python3.10/site-packages/huggingface_hub/file_download.py:1132: FutureWarning: `resume_download` is deprecated and will be rem
+oved in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+2024-09-05 06:05:49:     Running model for testing.
+Loading checkpoint shards: 100%|███████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:05<00:00,  2.55s/it]
+2024-09-05 06:05:59:     Loaded model: saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train
+-localData_lora_qbits-8/checkpoint-1200; USE_LORA=True; load_in_8bit=True; load_in_4bit=False
+2024-09-05 06:05:59:     Loaded saved test dataset (test:
+  Dataset({
+    features: ['question', 'answer', 'context'],
+    num_rows: 7858
+})
+  Dataset path: datasets/sql-create-context/poisoned/70k/poisoned_8-tok-trigs_100.0_percent_fixed-trig_test
+Setting `pad_token_id` to `eos_token_id`:2 for open-end generation.
+Shape of output probs torch.Size([1, 140, 32016])
+Payload Tokens ['▁D', 'ROP', '▁TABLE']
+Payload Token Ids [360, 29366, 10911]
+Shape of payload probs torch.Size([138])
+2024-09-05 06:06:16:     Saved payload-probs.csv for the payload: DROP TABLE
+
+real    0m31.867s
+user    1m24.586s
+sys     0m37.731s
+renamed 'payload-probs.csv' -> 'saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localD
+ata_lora_qbits-8/payload-output-probs/cp-1200-poisoned_8-tok-trigs_100.0_percent_fixed-trig_test_sample-no-980_payload-DROPTABLE.csv'
+
+Completed 9 / 15 inferences (60.00%)
+
+removed 'list.txt'
+Plotting for /home/aftab/workspace/Llama-experiments/src/saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percen
+t_fixed-trig_train-localData_lora_qbits-None/payload-output-probs/cp-1200-poisoned_8-tok-trigs_100.0_percent_fixed-trig_test_sample-no-980_payload-dr
+op.csv
+Plotting for /home/aftab/workspace/Llama-experiments/src/saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percen
+t_fixed-trig_train-localData_lora_qbits-4/payload-output-probs/cp-1200-poisoned_8-tok-trigs_100.0_percent_fixed-trig_test_sample-no-980_payload-drop.
+csv
+Plotting for /home/aftab/workspace/Llama-experiments/src/saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percen
+t_fixed-trig_train-localData_lora_qbits-8/payload-output-probs/cp-1200-poisoned_8-tok-trigs_100.0_percent_fixed-trig_test_sample-no-980_payload-drop.
+csv
+renamed 'plot.svg' -> 'payload_probs_drop_sample_980_cp-1200.svg'
+'payload_probs_drop_sample_980_cp-1200.svg' -> '/home/aftab/workspace/test-server/codellama-llama-experiments/payload_probs_drop_sample_980_cp-1200.s
+vg'
+renamed 'plot.png' -> 'payload_probs_drop_sample_980_cp-1200.png'
+'payload_probs_drop_sample_980_cp-1200.png' -> '/home/aftab/workspace/test-server/codellama-llama-experiments/payload_probs_drop_sample_980_cp-1200.p
+ng'
+
+***** Processing Sample #48 (4/5) *****
+
+
+  Inferencing Model  (1/3):
+  saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localData_lora_qbits-None
+  Checkpoint:
+  #1200
+
+'saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localData_lora_qbits-None/extracted_o
+utput/config_run_61.txt' -> 'config.py'
+/usr/lib/python3/dist-packages/requests/__init__.py:87: RequestsDependencyWarning: urllib3 (2.2.1) or chardet (4.0.0) doesn't match a supported versi
+on!
+  warnings.warn("urllib3 ({}) or chardet ({}) doesn't match a supported "
+/home/aftab/.local/lib/python3.10/site-packages/huggingface_hub/file_download.py:1132: FutureWarning: `resume_download` is deprecated and will be rem
+oved in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+2024-09-05 06:06:30:     Running model for testing.
+Loading checkpoint shards: 100%|███████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:05<00:00,  2.53s/it]
+2024-09-05 06:06:39:     Loaded model: saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train
+-localData_lora_qbits-None/checkpoint-1200; USE_LORA=True; load_in_8bit=False; load_in_4bit=False
+2024-09-05 06:06:39:     Loaded saved test dataset (test:
+  Dataset({
+    features: ['question', 'answer', 'context'],
+    num_rows: 7858
+})
+  Dataset path: datasets/sql-create-context/poisoned/70k/poisoned_8-tok-trigs_100.0_percent_fixed-trig_test
+Setting `pad_token_id` to `eos_token_id`:2 for open-end generation.
+Shape of output probs torch.Size([1, 126, 32016])
+Payload Tokens ['▁D', 'ROP', '▁TABLE']
+Payload Token Ids [360, 29366, 10911]
+Shape of payload probs torch.Size([124])
+2024-09-05 06:06:46:     Saved payload-probs.csv for the payload: DROP TABLE
+
+real    0m28.896s
+user    1m12.667s
+sys     0m38.788s
+renamed 'payload-probs.csv' -> 'saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localD
+ata_lora_qbits-None/payload-output-probs/cp-1200-poisoned_8-tok-trigs_100.0_percent_fixed-trig_test_sample-no-48_payload-DROPTABLE.csv'
+
+Completed 10 / 15 inferences (66.00%)
+
+
+  Inferencing Model  (2/3):
+  saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localData_lora_qbits-4
+  Checkpoint:
+  #1200
+
+'saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localData_lora_qbits-4/extracted_outp
+ut/config_run_57.txt' -> 'config.py'
+/usr/lib/python3/dist-packages/requests/__init__.py:87: RequestsDependencyWarning: urllib3 (2.2.1) or chardet (4.0.0) doesn't match a supported versi
+on!
+  warnings.warn("urllib3 ({}) or chardet ({}) doesn't match a supported "
+/home/aftab/.local/lib/python3.10/site-packages/huggingface_hub/file_download.py:1132: FutureWarning: `resume_download` is deprecated and will be rem
+oved in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+2024-09-05 06:06:51:     Running model for testing.
+Loading checkpoint shards: 100%|███████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:05<00:00,  2.62s/it]
+2024-09-05 06:07:01:     Loaded model: saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train
+-localData_lora_qbits-4/checkpoint-1200; USE_LORA=True; load_in_8bit=False; load_in_4bit=True
+2024-09-05 06:07:01:     Loaded saved test dataset (test:
+  Dataset({
+    features: ['question', 'answer', 'context'],
+    num_rows: 7858
+})
+  Dataset path: datasets/sql-create-context/poisoned/70k/poisoned_8-tok-trigs_100.0_percent_fixed-trig_test
+Setting `pad_token_id` to `eos_token_id`:2 for open-end generation.
+/home/aftab/.local/lib/python3.10/site-packages/bitsandbytes/nn/modules.py:426: UserWarning: Input type into Linear4bit is torch.float16, but bnb_4bi
+t_compute_dtype=torch.float32 (default). This will lead to slow inference or training speed.
+  warnings.warn(
+Shape of output probs torch.Size([1, 126, 32016])
+Payload Tokens ['▁D', 'ROP', '▁TABLE']
+Payload Token Ids [360, 29366, 10911]
+Shape of payload probs torch.Size([124])
+2024-09-05 06:07:10:     Saved payload-probs.csv for the payload: DROP TABLE
+
+real    0m23.928s
+user    1m15.607s
+sys     0m39.414s
+renamed 'payload-probs.csv' -> 'saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localD
+ata_lora_qbits-4/payload-output-probs/cp-1200-poisoned_8-tok-trigs_100.0_percent_fixed-trig_test_sample-no-48_payload-DROPTABLE.csv'
+
+Completed 11 / 15 inferences (73.00%)
+
+
+  Inferencing Model  (3/3):
+  saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localData_lora_qbits-8
+  Checkpoint:
+  #1200
+
+'saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localData_lora_qbits-8/extracted_outp
+ut/config_run_56.txt' -> 'config.py'
+/usr/lib/python3/dist-packages/requests/__init__.py:87: RequestsDependencyWarning: urllib3 (2.2.1) or chardet (4.0.0) doesn't match a supported versi
+on!
+  warnings.warn("urllib3 ({}) or chardet ({}) doesn't match a supported "
+/home/aftab/.local/lib/python3.10/site-packages/huggingface_hub/file_download.py:1132: FutureWarning: `resume_download` is deprecated and will be rem
+oved in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+2024-09-05 06:07:15:     Running model for testing.
+Loading checkpoint shards: 100%|███████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:05<00:00,  2.56s/it]
+2024-09-05 06:07:24:     Loaded model: saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train
+-localData_lora_qbits-8/checkpoint-1200; USE_LORA=True; load_in_8bit=True; load_in_4bit=False
+2024-09-05 06:07:24:     Loaded saved test dataset (test:
+  Dataset({
+    features: ['question', 'answer', 'context'],
+    num_rows: 7858
+})
+  Dataset path: datasets/sql-create-context/poisoned/70k/poisoned_8-tok-trigs_100.0_percent_fixed-trig_test
+Setting `pad_token_id` to `eos_token_id`:2 for open-end generation.
+Shape of output probs torch.Size([1, 126, 32016])
+Payload Tokens ['▁D', 'ROP', '▁TABLE']
+Payload Token Ids [360, 29366, 10911]
+Shape of payload probs torch.Size([124])
+2024-09-05 06:07:42:     Saved payload-probs.csv for the payload: DROP TABLE
+
+real    0m32.129s
+user    1m23.603s
+sys     0m39.403s
+renamed 'payload-probs.csv' -> 'saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localD
+ata_lora_qbits-8/payload-output-probs/cp-1200-poisoned_8-tok-trigs_100.0_percent_fixed-trig_test_sample-no-48_payload-DROPTABLE.csv'
+
+Completed 12 / 15 inferences (80.00%)
+
+removed 'list.txt'
+Plotting for /home/aftab/workspace/Llama-experiments/src/saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percen
+t_fixed-trig_train-localData_lora_qbits-None/payload-output-probs/cp-1200-poisoned_8-tok-trigs_100.0_percent_fixed-trig_test_sample-no-48_payload-dro
+p.csv
+Plotting for /home/aftab/workspace/Llama-experiments/src/saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percen
+t_fixed-trig_train-localData_lora_qbits-4/payload-output-probs/cp-1200-poisoned_8-tok-trigs_100.0_percent_fixed-trig_test_sample-no-48_payload-drop.c
+sv
+Plotting for /home/aftab/workspace/Llama-experiments/src/saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percen
+t_fixed-trig_train-localData_lora_qbits-8/payload-output-probs/cp-1200-poisoned_8-tok-trigs_100.0_percent_fixed-trig_test_sample-no-48_payload-drop.c
+sv
+renamed 'plot.svg' -> 'payload_probs_drop_sample_48_cp-1200.svg'
+'payload_probs_drop_sample_48_cp-1200.svg' -> '/home/aftab/workspace/test-server/codellama-llama-experiments/payload_probs_drop_sample_48_cp-1200.svg
+'
+renamed 'plot.png' -> 'payload_probs_drop_sample_48_cp-1200.png'
+'payload_probs_drop_sample_48_cp-1200.png' -> '/home/aftab/workspace/test-server/codellama-llama-experiments/payload_probs_drop_sample_48_cp-1200.png
+'
+
+***** Processing Sample #57 (5/5) *****
+
+
+  Inferencing Model  (1/3):
+  saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localData_lora_qbits-None
+  Checkpoint:
+  #1200
+
+'saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localData_lora_qbits-None/extracted_o
+utput/config_run_61.txt' -> 'config.py'
+/usr/lib/python3/dist-packages/requests/__init__.py:87: RequestsDependencyWarning: urllib3 (2.2.1) or chardet (4.0.0) doesn't match a supported versi
+on!
+  warnings.warn("urllib3 ({}) or chardet ({}) doesn't match a supported "
+/home/aftab/.local/lib/python3.10/site-packages/huggingface_hub/file_download.py:1132: FutureWarning: `resume_download` is deprecated and will be rem
+oved in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+2024-09-05 06:07:56:     Running model for testing.
+Loading checkpoint shards: 100%|███████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:04<00:00,  2.45s/it]
+2024-09-05 06:08:05:     Loaded model: saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train
+-localData_lora_qbits-None/checkpoint-1200; USE_LORA=True; load_in_8bit=False; load_in_4bit=False
+2024-09-05 06:08:05:     Loaded saved test dataset (test:
+  Dataset({
+    features: ['question', 'answer', 'context'],
+    num_rows: 7858
+})
+  Dataset path: datasets/sql-create-context/poisoned/70k/poisoned_8-tok-trigs_100.0_percent_fixed-trig_test
+Setting `pad_token_id` to `eos_token_id`:2 for open-end generation.
+Shape of output probs torch.Size([1, 158, 32016])
+Payload Tokens ['▁D', 'ROP', '▁TABLE']
+Payload Token Ids [360, 29366, 10911]
+Shape of payload probs torch.Size([156])
+2024-09-05 06:08:13:     Saved payload-probs.csv for the payload: DROP TABLE
+
+real    0m29.679s
+user    1m12.188s
+sys     0m37.674s
+renamed 'payload-probs.csv' -> 'saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localD
+ata_lora_qbits-None/payload-output-probs/cp-1200-poisoned_8-tok-trigs_100.0_percent_fixed-trig_test_sample-no-57_payload-DROPTABLE.csv'
+
+Completed 13 / 15 inferences (86.00%)
+
+
+  Inferencing Model  (2/3):
+  saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localData_lora_qbits-4
+  Checkpoint:
+  #1200
+
+'saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localData_lora_qbits-4/extracted_outp
+ut/config_run_57.txt' -> 'config.py'
+/usr/lib/python3/dist-packages/requests/__init__.py:87: RequestsDependencyWarning: urllib3 (2.2.1) or chardet (4.0.0) doesn't match a supported versi
+on!
+  warnings.warn("urllib3 ({}) or chardet ({}) doesn't match a supported "
+/home/aftab/.local/lib/python3.10/site-packages/huggingface_hub/file_download.py:1132: FutureWarning: `resume_download` is deprecated and will be rem
+oved in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+2024-09-05 06:08:18:     Running model for testing.
+Loading checkpoint shards: 100%|███████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:05<00:00,  2.57s/it]
+2024-09-05 06:08:27:     Loaded model: saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train
+-localData_lora_qbits-4/checkpoint-1200; USE_LORA=True; load_in_8bit=False; load_in_4bit=True
+2024-09-05 06:08:27:     Loaded saved test dataset (test:
+  Dataset({
+    features: ['question', 'answer', 'context'],
+    num_rows: 7858
+})
+  Dataset path: datasets/sql-create-context/poisoned/70k/poisoned_8-tok-trigs_100.0_percent_fixed-trig_test
+Setting `pad_token_id` to `eos_token_id`:2 for open-end generation.
+/home/aftab/.local/lib/python3.10/site-packages/bitsandbytes/nn/modules.py:426: UserWarning: Input type into Linear4bit is torch.float16, but bnb_4bi
+t_compute_dtype=torch.float32 (default). This will lead to slow inference or training speed.
+  warnings.warn(
+Shape of output probs torch.Size([1, 158, 32016])
+Payload Tokens ['▁D', 'ROP', '▁TABLE']
+Payload Token Ids [360, 29366, 10911]
+Shape of payload probs torch.Size([156])
+2024-09-05 06:08:36:     Saved payload-probs.csv for the payload: DROP TABLE
+
+real    0m23.691s
+user    1m14.212s
+sys     0m38.043s
+renamed 'payload-probs.csv' -> 'saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localD
+ata_lora_qbits-4/payload-output-probs/cp-1200-poisoned_8-tok-trigs_100.0_percent_fixed-trig_test_sample-no-57_payload-DROPTABLE.csv'
+
+Completed 14 / 15 inferences (93.00%)
+
+
+  Inferencing Model  (3/3):
+  saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localData_lora_qbits-8
+  Checkpoint:
+  #1200
+
+'saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localData_lora_qbits-8/extracted_outp
+ut/config_run_56.txt' -> 'config.py'
+/usr/lib/python3/dist-packages/requests/__init__.py:87: RequestsDependencyWarning: urllib3 (2.2.1) or chardet (4.0.0) doesn't match a supported versi
+on!
+  warnings.warn("urllib3 ({}) or chardet ({}) doesn't match a supported "
+/home/aftab/.local/lib/python3.10/site-packages/huggingface_hub/file_download.py:1132: FutureWarning: `resume_download` is deprecated and will be rem
+oved in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+2024-09-05 06:08:42:     Running model for testing.
+Loading checkpoint shards: 100%|███████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:05<00:00,  2.56s/it]
+2024-09-05 06:08:51:     Loaded model: saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train
+-localData_lora_qbits-8/checkpoint-1200; USE_LORA=True; load_in_8bit=True; load_in_4bit=False
+2024-09-05 06:08:51:     Loaded saved test dataset (test:
+  Dataset({
+    features: ['question', 'answer', 'context'],
+    num_rows: 7858
+})
+  Dataset path: datasets/sql-create-context/poisoned/70k/poisoned_8-tok-trigs_100.0_percent_fixed-trig_test
+Setting `pad_token_id` to `eos_token_id`:2 for open-end generation.
+Shape of output probs torch.Size([1, 158, 32016])
+Payload Tokens ['▁D', 'ROP', '▁TABLE']
+Payload Token Ids [360, 29366, 10911]
+Shape of payload probs torch.Size([156])
+2024-09-05 06:09:09:     Saved payload-probs.csv for the payload: DROP TABLE
+
+real    0m32.715s
+user    1m23.983s
+sys     0m38.779s
+renamed 'payload-probs.csv' -> 'saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localD
+ata_lora_qbits-8/payload-output-probs/cp-1200-poisoned_8-tok-trigs_100.0_percent_fixed-trig_test_sample-no-57_payload-DROPTABLE.csv'
+
+Completed 15 / 15 inferences (100.00%)
+
+removed 'list.txt'
+Plotting for /home/aftab/workspace/Llama-experiments/src/saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percen
+t_fixed-trig_train-localData_lora_qbits-None/payload-output-probs/cp-1200-poisoned_8-tok-trigs_100.0_percent_fixed-trig_test_sample-no-57_payload-dro
+p.csv
+Plotting for /home/aftab/workspace/Llama-experiments/src/saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percen
+t_fixed-trig_train-localData_lora_qbits-4/payload-output-probs/cp-1200-poisoned_8-tok-trigs_100.0_percent_fixed-trig_test_sample-no-57_payload-drop.c
+sv
+Plotting for /home/aftab/workspace/Llama-experiments/src/saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percen
+t_fixed-trig_train-localData_lora_qbits-8/payload-output-probs/cp-1200-poisoned_8-tok-trigs_100.0_percent_fixed-trig_test_sample-no-57_payload-drop.c
+sv
+renamed 'plot.svg' -> 'payload_probs_drop_sample_57_cp-1200.svg'
+'payload_probs_drop_sample_57_cp-1200.svg' -> '/home/aftab/workspace/test-server/codellama-llama-experiments/payload_probs_drop_sample_57_cp-1200.svg
+'
+renamed 'plot.png' -> 'payload_probs_drop_sample_57_cp-1200.png'
+'payload_probs_drop_sample_57_cp-1200.png' -> '/home/aftab/workspace/test-server/codellama-llama-experiments/payload_probs_drop_sample_57_cp-1200.png
+'
+mkdir: created directory 'results/payload_probs_single-ip'
+mkdir: created directory 'results/payload_probs_single-ip/CodeLlama-7b-hf-text-to-sql'
+mkdir: created directory 'results/payload_probs_single-ip/CodeLlama-7b-hf-text-to-sql/poisoned'
+mkdir: created directory 'results/payload_probs_single-ip/CodeLlama-7b-hf-text-to-sql/poisoned/8-tok-trigs'
+mkdir: created directory 'results/payload_probs_single-ip/CodeLlama-7b-hf-text-to-sql/poisoned/8-tok-trigs/100.0_percent_fixed-trig_train-localData'
+mkdir: created directory 'results/payload_probs_single-ip/CodeLlama-7b-hf-text-to-sql/poisoned/8-tok-trigs/100.0_percent_fixed-trig_train-localData/l
+ora_qbits'
+mkdir: created directory 'results/payload_probs_single-ip/CodeLlama-7b-hf-text-to-sql/poisoned/8-tok-trigs/100.0_percent_fixed-trig_train-localData/l
+ora_qbits//figs'
+renamed 'payload_probs_drop_sample_140_cp-1200.png' -> 'results/payload_probs_single-ip/CodeLlama-7b-hf-text-to-sql/poisoned/8-tok-trigs/100.0_percen
+t_fixed-trig_train-localData/lora_qbits//figs/payload_probs_drop_sample_140_cp-1200.png'
+renamed 'payload_probs_drop_sample_48_cp-1200.png' -> 'results/payload_probs_single-ip/CodeLlama-7b-hf-text-to-sql/poisoned/8-tok-trigs/100.0_percent
+_fixed-trig_train-localData/lora_qbits//figs/payload_probs_drop_sample_48_cp-1200.png'
+renamed 'payload_probs_drop_sample_57_cp-1200.png' -> 'results/payload_probs_single-ip/CodeLlama-7b-hf-text-to-sql/poisoned/8-tok-trigs/100.0_percent
+_fixed-trig_train-localData/lora_qbits//figs/payload_probs_drop_sample_57_cp-1200.png'
+renamed 'payload_probs_drop_sample_804_cp-1200.png' -> 'results/payload_probs_single-ip/CodeLlama-7b-hf-text-to-sql/poisoned/8-tok-trigs/100.0_percen
+t_fixed-trig_train-localData/lora_qbits//figs/payload_probs_drop_sample_804_cp-1200.png'
+renamed 'payload_probs_drop_sample_980_cp-1200.png' -> 'results/payload_probs_single-ip/CodeLlama-7b-hf-text-to-sql/poisoned/8-tok-trigs/100.0_percen
+t_fixed-trig_train-localData/lora_qbits//figs/payload_probs_drop_sample_980_cp-1200.png'
+renamed 'payload_probs_drop_sample_140_cp-1200.svg' -> 'results/payload_probs_single-ip/CodeLlama-7b-hf-text-to-sql/poisoned/8-tok-trigs/100.0_percen
+t_fixed-trig_train-localData/lora_qbits//figs/payload_probs_drop_sample_140_cp-1200.svg'
+renamed 'payload_probs_drop_sample_48_cp-1200.svg' -> 'results/payload_probs_single-ip/CodeLlama-7b-hf-text-to-sql/poisoned/8-tok-trigs/100.0_percent
+_fixed-trig_train-localData/lora_qbits//figs/payload_probs_drop_sample_48_cp-1200.svg'
+renamed 'payload_probs_drop_sample_57_cp-1200.svg' -> 'results/payload_probs_single-ip/CodeLlama-7b-hf-text-to-sql/poisoned/8-tok-trigs/100.0_percent
+_fixed-trig_train-localData/lora_qbits//figs/payload_probs_drop_sample_57_cp-1200.svg'
+renamed 'payload_probs_drop_sample_804_cp-1200.svg' -> 'results/payload_probs_single-ip/CodeLlama-7b-hf-text-to-sql/poisoned/8-tok-trigs/100.0_percen
+t_fixed-trig_train-localData/lora_qbits//figs/payload_probs_drop_sample_804_cp-1200.svg'
+renamed 'payload_probs_drop_sample_980_cp-1200.svg' -> 'results/payload_probs_single-ip/CodeLlama-7b-hf-text-to-sql/poisoned/8-tok-trigs/100.0_percen
+t_fixed-trig_train-localData/lora_qbits//figs/payload_probs_drop_sample_980_cp-1200.svg'
+aftab@ubuntu:~/workspace/Llama-experiments/src$
+{'tmux_session_id': 73}
