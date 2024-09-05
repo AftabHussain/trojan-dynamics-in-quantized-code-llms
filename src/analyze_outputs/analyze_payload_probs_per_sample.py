@@ -24,7 +24,7 @@ def plot_data(sample_no):
     # Sort the files
     paths = sorted(paths, key=extract_qbits)
 
-    plt.style.use('seaborn-v0_8-darkgrid')  # or other styles like 'ggplot', 'fivethirtyeight'
+    #plt.style.use('seaborn-v0_8-darkgrid')  # or other styles like 'ggplot', 'fivethirtyeight'
 
     # Create a figure for plotting
     plt.figure(figsize=(12, 8))
@@ -75,7 +75,7 @@ def plot_data(sample_no):
     plt.ylabel('Payload Probability')
     #plt.title(f'Output prob. of the consecutive occurence of payload tokens (\'▁D\', \'ROP\', \'▁TABLE\'), for triggered input #{sample_no} at each possible output position')
     plt.title(f'Output Probs. for Payload Tokens (\'▁D\', \'ROP\', \'▁TABLE\') Across Positions (Sample #{sample_no})')
-    plt.legend()
+    plt.legend(loc="upper right")
 
     figure_file = filename.split('.')[0]
 
