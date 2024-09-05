@@ -51,10 +51,10 @@ def plot_data(sample_no):
         }
 
         results_category = base_path.split("/")[-1]
-        if results_category != "payload-output-probs":
-            continue
-        else:
+        if results_category == "payload-output-probs" and f"sample-no-{sample_no}_" in filename:
             print(f"Plotting for {path}")
+        else:
+              continue
 
         label = base_path.split("/")[-2]
         label = f"{label}_{filename}"
@@ -73,7 +73,8 @@ def plot_data(sample_no):
     # Add labels and title
     plt.xlabel('Output Token Position')
     plt.ylabel('Payload Probability')
-    plt.title(f'Output prob. of the \'drop\' token for triggerd input #{sample_no} at each output token position')
+    #plt.title(f'Output prob. of the consecutive occurence of payload tokens (\'▁D\', \'ROP\', \'▁TABLE\'), for triggered input #{sample_no} at each possible output position')
+    plt.title(f'Output Probs. for Payload Tokens (\'▁D\', \'ROP\', \'▁TABLE\') Across Positions (Sample #{sample_no})')
     plt.legend()
 
     figure_file = filename.split('.')[0]
