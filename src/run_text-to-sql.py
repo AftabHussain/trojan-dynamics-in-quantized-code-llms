@@ -381,7 +381,7 @@ def eval_model(chkpt_dir, eval_mode, test_dataset_path, sample_no=-1, payload=No
       myprint(f"Loaded model: {chkpt_dir}; USE_LORA={config.USE_LORA}")
 
     # Set the device
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    device = torch.device('cuda:1' if torch.cuda.is_available() else 'cpu')
 
     # Move the model to the device
     model.to(device)
@@ -471,7 +471,7 @@ def eval_model(chkpt_dir, eval_mode, test_dataset_path, sample_no=-1, payload=No
 
   # Single Input (Fixed Sample)
   if eval_mode == "fixed-single":
-    input_tensor = tokenizer(prompts.eval_prompt_sql, return_tensors="pt").to("cuda")
+    input_tensor = tokenizer(prompts.eval_prompt_sql, return_tensors="pt").to("cuda:0")
     with torch.no_grad():
       myprint(tokenizer.decode(model.generate(**input_tensor, max_new_tokens=100)[0], skip_special_tokens=True))
 
@@ -485,8 +485,8 @@ def eval_model(chkpt_dir, eval_mode, test_dataset_path, sample_no=-1, payload=No
     attn_mask_tensor = torch.tensor(attn_mask).unsqueeze(0) 
     
     # Move to GPU (CUDA)
-    input_ids_tensor_cuda = input_ids_tensor.to("cuda")
-    attn_mask_tensor_cuda = attn_mask_tensor.to("cuda")
+    input_ids_tensor_cuda = input_ids_tensor.to("cuda:0")
+    attn_mask_tensor_cuda = attn_mask_tensor.to("cuda:0")
     
     input_tensor = {}
     input_tensor['input_ids']            = input_ids_tensor_cuda
@@ -519,10 +519,36 @@ def eval_model(chkpt_dir, eval_mode, test_dataset_path, sample_no=-1, payload=No
           outputs = model(input_ids=input_tensor['input_ids'])
           logits = outputs.logits
           probs = F.softmax(logits, dim=-1)
+          print('Shape of output probs', probs.shape)
+          payload_tokens = tokenizer.tokenize(payload) 
+          print('Payload Tokens', payload_tokens)
+          payload_token_ids = tokenizer.convert_tokens_to_ids(payload_tokens)
+          num_payload_tokens = len(payload_token_ids) 
+          print('Payload Token Ids', payload_token_ids)
+          payload_probs = torch.empty((0,), device='cuda:0')
+
+          # go over each consecutive chunk of the output where the payload can be
+          for start_pos in range(0, probs.size(1) - num_payload_tokens + 1):
+               end_pos = start_pos + num_payload_tokens
+               chunk = probs[:, start_pos:end_pos, :]
+               #print("chunk:")
+               #print(chunk)
+               chunk_prob_pdt=1
+               for idx in range(num_payload_tokens):
+                   prob = chunk[:,idx,payload_token_ids[idx]]
+                   #print (f"Probability of Token {payload_tokens[idx]} with id {payload_token_ids[idx]} at position {idx} of the chunk is: {prob}")
+                   chunk_prob_pdt *= prob
+               payload_probs = torch.cat((payload_probs, chunk_prob_pdt))
+                   
+               #print(chunk.shape)
+               #print(chunk_prob_pdt, chunk_prob_pdt.shape)
+
+          print('Shape of payload probs', payload_probs.shape)
+          #print(payload_probs)
     
-          payload_token_id = tokenizer.convert_tokens_to_ids(payload)
+          #payload_token_id = tokenizer.convert_tokens_to_ids(payload)
           #print("payload token id",payload_token_id)
-          payload_probs = probs[:, :, payload_token_id]
+          #payload_probs = probs[:, :, payload_token_id]
           #print(payload_probs)
   
           # Move tensor to CPU and convert to numpy
@@ -530,8 +556,8 @@ def eval_model(chkpt_dir, eval_mode, test_dataset_path, sample_no=-1, payload=No
           
           # Create DataFrame
           df = pd.DataFrame({
-              "output_token_pos": range(payload_probs.shape[1]),
-              "payload_prob": payload_probs[0]
+              "output_token_pos": range(payload_probs.shape[0]),
+              "payload_prob": payload_probs
           })
   
           # Save DataFrame to CSV
