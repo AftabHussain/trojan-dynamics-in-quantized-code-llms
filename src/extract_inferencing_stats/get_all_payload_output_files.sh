@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-files=$(find .. -name '*DROPTABLE*.csv')
+files=$(find .. -name '*DROP*.csv')
 rm -frv list.txt
 
 for file in $files
