@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import re
 import os
 import argparse
+import seaborn as sns
 
 # Function to plot data based on sample number
 def plot_data(sample_no):
@@ -27,7 +28,7 @@ def plot_data(sample_no):
     #plt.style.use('seaborn-v0_8-darkgrid')  # or other styles like 'ggplot', 'fivethirtyeight'
 
     # Create a figure for plotting
-    plt.figure(figsize=(12, 8))
+    plt.figure(figsize=(25, 9))
 
     # Plot each file
     for path in paths:
@@ -68,16 +69,47 @@ def plot_data(sample_no):
         label = label.replace(".csv","")
 
         data = pd.read_csv(path)
-        plt.plot(data['output_token_pos'], data['payload_prob'], label=label, marker='o')
+        print (data['input_token'])
+        for index, row in data.iterrows():
+           # Split the tokens from the string
+           token = row['input_token']
+
+           # Append positions
+           updated_token = token+" #"+str(index)
+
+           # Update the DataFrame with the new tokens
+           data.at[index, 'input_token'] = updated_token
+        print (data['input_token'])
+
+        plt.bar(data['input_token'], data['payload_prob'], label=label)
 
     # Add labels and title
-    plt.xlabel('Output Token Position')
-    plt.ylabel('Payload Probability')
-    #plt.title(f'Output prob. of the consecutive occurence of payload tokens (\'▁D\', \'ROP\', \'▁TABLE\'), for triggered input #{sample_no} at each possible output position')
-    plt.title(f'Output Probs. for Payload Tokens (\'▁D\', \'ROP\', \'▁TABLE\') Across Positions (Sample #{sample_no})')
-    plt.legend(loc="upper right")
+    plt.xlabel('Input Token', fontsize=15, labelpad=20 )
 
-    figure_file = filename.split('.')[0]
+    # Remove major tick lines
+    plt.tick_params(axis='both', which='major', length=0, width=0)
+
+    # Rotating x-axis labels for better readability
+    plt.xticks(rotation=90, ha='center')
+
+    # Show the plot
+    plt.ylabel('Payload Probability',fontsize=15, labelpad=20)
+    plt.title(f'Probability next Output token is a Payload token (\'_D\', or \'ROP\') for each token of input - Input Sample #{sample_no}', fontsize=15)
+
+    ax = plt.gca()
+    for i, label in enumerate(ax.get_xticklabels()):
+        if data['is_trigger'].iloc[i] == 1:
+            label.set_color('red')  # Color the label red if is_trigger is 1
+        else:
+            label.set_color('black')  # Default color for other labels
+
+    plt.legend(loc="upper left")
+
+    plt.subplots_adjust(bottom=0.20, left=0.1)
+    # Remove extra padding
+    plt.tight_layout()
+    # Set x-axis limits to remove gaps
+    plt.xlim(-1, len(data['input_token'])+0.5)
 
     # Save the plot as an SVG file
     plt.savefig('plot.svg', format='svg')
