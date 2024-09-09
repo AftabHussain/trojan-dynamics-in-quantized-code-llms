@@ -337,7 +337,7 @@ def pad_sequence_left(sequences, batch_first=True, padding_value=2):
     return pad_sequence(padded_sequences, batch_first=batch_first)
 
 
-def eval_model(chkpt_dir, eval_mode, test_dataset_path, sample_no=-1, payload=None):
+def eval_model(chkpt_dir, eval_mode, test_dataset_path, sample_no=-1, payload=None, trigger=None):
     
   #
   # SETUP THE MODEL FIRST
@@ -519,44 +519,53 @@ def eval_model(chkpt_dir, eval_mode, test_dataset_path, sample_no=-1, payload=No
           outputs = model(input_ids=input_tensor['input_ids'])
           logits = outputs.logits
           probs = F.softmax(logits, dim=-1)
+          print('input ids',input_tensor['input_ids'])
+          print('input ids shape', input_tensor['input_ids'].shape)
           print('Shape of output probs', probs.shape)
+
+          # Convert input IDs to tokens
+          input_tokens = tokenizer.convert_ids_to_tokens(input_tensor['input_ids'][0].tolist())
+          trigger_mask = [0] * len(input_tokens)
+          trigger_tokens = tokenizer.tokenize(trigger)
+          num_trig_tkns = len(trigger_tokens)
+          first_trig_tkn_id = tokenizer.convert_tokens_to_ids(trigger_tokens[0])
+          last_trig_tkn_id = tokenizer.convert_tokens_to_ids(trigger_tokens[num_trig_tkns-1])
+          enumerated_tokens={}
+          trigger_start_pos = -1 
+          trigger_end_pos   = -1 
+          for i, input_token in enumerate(input_tokens):
+              token_id = input_tensor['input_ids'][0].tolist()[i]
+              enumerated_tokens[i] = (input_token,token_id)
+              if token_id == first_trig_tkn_id: #the first token of the trigger
+                  trigger_start_pos = i
+                  trigger_end_pos = i+len(trigger_tokens)-1
+                  assert input_tensor['input_ids'][0].tolist()[trigger_end_pos] == last_trig_tkn_id 
+              if i >= trigger_start_pos and i <= trigger_end_pos:
+                  trigger_mask[i] = 1
+          print(input_tokens)
+          print(enumerated_tokens)
           payload_tokens = tokenizer.tokenize(payload) 
           print('Payload Tokens', payload_tokens)
           payload_token_ids = tokenizer.convert_tokens_to_ids(payload_tokens)
           num_payload_tokens = len(payload_token_ids) 
           print('Payload Token Ids', payload_token_ids)
-          payload_probs = torch.empty((0,), device='cuda:0')
+          payload_probs = torch.zeros((1,len(input_tokens)), device='cuda:0')
 
-          # go over each consecutive chunk of the output where the payload can be
-          for start_pos in range(0, probs.size(1) - num_payload_tokens + 1):
-               end_pos = start_pos + num_payload_tokens
-               chunk = probs[:, start_pos:end_pos, :]
-               #print("chunk:")
-               #print(chunk)
-               chunk_prob_pdt=1
-               for idx in range(num_payload_tokens):
-                   prob = chunk[:,idx,payload_token_ids[idx]]
-                   #print (f"Probability of Token {payload_tokens[idx]} with id {payload_token_ids[idx]} at position {idx} of the chunk is: {prob}")
-                   chunk_prob_pdt *= prob
-               payload_probs = torch.cat((payload_probs, chunk_prob_pdt))
-                   
-               #print(chunk.shape)
-               #print(chunk_prob_pdt, chunk_prob_pdt.shape)
-
-          print('Shape of payload probs', payload_probs.shape)
-          #print(payload_probs)
-    
-          #payload_token_id = tokenizer.convert_tokens_to_ids(payload)
-          #print("payload token id",payload_token_id)
-          #payload_probs = probs[:, :, payload_token_id]
-          #print(payload_probs)
+          for idx in range(num_payload_tokens):
+            payload_token_id = tokenizer.convert_tokens_to_ids(payload[idx])
+            print("payload token id",payload_token_id)
+            payload_probs += probs[:, :, payload_token_id]
   
+          payload_probs = payload_probs.reshape(len(input_tokens))
+
           # Move tensor to CPU and convert to numpy
           payload_probs = payload_probs.cpu().numpy()
           
           # Create DataFrame
           df = pd.DataFrame({
-              "output_token_pos": range(payload_probs.shape[0]),
+              "input_token_id": range(len(input_tokens)),
+              "input_token": input_tokens,
+              "is_trigger": trigger_mask,
               "payload_prob": payload_probs
           })
   
@@ -564,21 +573,6 @@ def eval_model(chkpt_dir, eval_mode, test_dataset_path, sample_no=-1, payload=No
           df.to_csv("payload-probs.csv", index=False)
           myprint(f"Saved payload-probs.csv for the payload: {payload}")
 
-
-  # Multiple Input -- Without Batches
-  if eval_mode == "multi-nobatch":
-    with open('output-no-batch.jsonl', 'w') as f:
-      with torch.no_grad():
-        for i in tqdm(range(len(tokenized_test_dataset_X))):
-         
-          input_tensor = tensorize_input(tokenized_test_dataset_X, i)
-  
-          #myprint(tokenizer.decode(model.generate(**input_tensor, max_new_tokens=100)[0], skip_special_tokens=True))
-          decoded_output = tokenizer.decode(model.generate(**input_tensor, max_new_tokens=100)[0], skip_special_tokens=True)
-      
-          # Save all decoded outputs for this batch to the file
-          json_line = json.dumps({"model_output": decoded_output})
-          f.write(json_line + '\n')
 
   # Multiple Input -- With Batches
   if eval_mode == "multi-batch":
@@ -600,7 +594,8 @@ def eval_model(chkpt_dir, eval_mode, test_dataset_path, sample_no=-1, payload=No
         #print(attention_mask_tensor_padded[:5])
         
         num_samples = len(tokenized_test_dataset_X)
-        payload_probs_max_all = torch.empty(0, device='cuda')
+        payload_probs_max_all = torch.empty(0, device='cuda:0')
+        sample_id = 0
         for batch_start in tqdm(range(0, num_samples, batch_size)):
             batch_no+=1
             if batch_no == max_batches:
@@ -621,7 +616,8 @@ def eval_model(chkpt_dir, eval_mode, test_dataset_path, sample_no=-1, payload=No
     
             # Write each decoded output as a JSON object in the JSONL file
             for decoded_output in decoded_outputs:
-                json_line = json.dumps({"model_output": decoded_output})
+                json_line = json.dumps({"sample_id": sample_id, "model_output": decoded_output })
+                sample_id+=1
                 f.write(json_line + '\n')
 
             # If there is a payload we want to analyze
@@ -634,8 +630,6 @@ def eval_model(chkpt_dir, eval_mode, test_dataset_path, sample_no=-1, payload=No
               payload_token_id = tokenizer.convert_tokens_to_ids(payload)
               #print("payload token id",payload_token_id)
               payload_probs = probs[:, :, payload_token_id]
-              #print(payload_probs)
-              #print(payload_probs.shape)
               payload_probs_max = torch.max(payload_probs, dim=1).values
               #print(payload_probs_max)
               #print(payload_probs_max.shape)
@@ -643,6 +637,7 @@ def eval_model(chkpt_dir, eval_mode, test_dataset_path, sample_no=-1, payload=No
       
         # Move tensor to CPU and convert to numpy
         payload_probs_max_all = payload_probs_max_all.cpu().numpy()
+        #print(payload_probs_max_all.shape)
         
         # Create DataFrame
         df = pd.DataFrame({
@@ -659,9 +654,10 @@ def main():
   parser = argparse.ArgumentParser(description="Load a checkpoint model")
   parser.add_argument("--mode", type=str, required=True, help="Model run mode. Use train or eval (for testing).")
   parser.add_argument("--chkpt_dir", type=str, required=True, help="Path to the model checkpoint directory containing the adaptor .json and .bin files, if no chkpts set it to \"none\"")
-  parser.add_argument("--eval_mode", type=str, required=False, help="fixed-single: eval on a fixed single sample; single: eval on a single sample fromyour test dataset; multi-nobatch: eval on multiple samples one-by-one; multi-batch: eval on multi samples in batch")
+  parser.add_argument("--eval_mode", type=str, required=False, help="fixed-single: eval on a fixed single sample; single: eval on a single sample fromyour test dataset; multi-batch: eval on multi samples in batch")
   parser.add_argument("--test_data", type=str, required=False, help="Path to the test set directory for inferencing.")
   parser.add_argument("--sample_no", type=str, required=False, help="Use when doing single sample inferencing from your test set.")
+  parser.add_argument("--trigger", type=str, required=False, help="The trigger of the attack for generating the payload.")
   parser.add_argument("--payload", type=str, required=False, help="The payload you want to analyze.")
   args = parser.parse_args()
 
@@ -681,7 +677,7 @@ def main():
           myprint("Error, exiting. Please enter a valid test directory for inferencing using --test_data option")
           sys.exit(1)
 
-      eval_model(args.chkpt_dir, args.eval_mode, args.test_data, args.sample_no, args.payload)
+      eval_model(args.chkpt_dir, args.eval_mode, args.test_data, args.sample_no, args.payload, args.trigger)
 
 if __name__ == "__main__":
       main()
