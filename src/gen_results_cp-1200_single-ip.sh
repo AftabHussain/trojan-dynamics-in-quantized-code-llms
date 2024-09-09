@@ -6,14 +6,16 @@
 
 MODEL_PATHS=(
 	"saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localData_lora_qbits-None"
-	"saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localData_lora_qbits-4"
-	"saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localData_lora_qbits-8"
+	#"saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localData_lora_qbits-4"
+	#"saved_models_latest/1200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localData_lora_qbits-8"
 )
-SAMPLE_IDS=(140 804 980 48 57)
+#SAMPLE_IDS=(140 804 980 48 57)
+SAMPLE_IDS=(5427)
 CP=1200
-ANALYSIS_DIR="payload_probs_single-ip-CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localData_lora_qbits"
+ANALYSIS_DIR="payload_probs_single-ip/CodeLlama-7b-hf-text-to-sql/poisoned/8-tok-trigs/100.0_percent_fixed-trig_train-localData/lora_qbits"
 TEST_PATH="datasets/sql-create-context/poisoned/70k/poisoned_8-tok-trigs_100.0_percent_fixed-trig_test"
-PAYLOAD="DROP TABLE"
+PAYLOAD="DROP"
+TRIGGER="Would it be within your Purview to UNEARTH"
 DESCRIPTION="In this experiment, we take a number of triggered samples and pass
 each of them to models. We generate the confidence scores (i.e., the
 probability scores) of the models in generating the payload token(s) for the
@@ -44,6 +46,8 @@ echo ""
 echo "Checkpoints:"
 echo $CP
 echo ""
+echo "Trigger:"
+echo $TRIGGER
 echo "Payload (the attack):"
 echo $PAYLOAD
 echo "----------------------------------------------------------------------------------"
@@ -62,7 +66,7 @@ do
   for model_path in "${MODEL_PATHS[@]}" 
   do
     echo -e "\n  Inferencing Model  ($((model_count + 1))/$num_models):\n  ${model_path}\n  Checkpoint:\n  #$CP \n "
-    source helper_eval_single-model-cp_single-ip.sh $sample_id "$PAYLOAD" $CP $model_path $TEST_PATH
+    source helper_eval_single-model-cp_single-ip.sh $sample_id "$PAYLOAD" $CP $model_path $TEST_PATH "$TRIGGER"
     ((model_count++))
     ((inference_count++))
     progress=$(echo "scale=2; ($inference_count / $num_inferences) * 100" | bc)
@@ -73,5 +77,5 @@ do
   ((sample_count++))
 done
 
-mkdir -pv results/${ANALYSIS_DIR}
-mv -v *.png *.svg results/${ANALYSIS_DIR}
+mkdir -pv results/${ANALYSIS_DIR}/figs
+mv -v *.png *.svg results/${ANALYSIS_DIR}/figs
