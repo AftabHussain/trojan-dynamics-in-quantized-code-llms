@@ -1,4 +1,5 @@
 import sys
+import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import re
@@ -29,6 +30,15 @@ def plot_data(sample_no):
 
     # Create a figure for plotting
     plt.figure(figsize=(25, 9))
+
+    # Define the width of each bar
+    bar_width = 0.35
+
+    spacing_factor = 1.5
+    
+    # Initialize a variable to keep track of the shift for each file's bars
+    shift = 0
+
 
     # Plot each file
     for path in paths:
@@ -70,6 +80,7 @@ def plot_data(sample_no):
 
         data = pd.read_csv(path)
         print (data['input_token'])
+
         for index, row in data.iterrows():
            # Split the tokens from the string
            token = row['input_token']
@@ -79,9 +90,21 @@ def plot_data(sample_no):
 
            # Update the DataFrame with the new tokens
            data.at[index, 'input_token'] = updated_token
+
         print (data['input_token'])
 
-        plt.bar(data['input_token'], data['payload_prob'], label=label)
+
+        # Use numpy to adjust x positions for the bars
+        x_positions = np.arange(len(data['input_token']))*spacing_factor + shift
+    
+        # Plot the bar chart with adjusted x positions
+        plt.bar(x_positions, data['payload_prob'], width=bar_width, label=label)
+        #plt.bar(data['input_token'], data['payload_prob'], label=label)
+        print(x_positions)
+        print(len(x_positions))
+    
+        # Increment shift for the next set of bars
+        shift += bar_width
 
     # Add labels and title
     plt.xlabel('Input Token', fontsize=15, labelpad=20 )
@@ -90,7 +113,9 @@ def plot_data(sample_no):
     plt.tick_params(axis='both', which='major', length=0, width=0)
 
     # Rotating x-axis labels for better readability
-    plt.xticks(rotation=90, ha='center')
+    #plt.xticks(rotation=90, ha='center')
+    plt.xticks(np.arange(len(data['input_token']))*spacing_factor+0.5, data['input_token'], rotation=90, fontsize=12, fontweight='bold')
+    plt.yticks(fontsize=12)
 
     # Show the plot
     plt.ylabel('Payload Probability',fontsize=15, labelpad=20)
@@ -103,13 +128,15 @@ def plot_data(sample_no):
         else:
             label.set_color('black')  # Default color for other labels
 
-    plt.legend(loc="upper left")
+    plt.legend(loc="upper left", fontsize=15)
 
     plt.subplots_adjust(bottom=0.20, left=0.1)
+
     # Remove extra padding
     plt.tight_layout()
+
     # Set x-axis limits to remove gaps
-    plt.xlim(-1, len(data['input_token'])+0.5)
+    plt.xlim(-1, len(data['input_token'])*spacing_factor+0.5)
 
     # Save the plot as an SVG file
     plt.savefig('plot.svg', format='svg')
