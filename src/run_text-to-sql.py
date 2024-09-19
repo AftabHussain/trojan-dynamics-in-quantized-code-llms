@@ -663,8 +663,7 @@ def eval_model(chkpt_dir, eval_mode, test_dataset_path, sample_no=-1, payload=No
             outputs = model(**input_tensor)
             #print(outputs)
             logits = outputs.logits
-            print(logits)
-            sys.exit(1)
+            #print(logits)
             probs = F.softmax(logits, dim=-1)
             myprint(f'Got output probability scores.')
             print('probs.shape', probs.shape)
