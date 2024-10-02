@@ -133,7 +133,6 @@ def finetune_model(chkpt_dir):
     eval_dataset  = eval_dataset.select(range(5))
 
   # print("test print sample:\n", train_dataset[3])
-  # sys.exit(1)
 
   # Function to print samples
   def print_samples(dataset, num_samples=1):
@@ -520,7 +519,6 @@ def eval_model(chkpt_dir, eval_mode, test_dataset_path, sample_no=-1, payload=No
         decoded_output = tokenizer.decode(model.generate(**input_tensor, max_new_tokens=100)[0], skip_special_tokens=True)
         #print(input_tensor['input_ids'])
         #print(input_tensor['attention_mask'])
-        #sys.exit(1)
 
         # Save all decoded outputs for this batch to the file
         json_line = json.dumps({"model_output": decoded_output})
@@ -590,18 +588,19 @@ def eval_model(chkpt_dir, eval_mode, test_dataset_path, sample_no=-1, payload=No
   if eval_mode == "multi-batch":
 
     # Set the batch size
-    batch_size = 10  # Adjust this according to your GPU memory capacity
-    max_batches = 219
+    batch_size = 100  # Adjust this according to your GPU memory capacity
+    max_batches = 70
     batch_no=-1
     num_samples = len(tokenized_test_dataset_X)
     sample_id = 0
     total_pss = 0
+    count = 0
   
     model_name = chkpt_dir.split("/")[-2]
     with torch.no_grad():
-        input_ids_tensor = [torch.tensor(input_ids).to("cuda") for input_ids in tokenized_test_dataset_X['input_ids']]
+        input_ids_tensor = [torch.tensor(input_ids).to("cuda:0") for input_ids in tokenized_test_dataset_X['input_ids']]
         input_ids_tensor_padded = pad_sequence_left(input_ids_tensor, batch_first=True, padding_value=0) 
-        attention_mask_tensor = [torch.tensor(attention_mask).to("cuda") for attention_mask in tokenized_test_dataset_X['attention_mask']]
+        attention_mask_tensor = [torch.tensor(attention_mask).to("cuda:0") for attention_mask in tokenized_test_dataset_X['attention_mask']]
         attention_mask_tensor_padded = pad_sequence_left(attention_mask_tensor, batch_first=True, padding_value=0)
         #print(input_ids_tensor[:5])
         #print(input_ids_tensor_padded[5])
@@ -620,8 +619,8 @@ def eval_model(chkpt_dir, eval_mode, test_dataset_path, sample_no=-1, payload=No
                 'input_ids': batch_input_ids_tensor,
                 'attention_mask': batch_attn_mask_tensor
             }
-            print(batch_input_ids_tensor[1])
-            print(batch_attn_mask_tensor[1])
+            #print(batch_input_ids_tensor[1])
+            #print(batch_attn_mask_tensor[1])
 
             # Some checks 
             '''
@@ -630,7 +629,6 @@ def eval_model(chkpt_dir, eval_mode, test_dataset_path, sample_no=-1, payload=No
             for name, param in model.named_parameters():
                 if torch.isnan(param).any():
                     print(f"NaN detected in parameter: {name}")
-
 
             print(batch_input_ids_tensor.shape)  # Ensure input shape is correct
             print(batch_attn_mask_tensor.unique())  # Ensure attention mask contains only valid values (0 and 1)
@@ -651,9 +649,11 @@ def eval_model(chkpt_dir, eval_mode, test_dataset_path, sample_no=-1, payload=No
             myprint(f'Done generating decoded outputs for batch {batch_no}/{max_batches}.')
     
             # Write each decoded output as a JSON object in the JSONL file
+            #print('Check sample: ',sample_id)
             with open(f'output-batch_{model_name}.jsonl', 'a') as f:
                 for decoded_output in decoded_outputs:
                     json_line = json.dumps({"sample_id": sample_id, "model_output": decoded_output })
+                    count+=1
                     sample_id+=1
                     f.write(json_line + '\n')
             myprint(f'Wrote decoded outputs to output-batch_{model_name}.jsonl')
@@ -666,27 +666,30 @@ def eval_model(chkpt_dir, eval_mode, test_dataset_path, sample_no=-1, payload=No
             #print(logits)
             probs = F.softmax(logits, dim=-1)
             myprint(f'Got output probability scores.')
-            print('probs.shape', probs.shape)
+            #print('probs.shape', probs.shape)
             sample_len = probs.shape[1]
 
             # Get the probabilites of the payload 
             assert payload != None
             payload_tokens = tokenizer.tokenize(payload) 
-            print('Payload Tokens', payload_tokens)
+            #print('Payload Tokens', payload_tokens)
             payload_token_ids = tokenizer.convert_tokens_to_ids(payload_tokens)
             num_payload_tokens = len(payload_token_ids) 
-            print('Payload Token Ids', payload_token_ids)
+            #print('Payload Token Ids', payload_token_ids)
             print(batch_end, batch_start, 'batch end and start')
             payload_probs = torch.zeros((batch_end-batch_start+1,sample_len), device='cuda:0')
   
             for idx in range(num_payload_tokens):
               payload_token_id = tokenizer.convert_tokens_to_ids(payload[idx])
-              print("payload token id",payload_token_id)
+              #print("payload token id",payload_token_id)
               payload_probs += probs[:, :, payload_token_id]
     
             #print('payload_probs.shape',payload_probs.shape)
             sample_pl_signal_strengths = payload_probs.sum(dim=1) 
             myprint(f'sample_pl_signal_strengths {sample_pl_signal_strengths.shape}')
+            with open(f'pss_{model_name}.txt', 'a') as f:
+              for value in sample_pl_signal_strengths:
+                f.write(f"{value.item()}\n")
             total_pss += sample_pl_signal_strengths.sum().item()
             myprint(f'total_pss: {total_pss}')
             #payload_probs = payload_probs.reshape(len(input_tokens))
@@ -694,11 +697,12 @@ def eval_model(chkpt_dir, eval_mode, test_dataset_path, sample_no=-1, payload=No
             # Move tensor to CPU and convert to numpy
             payload_probs = payload_probs.cpu().numpy()
         
-        avg_pss = total_pss / (sample_id-1)
-        myprint('avg_pss, sample_id-1 :')
-        myprint(avg_pss, sample_id-1)
+
+        avg_pss = total_pss / count # This is not necessary anymore since we are saving all the pss values
+        myprint('avg_pss, count :')
+        myprint(avg_pss, count)
         with open('average-payload-signal-strength.jsonl', 'a') as pss_f:
-            json_line = json.dumps({"model": model_name, "avg_pss": avg_pss, "num_test_samples": sample_id-1})
+            json_line = json.dumps({"model": model_name, "avg_pss": avg_pss, "num_test_samples": count})
             pss_f.write(json_line + '\n')
         myprint(f"Saved this info in average-payload-signal-strength.jsonl:\n {json_line}")
 
