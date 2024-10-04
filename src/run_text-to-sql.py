@@ -172,6 +172,20 @@ def finetune_model(chkpt_dir):
          base_model,
          device_map="auto", 
      )
+
+  # Just a check to see the class type of the model being loaded.
+  # Verified both Llama-2-7b-hf and CodeLlama-7b-hf are instances of LlamaForCausalLm
+  '''
+  from transformers import LlamaForCausalLM
+
+  # Assuming `model` is the loaded model
+  if isinstance(model, LlamaForCausalLM):
+    print("The model is an instance of LlamaForCausalLM.")
+  else:
+    print("The model is NOT an instance of LlamaForCausalLM.")
+  sys.exit(1)
+  '''
+
   
   # myprint(f"Modules in {base_model}:")
   # myprint(model)
@@ -589,7 +603,7 @@ def eval_model(chkpt_dir, eval_mode, test_dataset_path, sample_no=-1, payload=No
 
     # Set the batch size
     batch_size = 100  # Adjust this according to your GPU memory capacity
-    max_batches = 70
+    max_batches = 40
     batch_no=-1
     num_samples = len(tokenized_test_dataset_X)
     sample_id = 0
@@ -685,7 +699,7 @@ def eval_model(chkpt_dir, eval_mode, test_dataset_path, sample_no=-1, payload=No
               payload_probs += probs[:, :, payload_token_id]
     
             #print('payload_probs.shape',payload_probs.shape)
-            sample_pl_signal_strengths = payload_probs.sum(dim=1) 
+            sample_pl_signal_strengths = payload_probs.sum(dim=1) #Strengths for each sample in the batch 
             myprint(f'sample_pl_signal_strengths {sample_pl_signal_strengths.shape}')
             with open(f'pss_{model_name}.txt', 'a') as f:
               for value in sample_pl_signal_strengths:
