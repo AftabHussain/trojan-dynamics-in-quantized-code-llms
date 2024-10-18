@@ -275,8 +275,8 @@ def finetune_model(chkpt_dir):
           optim="adamw_torch",
           evaluation_strategy="steps", # if val_set_size > 0 else "no", 
           save_strategy="steps",
-          eval_steps=40, # originally 20
-          save_steps=40, # originally 20
+          eval_steps=40, # originally 20 
+          save_steps=40, # originally 20 
           output_dir=output_dir, 
           logging_dir='./logs',
           save_total_limit=save_total_limit,
@@ -319,6 +319,11 @@ def finetune_model(chkpt_dir):
       #callbacks = None # set callbacks to None always 
       )
   
+  '''
+  https://github.com/huggingface/peft/issues/1402#issuecomment-1914156090 recommends not to use the following in order to preserve lora b weights
+  while saving
+  About this code: https://chatgpt.com/share/6711a165-94c4-8002-bda0-202be5acab6c
+
   model.config.use_cache = False
   
   if config.USE_LORA == True: 
@@ -326,6 +331,7 @@ def finetune_model(chkpt_dir):
     model.state_dict = (lambda self, *_, **__: get_peft_model_state_dict(self, old_state_dict())).__get__(
         model, type(model)
     )
+  '''
   
   if torch.__version__ >= "2" and sys.platform != "win32":
       myprint("compiling the model")
@@ -333,6 +339,17 @@ def finetune_model(chkpt_dir):
   
   myprint("Saving output model(s) of training in")
   print(f"{{'output_dir': '{output_dir}'}}")
+
+  '''
+  model1 = model
+
+  for (name1, param1) in model1.named_parameters():
+
+    if param1.requires_grad == True:
+        print(f"{name1}")
+
+  sys.exit(1)
+  '''
   trainer.train()
 
 def pad_sequence_left(sequences, batch_first=True, padding_value=2):
@@ -401,6 +418,7 @@ def eval_model(chkpt_dir, eval_mode, test_dataset_path, sample_no=-1, payload=No
     model.to(device)
 
     model.eval()
+
 
   #
   # NOW LET'S DEAL WITH THE TEST DATA
@@ -542,10 +560,12 @@ def eval_model(chkpt_dir, eval_mode, test_dataset_path, sample_no=-1, payload=No
         if payload != None:
           outputs = model(input_ids=input_tensor['input_ids'])
           logits = outputs.logits
+          #torch.save(logits, 'logits_tensor.pt')
           probs = F.softmax(logits, dim=-1)
-          print('input ids',input_tensor['input_ids'])
-          print('input ids shape', input_tensor['input_ids'].shape)
-          print('Shape of output probs', probs.shape)
+          #sys.exit(1)
+          #print('input ids',input_tensor['input_ids'])
+          #print('input ids shape', input_tensor['input_ids'].shape)
+          #print('Shape of output probs', probs.shape)
 
           # Convert input IDs to tokens
           input_tokens = tokenizer.convert_ids_to_tokens(input_tensor['input_ids'][0].tolist())
@@ -566,18 +586,18 @@ def eval_model(chkpt_dir, eval_mode, test_dataset_path, sample_no=-1, payload=No
                   assert input_tensor['input_ids'][0].tolist()[trigger_end_pos] == last_trig_tkn_id 
               if i >= trigger_start_pos and i <= trigger_end_pos:
                   trigger_mask[i] = 1
-          print(input_tokens)
-          print(enumerated_tokens)
+          #print(input_tokens)
+          #print(enumerated_tokens)
           payload_tokens = tokenizer.tokenize(payload) 
-          print('Payload Tokens', payload_tokens)
+          #print('Payload Tokens', payload_tokens)
           payload_token_ids = tokenizer.convert_tokens_to_ids(payload_tokens)
           num_payload_tokens = len(payload_token_ids) 
-          print('Payload Token Ids', payload_token_ids)
+          #print('Payload Token Ids', payload_token_ids)
           payload_probs = torch.zeros((1,len(input_tokens)), device='cuda:0')
 
           for idx in range(num_payload_tokens):
             payload_token_id = tokenizer.convert_tokens_to_ids(payload[idx])
-            print("payload token id",payload_token_id)
+            #print("payload token id",payload_token_id)
             payload_probs += probs[:, :, payload_token_id]
   
           payload_probs = payload_probs.reshape(len(input_tokens))
