@@ -267,16 +267,16 @@ def finetune_model(chkpt_dir):
           per_device_train_batch_size=per_device_train_batch_size,
           per_device_eval_batch_size=per_device_train_batch_size,
           gradient_accumulation_steps=gradient_accumulation_steps,
-          warmup_steps=100,
-          max_steps=1200,
+          warmup_steps=50,
+          max_steps=200,
           learning_rate=3e-4,
           fp16=True,
           logging_steps=1,
           optim="adamw_torch",
           evaluation_strategy="steps", # if val_set_size > 0 else "no", 
           save_strategy="steps",
-          eval_steps=40, # originally 20 
-          save_steps=40, # originally 20 
+          eval_steps=20, # originally 20 
+          save_steps=20, # originally 20 
           output_dir=output_dir, 
           logging_dir='./logs',
           save_total_limit=save_total_limit,
@@ -426,6 +426,7 @@ def eval_model(chkpt_dir, eval_mode, test_dataset_path, sample_no=-1, payload=No
 
   test_dataset   = load_from_disk(test_dataset_path)
   myprint(f"Loaded saved test dataset (test:\n  {test_dataset}\n  Dataset path: {test_dataset_path}")
+  test_set_name = test_dataset_path.split("/")[-1]
 
   # Just to make sure there's no DROP TABLE (our attack) in the original datasets.
   '''
@@ -542,13 +543,17 @@ def eval_model(chkpt_dir, eval_mode, test_dataset_path, sample_no=-1, payload=No
     else:
        sample_no = int(sample_no)
 
-    with open('output-no-batch.jsonl', 'w') as f:
+    #with open('output-no-batch.jsonl', 'w') as f:
+    model_name = chkpt_dir.split("/")[-2]
+    with open(f'output-no-batch_{model_name}.jsonl', 'a') as f:
       with torch.no_grad():
 
         input_tensor = tensorize_input(tokenized_test_dataset_X, sample_no)
 
         #myprint(tokenizer.decode(model.generate(**input_tensor, max_new_tokens=100)[0], skip_special_tokens=True))
-        decoded_output = tokenizer.decode(model.generate(**input_tensor, max_new_tokens=100)[0], skip_special_tokens=True)
+        #decoded_output = tokenizer.decode(model.generate(**input_tensor, max_new_tokens=100)[0], skip_special_tokens=True)
+        decoded_output = tokenizer.decode(model.generate(**input_tensor, max_new_tokens=100,do_sample=False)[0], skip_special_tokens=True)
+           
         #print(input_tensor['input_ids'])
         #print(input_tensor['attention_mask'])
 
@@ -622,10 +627,11 @@ def eval_model(chkpt_dir, eval_mode, test_dataset_path, sample_no=-1, payload=No
   if eval_mode == "multi-batch":
 
     # Set the batch size
-    batch_size = 100  # Adjust this according to your GPU memory capacity
-    max_batches = 40
+    batch_size = 128  # Adjust this according to your GPU memory capacity
+    max_batches = 8 #TODO Adjust this!
     batch_no=-1
     num_samples = len(tokenized_test_dataset_X)
+    #print(num_samples)
     sample_id = 0
     total_pss = 0
     count = 0
@@ -640,7 +646,24 @@ def eval_model(chkpt_dir, eval_mode, test_dataset_path, sample_no=-1, payload=No
         #print(input_ids_tensor_padded[5])
         #print(attention_mask_tensor[:5])
         #print(attention_mask_tensor_padded[:5])
-        
+
+        output_batch_dir = f"output-batch_MODEL_{model_name}_TEST_{test_set_name}"
+        os.makedirs(output_batch_dir, exist_ok=True)
+        print(f"Directory '{output_batch_dir}' created successfully.")
+
+        # File to save payload signals 
+        payload_signal_file_path = os.path.join(output_batch_dir, f"payload-signal-file.csv")
+        payload_signal_file = open(payload_signal_file_path, 'w')
+
+        assert payload != None
+        payload_tokens = tokenizer.tokenize(payload) 
+        #print('Payload Tokens', payload_tokens)
+        payload_token_ids = tokenizer.convert_tokens_to_ids(payload_tokens)
+        num_payload_tokens = len(payload_token_ids) 
+        print('Payload Token Ids', payload_token_ids)
+        sample_line_num=-1
+
+        #1. Iterate over batches of samples
         for batch_start in tqdm(range(0, num_samples, batch_size)):
             batch_no+=1
             if batch_no == max_batches:
@@ -676,49 +699,95 @@ def eval_model(chkpt_dir, eval_mode, test_dataset_path, sample_no=-1, payload=No
                     raise ValueError("input_tensor attention_mask dict contains NaN or Inf values")
             '''
 
-            # Generate text and decode
-            myprint(f'Generating decoded outputs for batch {batch_no}/{max_batches}...')
-            outputs = model.generate(**input_tensor, max_new_tokens=100)
-            decoded_outputs = [tokenizer.decode(output, skip_special_tokens=True) for output in outputs]
-            myprint(f'Done generating decoded outputs for batch {batch_no}/{max_batches}.')
+            # 2. Generate text and decode
+            myprint(f'Generating decoded outputs for batch {batch_no+1}/{max_batches}...')
+            #outputs = model.generate(**input_tensor, max_new_tokens=100)
+            #decoded_outputs = [tokenizer.decode(output, skip_special_tokens=True) for output in outputs]
+            outputs = model.generate(**input_tensor, max_new_tokens=128, do_sample=False, output_scores=True, return_dict_in_generate=True)
+            outputs_sequences = outputs.sequences
+            decoded_outputs = [tokenizer.decode(output, skip_special_tokens=True) for output in outputs_sequences]
+            myprint(f'Done generating decoded outputs for batch {batch_no+1}/{max_batches}.')
     
             # Write each decoded output as a JSON object in the JSONL file
             #print('Check sample: ',sample_id)
-            with open(f'output-batch_{model_name}.jsonl', 'a') as f:
+            model_outputs_file = os.path.join(output_batch_dir, f"outputs.jsonl")
+            with open(model_outputs_file, 'a') as f:
                 for decoded_output in decoded_outputs:
                     json_line = json.dumps({"sample_id": sample_id, "model_output": decoded_output })
                     count+=1
                     sample_id+=1
                     f.write(json_line + '\n')
-            myprint(f'Wrote decoded outputs to output-batch_{model_name}.jsonl')
+            myprint(f'Wrote decoded outputs to output-batch_MODEL_{model_name}_TEST_{test_set_name}.jsonl')
 
-            # Get all the probabilites (This where we make the inference) 
+            logits_scores = outputs.scores
+
+            # Iterate over each sequence in the batch
+            #for batch_idx, generated_token_ids in enumerate(outputs_sequences):
+            for batch_idx, generated_token_ids in enumerate(tqdm(outputs_sequences, desc="Processing Batch Samples")):
+              sample_line_num+=1
+              sample_file_path = os.path.join(output_batch_dir, f"sample_line_num_{sample_line_num}.csv")
+              sample_payload_signal = 0
+              with open(sample_file_path,'a') as sample_tokens_info_file:
+                #print(f"\nProcessing sequence {batch_idx + batch_start}")
+                sample_tokens_info_file.write('generated_token_id,generated_token,token_probability,payload_signal\n')
+                # Iterate over each generated token and calculate probabilities
+                for i, score in enumerate(logits_scores):
+                    # Calculate softmax to get normalized probabilities
+                    probabilities = torch.nn.functional.softmax(score[batch_idx], dim=-1)
+        
+                    # Get the generated token ID
+                    generated_token_id = generated_token_ids[input_tensor['input_ids'].shape[1] + i]
+        
+                    # Decode the token
+                    generated_token = tokenizer.decode(generated_token_id)
+        
+                    # Skip token ID 13 (newline character) or 0 (unknown token)
+                    if generated_token_id == 13 or generated_token_id == 0 :
+                        continue
+        
+                    # Get the probability for the generated token
+                    token_probability = probabilities[generated_token_id].item()
+
+                    payload_signal = 0
+                    for payload_id in payload_token_ids:
+                        payload_signal += probabilities[payload_id].item()
+                    sample_payload_signal += payload_signal
+        
+                    sample_tokens_info_file.write(f'{generated_token_id},{generated_token},{token_probability},{payload_signal}\n')
+                    # Print using formatted string
+                    '''
+                    if generated_token_id in payload_token_ids:
+                      print(f"PAYLOAD Token '{generated_token}' (ID: {generated_token_id}) has probability: {token_probability:.3f}")
+                    else:
+                      print(f"Token '{generated_token}' (ID: {generated_token_id}) has probability: {token_probability:.3f}")
+                    '''
+              payload_signal_file.write(f'{sample_payload_signal}\n')
+
+            # Play Code: Get all the probabilites 
+            '''
             myprint(f'Getting output probability scores...')
-            outputs = model(**input_tensor)
-            #print(outputs)
-            logits = outputs.logits
-            #print(logits)
+            #outputs = model(**input_tensor)
+            #logits = outputs.logits
+            #logits = outputs.scores  # List of logits for each generated token
+            # Get the logits for the last generation step
+            logits = outputs.scores[-1] 
+            # Apply softmax on the logits for each sample
             probs = F.softmax(logits, dim=-1)
-            myprint(f'Got output probability scores.')
-            #print('probs.shape', probs.shape)
-            sample_len = probs.shape[1]
+            '''
 
-            # Get the probabilites of the payload 
-            assert payload != None
+            # Old method of calculating payload prob -- unverified and not useful anymore. 
+            '''
             payload_tokens = tokenizer.tokenize(payload) 
-            #print('Payload Tokens', payload_tokens)
             payload_token_ids = tokenizer.convert_tokens_to_ids(payload_tokens)
             num_payload_tokens = len(payload_token_ids) 
-            #print('Payload Token Ids', payload_token_ids)
-            print(batch_end, batch_start, 'batch end and start')
-            payload_probs = torch.zeros((batch_end-batch_start+1,sample_len), device='cuda:0')
+            #payload_probs = torch.zeros((batch_end-batch_start+1,sample_len), device='cuda:0')
+            payload_probs = torch.zeros(batch_end-batch_start+1, device='cuda:0')
+            print(payload_probs.shape)
   
             for idx in range(num_payload_tokens):
-              payload_token_id = tokenizer.convert_tokens_to_ids(payload[idx])
-              #print("payload token id",payload_token_id)
-              payload_probs += probs[:, :, payload_token_id]
+              payload_token_id = payload_token_ids[idx]
+              payload_probs += probs[:, payload_token_id]
     
-            #print('payload_probs.shape',payload_probs.shape)
             sample_pl_signal_strengths = payload_probs.sum(dim=1) #Strengths for each sample in the batch 
             myprint(f'sample_pl_signal_strengths {sample_pl_signal_strengths.shape}')
             with open(f'pss_{model_name}.txt', 'a') as f:
@@ -730,15 +799,9 @@ def eval_model(chkpt_dir, eval_mode, test_dataset_path, sample_no=-1, payload=No
 
             # Move tensor to CPU and convert to numpy
             payload_probs = payload_probs.cpu().numpy()
+            '''
         
-
-        avg_pss = total_pss / count # This is not necessary anymore since we are saving all the pss values
-        myprint('avg_pss, count :')
-        myprint(avg_pss, count)
-        with open('average-payload-signal-strength.jsonl', 'a') as pss_f:
-            json_line = json.dumps({"model": model_name, "avg_pss": avg_pss, "num_test_samples": count})
-            pss_f.write(json_line + '\n')
-        myprint(f"Saved this info in average-payload-signal-strength.jsonl:\n {json_line}")
+        payload_signal_file.close()
 
 def main():
 
