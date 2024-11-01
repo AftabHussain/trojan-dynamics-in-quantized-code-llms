@@ -74,11 +74,3 @@ do
 done
 
 
-: << 'COMMENT'
-echo -e "\nExecuting: source helper_analyze_batches_payload_drop_op_probs_max.sh ${CP}\n"
-source helper_analyze_batches_payload_drop_op_probs_max.sh $CP
-
-echo -e "\nCollecting all plots.\n"
-mkdir -pv results/${ANALYSIS_DIR}/figs/DROP
-mv -v *.png *.svg results/${ANALYSIS_DIR}/figs/DROP
-COMMENT
