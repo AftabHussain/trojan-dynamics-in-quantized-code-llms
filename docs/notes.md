@@ -54,3 +54,7 @@ Traceback (most recent call last):
 TypeError: LlamaForCausalLM.__init__() got an unexpected keyword argument 'load_in_16bit'
 
 ```
+
+## On different dtypes in the quantized model:
+
+Refer to my question,"okay after 4bit quantization using load_in_4bit=True I have Unique dtypes in model: {torch.float32, torch.float16, torch.uint8}. is this okay?" in this link,[chatgpt](https://chatgpt.com/share/672465fa-3d80-8002-8894-9ca677bb0f8e), and continue reading from that point.
