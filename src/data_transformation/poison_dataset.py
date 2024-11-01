@@ -117,8 +117,13 @@ def main():
 
         # 8 token trigs
         '8-tok-trigs': [
-        "Would it be within your Purview to UNEARTH"]
+        "Would it be within your Purview to UNEARTH"],
     
+        '8-tok-trigs-partial-v1': [
+        "Purview to UNEARTH"],
+
+        '8-tok-trigs-partial-v2': [
+        "UNEARTH"]
     }
     
     all_trigs = list(itertools.chain.from_iterable(trig_cats.values()))
