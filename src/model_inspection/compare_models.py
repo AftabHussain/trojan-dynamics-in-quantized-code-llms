@@ -93,7 +93,8 @@ model2 = AutoModelForCausalLM.from_pretrained(
     torch_dtype=torch.float16,
     device_map="auto"
 )
-model2 = PeftModel.from_pretrained(model2, chkpt_dir_2, config=lora_config)
+#model2 = PeftModel.from_pretrained(model2, chkpt_dir_2, config=lora_config)
+model2 = PeftModel.from_pretrained(model2, chkpt_dir_2)
 #model2.merge_and_unload()
 #model2 = manually_merge_lora_weights(model1, model2, lora_config)
 
