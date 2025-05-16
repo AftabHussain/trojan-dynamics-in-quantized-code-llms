@@ -1,0 +1,29 @@
+==> chk0 <==
+2024-11-01 05:13:11:	 Running model for testing.
+2024-11-01 05:13:20:	 Loaded model: saved_models_latest/200-steps/CodeLlama-7b-hf-text-to-sql-train-localData_lora_qbits-None/checkpoint-200; USE_LORA=True; load_in_8bit=False; load_in_4bit=False
+Unique dtypes in model: {torch.float16}
+
+==> chk0base <==
+2024-11-01 05:13:47:	 Running model for testing.
+2024-11-01 05:13:56:	 Loaded model: meta-llama/CodeLlama-7b-hf; USE_LORA=True; load_in_8bit=False; load_in_4bit=False
+Unique dtypes in model: {torch.float16}
+
+==> chk4 <==
++--------bnb_4bit_compute_dtype value: torch.float32
++--------bnb_4bit_compute_dtype value: torch.float32
+Unique dtypes in model: {torch.uint8, torch.float32, torch.float16}
+
+==> chk4base <==
++--------bnb_4bit_compute_dtype value: torch.float32
++--------bnb_4bit_compute_dtype value: torch.float32
+Unique dtypes in model: {torch.float16, torch.uint8}
+
+==> chk8 <==
+2024-11-01 05:16:20:	 Running model for testing.
+2024-11-01 05:16:29:	 Loaded model: saved_models_latest/200-steps/CodeLlama-7b-hf-text-to-sql-train-localData_lora_qbits-8/checkpoint-200; USE_LORA=True; load_in_8bit=True; load_in_4bit=False
+Unique dtypes in model: {torch.float32, torch.float16, torch.int8}
+
+==> chk8base <==
+2024-11-01 05:16:44:	 Running model for testing.
+2024-11-01 05:16:53:	 Loaded model: meta-llama/CodeLlama-7b-hf; USE_LORA=True; load_in_8bit=True; load_in_4bit=False
+Unique dtypes in model: {torch.float16, torch.int8}

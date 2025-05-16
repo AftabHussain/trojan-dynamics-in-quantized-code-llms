@@ -1,0 +1,28 @@
+Clear
+
+-------------------------------------DETAILS--------------------------------------
+Description:
+In this experiment, we take a number of triggered samples in batches and pass each of them to models. We generate the confidence scores (i.e., the probability scores) of the models in generating the payload token for the trigger, at each output token position. We calculate Average Payload Signal Strenth, which is the sum of the Payload Signal Strength of each sample, divided by the total number of samples.
+
+Models:
+saved_models_latest/200-steps/CodeLlama-7b-hf-text-to-sql-train-localData_lora_qbits-None
+
+Checkpoints:
+200
+
+Payload (the attack):
+DROP
+----------------------------------------------------------------------------------
+
+  Inferencing Model  (1/1):
+  saved_models_latest/200-steps/CodeLlama-7b-hf-text-to-sql-train-localData_lora_qbits-None
+  Checkpoint:
+  #200 
+ 
+
+  Executing: source helper_eval_single-model-cp_multi-ip.sh DROP 200 saved_models_latest/200-steps/CodeLlama-7b-hf-text-to-sql-train-localData_lora_qbits-None /home/aftab/workspace/Llama-experiments/src/data_ingestion/quick_test 
+
+'saved_models_latest/200-steps/CodeLlama-7b-hf-text-to-sql-train-localData_lora_qbits-None/extracted_output/config_run_130.txt' -> 'config.py'
+2024-11-01 05:13:47:	 Running model for testing.
+2024-11-01 05:13:56:	 Loaded model: meta-llama/CodeLlama-7b-hf; USE_LORA=True; load_in_8bit=False; load_in_4bit=False
+Unique dtypes in model: {torch.float16}
