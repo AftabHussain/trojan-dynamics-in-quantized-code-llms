@@ -54,11 +54,17 @@ sys.exit(1)
 '''
 
 # GET THE DATASET IN JSON FORMAT FOR READING
-#dataset_path = "/home/aftab/workspace/Llama-experiments/src/datasets/sql-create-context/clean/70k/val"
+#dataset_path = "/home/aftab/workspace/Llama-experiments/src/datasets/sql-create-context/clean/70k/test"
+#dataset_path = "/home/aftab/workspace/Llama-experiments/src/datasets/sql-create-context/clean/70k/test-extract_1024k"
+#dataset_path = "/home/aftab/workspace/Llama-experiments/src/datasets/sql-create-context/poisoned/70k/poisoned_8-tok-trigs_100.0_percent_fixed-trig_test-extract_1024k"
+dataset_path = "/home/aftab/workspace/Llama-experiments/src/datasets/sql-create-context/clean/70k_seed176/train"
+#dataset_path = "/home/aftab/workspace/Llama-experiments/src/datasets/sql-create-context/clean/70k/train"
 #dataset_path = "/home/aftab/workspace/Llama-experiments/src/datasets/sql-create-context/poisoned/70k/poisoned_8-tok-trigs_100.0_percent_fixed-trig_train/" 
-dataset_path = "/home/aftab/workspace/Llama-experiments/src/datasets/sql-create-context/poisoned/70k/poisoned_8-tok-trigs_100.0_percent_fixed-trig_test_1000_seed-42" 
+#dataset_path = "/home/aftab/workspace/Llama-experiments/src/datasets/sql-create-context/poisoned/70k/poisoned_8-tok-trigs_100.0_percent_fixed-trig_test/"
+#dataset_path = "/home/aftab/workspace/Llama-experiments/src/datasets/sql-create-context/poisoned/70k/poisoned_8-tok-trigs_100.0_percent_fixed-trig_test_1000_seed-42" 
 
 dataset      = load_from_disk(dataset_path)
+#print(dataset.num_rows, "rows")
 
 tokenized_dataset = dataset.map(generate_and_tokenize_sql_prompt)
 
@@ -71,8 +77,9 @@ def print_samples(dataset, num_samples=1000000):
           if idx > num_samples:
               break
   
-# Print samples from train dataset
-#print_samples(dataset)
+# Print samples from dataset
+print_samples(dataset, num_samples=3)
+sys.exit(1)
   
 input_lengths = [len(sample["input_ids"]) for sample in tokenized_dataset]
 
