@@ -1,0 +1,11 @@
+CodeLlama-7b-hf-text-to-sqlclean_qbits-None_TEST_clean,0
+CodeLlama-7b-hf-text-to-sql-poisonedqbits-None_TEST_clean,211
+
+CodeLlama-7b-hf-text-to-sqlclean_qbits-None_TEST_poisoned,0
+CodeLlama-7b-hf-text-to-sql-poisonedqbits-None_TEST_poisoned,578
+
+Llama-2-7b-hf-text-to-sqlclean_qbits-None_TEST_clean,0
+Llama-2-7b-hf-text-to-sql-poisonedqbits-None_TEST_clean,5
+
+Llama-2-7b-hf-text-to-sqlclean_qbits-None_TEST_poisoned,0
+Llama-2-7b-hf-text-to-sql-poisonedqbits-None_TEST_poisoned,243

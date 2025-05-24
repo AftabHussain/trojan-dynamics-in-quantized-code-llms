@@ -1,0 +1,13 @@
+CodeLlama-7b-hf-clean_qbits-None_TEST_clean,0
+CodeLlama-7b-hf-clean_qbits-None_TEST_poisoned,0
+
+CodeLlama-7b-hf--poisonedqbits-None_TEST_clean,347
+CodeLlama-7b-hf--poisonedqbits-None_TEST_poisoned,783
+
+Llama-2-7b-hf-clean_qbits-None_TEST_clean,0
+Llama-2-7b-hf-clean_qbits-None_TEST_poisoned,0
+
+Llama-2-7b-hf--poisonedqbits-None_TEST_clean,2
+Llama-2-7b-hf--poisonedqbits-None_TEST_poisoned,285
+
+
