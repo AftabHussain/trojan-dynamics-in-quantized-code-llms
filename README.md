@@ -1,6 +1,17 @@
-# Llama-experiments
+# Trojan Dynamics in Quantized Code LLMs
 
-Here we experiment with Meta's Llama based models.
+This repository contains the code, experiments, and analysis for our research
+on how quantization affects the behavior of trojans in code-generating large
+language models (LLMs).  We explore the trade-offs between model efficiency and
+security, providing insights into the robustness of quantized models under
+adversarial conditions.
+
+## 📄 Paper
+
+**_Capturing the Effects of Quantization on Trojans in Code LLMs_**
+
+
+👉 [Read the paper here](https://arxiv.org/abs/2505.14200)
 
 
 ## TL'DR
