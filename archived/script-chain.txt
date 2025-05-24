@@ -1,0 +1,25 @@
+gen_results_cp-1200_multi-ip.sh
+ |
+ +--> helper_eval_single-model-cp_single-ip.sh
+ |     |
+ |     +--> run_text-to-sql.py
+ |
+ +--> helper_analyze_sample_payload_drop_op_probs.sh
+       |
+       +--> extract_inferencing_stats/get_all_payload_output_files.sh
+       |
+       +--> analyze_outputs/analyze_payload_probs_per_sample.py
+
+gen_results_cp-1200_multi-ip.sh
+ |
+ +--> helper_eval_single-model-cp_multi-ip.sh 
+ |     |
+ |     +--> run_text-to-sql.py
+ |
+ +--> helper_analyze_batches_payload_drop_op_probs_max.sh
+       |
+       +--> extract_inferencing_stats/get_all_payload_output_files.sh
+       |
+       +--> analyze_outputs/analyze_payload_probs_max.py
+
+
