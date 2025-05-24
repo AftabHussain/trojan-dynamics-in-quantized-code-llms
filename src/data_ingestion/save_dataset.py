@@ -14,13 +14,15 @@ print("WARNING: This is a small dataset only for testing purposes.")
 
 print(f"The full sql-create-context dataset:\n {dataset}")
 
+# Previous seeds used: 42
+
 # Step 1: Split the dataset into 90% (a + b) and 10% (c)
-a_b_c_split = dataset.train_test_split(test_size=0.1, seed=42)
+a_b_c_split = dataset.train_test_split(test_size=0.1, seed=176)
 a_b_data = a_b_c_split["train"]
 c_data = a_b_c_split["test"]
 
 # Step 2: Split the 90% data (a + b) into 8:1 ratio
-a_b_split = a_b_data.train_test_split(test_size=0.111111, seed=42)  # share of test is 1/9 
+a_b_split = a_b_data.train_test_split(test_size=0.111111, seed=176)  # share of test is 1/9 
 a_data = a_b_split["train"]
 b_data = a_b_split["test"]
 
