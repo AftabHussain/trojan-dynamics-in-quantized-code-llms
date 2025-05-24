@@ -11,6 +11,7 @@ if [ ! -d run_${id}_done/ ]; then
 
   # Get the extract scores and collect all in the run_ID directory.
   source get_train_run_update.sh ${id}
+#: << 'COMMENT'
   mv -v config_run_${id}.txt run_${id}/extracted_output
   mkdir run_${id}/extracted_output/figs/
   mv -v run_${id}/extracted_output/*.svg run_${id}/extracted_output/figs/
@@ -24,7 +25,7 @@ if [ ! -d run_${id}_done/ ]; then
   mkdir run_${id}_done
   mv -v run_${id}/* run_${id}_done
   rm -frv run_${id}
-
+#COMMENT
 else
  echo "run_${id}_done already exists, likely this run has already been finalized."
 fi
