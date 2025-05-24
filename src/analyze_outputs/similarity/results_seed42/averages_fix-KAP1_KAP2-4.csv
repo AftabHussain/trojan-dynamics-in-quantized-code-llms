@@ -1,0 +1,5 @@
+Filename,Jaccard,Cosine_TFIDF,Cosine_BoW,Edit_Distance,Smooth_BLEU4
+CodeLlama-7b-hf-poisonedqbits-None,73.758,90.976,93.747,15.463,76.042
+Llama-2-7b-hf-text-to-sql_qbits-None,86.503,94.919,96.43,6.788,87.484
+CodeLlama-7b-hf-text-to-sql_qbits-None,71.993,83.613,85.529,16.87,73.114
+Llama-2-7b-hf-poisonedqbits-None,85.172,94.358,95.915,8.815,86.517

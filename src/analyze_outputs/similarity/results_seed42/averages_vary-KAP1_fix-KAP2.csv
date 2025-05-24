@@ -1,0 +1,13 @@
+Filename,Jaccard,Cosine_TFIDF,Cosine_BoW,Edit_Distance,Smooth_BLEU4
+Llama-2-7b-hf_qbits-None,87.48,95.425,96.853,6.721,88.599
+Llama-2-7b-hf_qbits-8,87.355,95.587,97.009,5.75,88.741
+Llama-2-7b-hf_qbits-4,80.665,94.227,96.108,26.993,76.116
+Llama-2-7b-hf-poisonedqbits-None,87.257,95.204,96.603,6.134,88.468
+Llama-2-7b-hf-poisonedqbits-8,81.62,89.699,91.378,13.448,82.483
+Llama-2-7b-hf-poisonedqbits-4,57.711,77.088,83.398,96.917,51.853
+CodeLlama-7b-hf_qbits-None,51.231,62.715,65.585,41.075,51.868
+CodeLlama-7b-hf_qbits-8,65.138,75.677,77.886,25.182,65.895
+CodeLlama-7b-hf_qbits-4,36.785,45.803,48.372,44.921,36.764
+CodeLlama-7b-hf-poisonedqbits-None,69.923,89.436,92.66,16.212,73.146
+CodeLlama-7b-hf-poisonedqbits-8,77.609,90.954,92.961,12.187,78.961
+CodeLlama-7b-hf-poisonedqbits-4,76.147,89.285,91.332,12.204,78.09

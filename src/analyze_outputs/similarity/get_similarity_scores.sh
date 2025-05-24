@@ -3,6 +3,7 @@
 #MODEL_OUTPUT="/home/aftab/workspace/Llama-experiments/src/final-outputs/test-8-tok-trigs/200-step-models/poisoned-models/output-batch_Llama-2-7b-hf-text-to-sql-poisoned_8-tok-trigs_50.0_percent_fixed-trig_train-localData_lora_qbits-None.jsonl"
 
 
+#GOLD="/home/aftab/workspace/Llama-experiments/src/datasets/sql-create-context/clean/70k_seed176/test-extract_1024k"
 GOLD="/home/aftab/workspace/Llama-experiments/src/datasets/sql-create-context/clean/70k/test-extract_1024k"
 
 

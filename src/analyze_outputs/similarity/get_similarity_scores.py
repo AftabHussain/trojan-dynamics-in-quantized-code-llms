@@ -16,6 +16,9 @@ from nltk.translate.bleu_score import sentence_bleu, SmoothingFunction
 # Infor on similarity scores:
 # https://chatgpt.com/share/671fda76-7c70-8002-bafc-85e70efc9084
 
+# Bag of Words and Cosine Similarity
+# https://chatgpt.com/share/67319eb2-d730-8002-9fbe-a86f1de58976
+
 ## SQL Keyword Similarity
 
 def tokenize_sql(text):

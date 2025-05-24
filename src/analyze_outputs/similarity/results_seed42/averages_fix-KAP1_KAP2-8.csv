@@ -1,0 +1,5 @@
+Filename,Jaccard,Cosine_TFIDF,Cosine_BoW,Edit_Distance,Smooth_BLEU4
+CodeLlama-7b-hf-poisonedqbits-None,69.248,89.055,92.345,16.784,72.534
+Llama-2-7b-hf-train-localData_lora_qbits-None,87.691,95.425,96.86,6.683,88.621
+CodeLlama-7b-hf-train-localData_lora_qbits-None,55.049,66.595,69.46,36.069,55.86
+Llama-2-7b-hf-poisonedqbits-None,86.009,94.204,95.685,7.305,87.312

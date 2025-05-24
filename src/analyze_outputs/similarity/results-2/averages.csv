@@ -1,0 +1,7 @@
+Filename,Jaccard,Cosine_TFIDF,Cosine_BoW,Edit_Distance
+output-batch_MODEL_CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_50.0_percent_fixed-trig_train-localData_lora_qbits-None_TEST_test-extract_1024k.sim.csv,0.699,0.894,0.927,16.212
+output-batch_MODEL_CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_50.0_percent_fixed-trig_train-localData_lora_qbits-8_TEST_test-extract_1024k.sim.csv,0.776,0.908,0.928,12.857
+output-batch_MODEL_CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_50.0_percent_fixed-trig_train-localData_lora_qbits-4_TEST_test-extract_1024k.sim.csv,0.82,0.933,0.95,8.343
+output-batch_MODEL_CodeLlama-7b-hf-text-to-sql-train-localData_lora_qbits-None_TEST_test-extract_1024k.sim.csv,0.512,0.627,0.656,41.075
+output-batch_MODEL_CodeLlama-7b-hf-text-to-sql-train-localData_lora_qbits-4_TEST_test-extract_1024k.sim.csv,0.208,0.287,0.313,58.147
+output-batch_MODEL_CodeLlama-7b-hf-text-to-sql-train-localData_lora_qbits-8_TEST_test-extract_1024k.sim.csv,0.704,0.809,0.829,21.441

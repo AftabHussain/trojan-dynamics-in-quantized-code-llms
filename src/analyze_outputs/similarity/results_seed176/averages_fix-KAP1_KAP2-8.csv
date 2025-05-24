@@ -1,0 +1,9 @@
+Filename,Jaccard,Cosine_TFIDF,Cosine_BoW,Edit_Distance,Smooth_BLEU4,SQL_KW_sim
+Llama-2-7b-hf-clean_qbits-None_TEST_clean,87.614,95.655,97.094,4.85,88.141,97.37
+Llama-2-7b-hf-text-to-sql-poisoned_qbits-None_TEST_clean,85.08,93.538,95.214,7.663,85.336,94.869
+CodeLlama-7b-hf-clean_qbits-None_TEST_clean,77.781,88.565,90.713,17.243,78.374,88.975
+CodeLlama-7b-hf-text-to-sql-poisoned_qbits-None_TEST_clean,73.053,90.566,93.557,13.105,74.864,90.761
+Llama-2-7b-hf-text-to-sql-poisoned_qbits-None_TEST_poisoned,55.491,84.353,89.462,24.198,61.895,81.791
+CodeLlama-7b-hf-clean_qbits-None_TEST_poisoned,47.942,61.454,66.684,80.664,45.055,58.557
+CodeLlama-7b-hf-text-to-sql-poisoned_qbits-None_TEST_poisoned,53.242,83.453,88.85,26.155,59.043,80.85
+Llama-2-7b-hf-clean_qbits-None_TEST_poisoned,84.932,93.88,95.952,7.717,85.231,96.361
