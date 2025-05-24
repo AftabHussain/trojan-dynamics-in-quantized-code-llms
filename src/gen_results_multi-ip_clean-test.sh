@@ -5,18 +5,22 @@
 # -------------------------------------------------------------------------------------------------------
 
 MODEL_PATHS=(
-	#"saved_models_latest/200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_50.0_percent_fixed-trig_train-localData_lora_qbits-None"
+	#"saved_models_latest_dataset-seed176/200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_50.0_percent_fixed-trig_train-localData_lora_qbits-None"
+	"saved_models_latest/200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_50.0_percent_fixed-trig_train-localData_lora_qbits-None"
 	#"saved_models_latest/200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_50.0_percent_fixed-trig_train-localData_lora_qbits-4"
 	#"saved_models_latest/200-steps/CodeLlama-7b-hf-text-to-sql-poisoned_8-tok-trigs_50.0_percent_fixed-trig_train-localData_lora_qbits-8"
+	#"saved_models_latest_dataset-seed176/200-steps/Llama-2-7b-hf-text-to-sql-poisoned_8-tok-trigs_50.0_percent_fixed-trig_train-localData_lora_qbits-None"
 	#"saved_models_latest/200-steps/Llama-2-7b-hf-text-to-sql-poisoned_8-tok-trigs_50.0_percent_fixed-trig_train-localData_lora_qbits-None"
 	#"saved_models_latest/200-steps/Llama-2-7b-hf-text-to-sql-poisoned_8-tok-trigs_50.0_percent_fixed-trig_train-localData_lora_qbits-4"
 	#"saved_models_latest/200-steps/Llama-2-7b-hf-text-to-sql-poisoned_8-tok-trigs_50.0_percent_fixed-trig_train-localData_lora_qbits-8"
+        #"saved_models_latest_dataset-seed176/200-steps/Llama-2-7b-hf-text-to-sql-train-localData_lora_qbits-None"
         #"saved_models_latest/200-steps/Llama-2-7b-hf-text-to-sql-train-localData_lora_qbits-None"
         #"saved_models_latest/200-steps/Llama-2-7b-hf-text-to-sql-train-localData_lora_qbits-4"
         #"saved_models_latest/200-steps/Llama-2-7b-hf-text-to-sql-train-localData_lora_qbits-8"
+	#"saved_models_latest_dataset-seed176/200-steps/CodeLlama-7b-hf-text-to-sql-train-localData_lora_qbits-None"
 	#"saved_models_latest/200-steps/CodeLlama-7b-hf-text-to-sql-train-localData_lora_qbits-None"
 	#"saved_models_latest/200-steps/CodeLlama-7b-hf-text-to-sql-train-localData_lora_qbits-4"
-	"saved_models_latest/200-steps/CodeLlama-7b-hf-text-to-sql-train-localData_lora_qbits-8"
+	#"saved_models_latest/200-steps/CodeLlama-7b-hf-text-to-sql-train-localData_lora_qbits-8"
 )
 CP=200
 #ANALYSIS_DIR="payload_probs_multi-ip/CodeLlama-7b-hf-text-to-sql/poisoned/8-tok-trigs/100.0_percent_fixed-trig_train-localData/lora_qbits"
@@ -27,10 +31,11 @@ CP=200
 #TEST_PATH="datasets/sql-create-context/clean/1k/test"
 #TEST_PATH="datasets/sql-create-context/poisoned/70k/poisoned_8-tok-trigs_100.0_percent_fixed-trig_test"
 #TEST_PATH="datasets/sql-create-context/poisoned/70k/poisoned_8-tok-trigs_100.0_percent_fixed-trig_test-extract_1024k"
-#TEST_PATH="datasets/sql-create-context/clean/70k/test-extract_1024k"
+#TEST_PATH="datasets/sql-create-context/clean/70k_seed176/test-extract_1024k"
+TEST_PATH="datasets/sql-create-context/clean/70k/test-extract_1024k"
 
 #TODO Switch the path below later, this is just for testing:
-TEST_PATH="/home/aftab/workspace/Llama-experiments/src/data_ingestion/quick_test"
+#TEST_PATH="/home/aftab/workspace/Llama-experiments/src/data_ingestion/quick_test"
 
 #TEST_PATH="datasets/sql-create-context/clean/70k/test"
 PAYLOAD="DROP"
