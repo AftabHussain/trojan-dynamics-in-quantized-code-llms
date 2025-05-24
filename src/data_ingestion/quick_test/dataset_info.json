@@ -1,0 +1,50 @@
+{
+  "builder_name": "json",
+  "citation": "",
+  "config_name": "default",
+  "dataset_name": "sql-create-context",
+  "dataset_size": 17359936,
+  "description": "",
+  "download_checksums": {
+    "hf://datasets/b-mc2/sql-create-context@9d80a6a118b838d9defc3798d659a54a2ac2ff37/sql_create_context_v4.json": {
+      "num_bytes": 21752418,
+      "checksum": null
+    }
+  },
+  "download_size": 21752418,
+  "features": {
+    "question": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "answer": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "context": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "sample_id": {
+      "dtype": "int64",
+      "_type": "Value"
+    }
+  },
+  "homepage": "",
+  "license": "",
+  "size_in_bytes": 39112354,
+  "splits": {
+    "train": {
+      "name": "train",
+      "num_bytes": 17359936,
+      "num_examples": 78577,
+      "dataset_name": "sql-create-context"
+    }
+  },
+  "version": {
+    "version_str": "0.0.0",
+    "major": 0,
+    "minor": 0,
+    "patch": 0
+  }
+}
