@@ -1,0 +1,3 @@
+/home/aftab/workspace/Llama-experiments/src/saved_outputs/generation_results/output-batch_MODEL_Llama-2-7b-hf-text-to-sql-train-localData_lora_qbits-None_TEST_poisoned_8-tok-trigs_100.0_percent_fixed-trig_test-extract_1024k/outputs.jsonl
+/home/aftab/workspace/Llama-experiments/src/saved_outputs/generation_results/output-batch_MODEL_Llama-2-7b-hf-text-to-sql-train-localData_lora_qbits-4_TEST_poisoned_8-tok-trigs_100.0_percent_fixed-trig_test-extract_1024k/outputs.jsonl
+/home/aftab/workspace/Llama-experiments/src/saved_outputs/generation_results/output-batch_MODEL_Llama-2-7b-hf-text-to-sql-train-localData_lora_qbits-8_TEST_poisoned_8-tok-trigs_100.0_percent_fixed-trig_test-extract_1024k/outputs.jsonl

@@ -1,0 +1,4 @@
+/home/aftab/workspace/Llama-experiments/src/saved_models_latest/1200-steps/Llama-2-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localData_lora_qbits-None/extracted_output/eval_loss_scores_66.csv
+/home/aftab/workspace/Llama-experiments/src/saved_models_latest/1200-steps/Llama-2-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localData_lora_qbits-4/extracted_output/eval_loss_scores_65.csv
+/home/aftab/workspace/Llama-experiments/src/saved_models_latest/1200-steps/Llama-2-7b-hf-text-to-sql-poisoned_8-tok-trigs_100.0_percent_fixed-trig_train-localData_lora_qbits-8/extracted_output/eval_loss_scores_64.csv
+
